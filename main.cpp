@@ -106,7 +106,7 @@ void imagesLoad(const std::vector<Tiger::Channel>& files)
 		}
 	}
 
-void imagesSave(const std::vector<Tiger::Channel>& files)
+void imagesStore(const std::vector<Tiger::Channel>& files)
 	{
 	auto ptr=files.begin();
 	auto ptr_end=files.end();
@@ -147,17 +147,25 @@ int main(int argc,char** argv)
 			{return 0;}
 
 		if(!cmdline.get<Alice::Stringkey("init")>())
-			{return 0;}
+			{throw Tiger::Error("Initial condition is missing");}
 
 		if(!cmdline.get<Alice::Stringkey("dest")>())
-			{return 0;}
+			{throw Tiger::Error("List of destination files is missing");}
+
+		if(! (cmdline.get<Alice::Stringkey("source")>().valueGet().size()
+			==cmdline.get<Alice::Stringkey("init")>().valueGet().size()
+			&&cmdline.get<Alice::Stringkey("source")>().valueGet().size()
+			==cmdline.get<Alice::Stringkey("dest")>().valueGet().size()) )
+			{throw Tiger::Error("snit, source, and dest must have the same number of components.");}
 
 		imagesLoad(cmdline.get<Alice::Stringkey("source")>().valueGet());
 		imagesLoad(cmdline.get<Alice::Stringkey("init")>().valueGet());
 
+	/*	if(!sizesEqual(...))*/
+
 		simulation_run(cmdline.get<Alice::Stringkey("iterations")>().valueGet(),filter);
 
-		imagesSave(cmdline.get<Alice::Stringkey("dest")>().valueGet());
+		imagesStore(cmdline.get<Alice::Stringkey("dest")>().valueGet());
 		}
 	catch(const Alice::ErrorMessage& message)
 		{
