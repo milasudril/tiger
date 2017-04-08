@@ -21,6 +21,7 @@ namespace Tiger
 			void paramSet(const Parameter& param);
 			void paramsList(FILE* output);
 			void channelsList(FILE* output);
+			unsigned int channelIndex(const std::string& name);
 
 		private:
 			std::vector<float> m_params;

@@ -1,4 +1,7 @@
-//@	{"targets":[{"name":"channel.hpp","type":"include"}]}
+//@	{
+//@	 "targets":[{"name":"channel.hpp","type":"include"}]
+//@	,"dependencies_extra":[{"ref":"channel.o","rel":"implementation"}]
+//@	}
 
 #ifndef TIGER_CHANNEL_HPP
 #define TIGER_CHANNEL_HPP

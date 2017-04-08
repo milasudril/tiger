@@ -43,7 +43,7 @@ namespace Alice
 	template<>
 	struct MakeType<Stringkey("Channel mapping")>
 		{
-		typedef Tiger::Parameter Type;
+		typedef Tiger::Channel Type;
 		static constexpr const char* descriptionShortGet() noexcept
 			{return "Channel:Filename";}
 		static constexpr const char* descriptionLongGet() noexcept
@@ -70,9 +70,9 @@ ALICE_OPTION_DESCRIPTOR(OptionDescriptor
 	,{"","params","Filter parameters","Parameter",Alice::Option::Multiplicity::ZERO_OR_MORE}
 	,{"","params-list","Lists all parameters availible for *filter*","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
 	,{"","channels-list","Lists all channel names used by *filter","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
-	,{"","source","Selects static source image","Channel mapping",Alice::Option::Multiplicity::ZERO_OR_MORE}
-	,{"","init","Selects initial image","Channel mapping",Alice::Option::Multiplicity::ZERO_OR_MORE}
-	,{"","output","Selects output image","Channel mapping",Alice::Option::Multiplicity::ZERO_OR_MORE}
+	,{"","source","Selects static source image","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
+	,{"","init","Selects initial image","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
+	,{"","dest","Selects output image","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
 	,{"","iterations","Selects the number of iterations to apply the filter","unsigned int",Alice::Option::Multiplicity::ONE}
 	);
 
@@ -92,6 +92,28 @@ static void simulation_run(unsigned int N,Tiger::Filter& filter)
 	while(N!=0)
 		{
 		--N;
+		}
+	}
+
+void imagesLoad(const std::vector<Tiger::Channel>& files)
+	{
+	auto ptr=files.begin();
+	auto ptr_end=files.end();
+	while(ptr!=ptr_end)
+		{
+		fprintf(stderr,"%s->%s\n",ptr->filename(),ptr->name());
+		++ptr;
+		}
+	}
+
+void imagesSave(const std::vector<Tiger::Channel>& files)
+	{
+	auto ptr=files.begin();
+	auto ptr_end=files.end();
+	while(ptr!=ptr_end)
+		{
+		fprintf(stderr,"%s->%s\n",ptr->filename(),ptr->name());
+		++ptr;
 		}
 	}
 
@@ -121,7 +143,21 @@ int main(int argc,char** argv)
 			filter.channelsList(stdout);
 			}
 
+		if(!cmdline.get<Alice::Stringkey("source")>())
+			{return 0;}
+
+		if(!cmdline.get<Alice::Stringkey("init")>())
+			{return 0;}
+
+		if(!cmdline.get<Alice::Stringkey("dest")>())
+			{return 0;}
+
+		imagesLoad(cmdline.get<Alice::Stringkey("source")>().valueGet());
+		imagesLoad(cmdline.get<Alice::Stringkey("init")>().valueGet());
+
 		simulation_run(cmdline.get<Alice::Stringkey("iterations")>().valueGet(),filter);
+
+		imagesSave(cmdline.get<Alice::Stringkey("dest")>().valueGet());
 		}
 	catch(const Alice::ErrorMessage& message)
 		{

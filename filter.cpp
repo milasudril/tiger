@@ -146,3 +146,11 @@ void Filter::channelsList(FILE* output)
 		++ptr;
 		}
 	}
+
+unsigned int Filter::channelIndex(const std::string& ch)
+	{
+	auto i=m_channel_index.find(ch);
+	if(i==m_param_index.end())
+		{throw Error(name()," does use a channel with name ",ch.c_str());}
+	return i->second;
+	}
