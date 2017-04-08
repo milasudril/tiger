@@ -8,6 +8,7 @@
 //@	}
 
 #include "filter.hpp"
+#include "error.hpp"
 #include <magic.h>
 #include <uuid.h>
 #include <cstring>
@@ -59,7 +60,7 @@ static void compile(const char* src,const char* dest)
 	cmdbuff+="'";
 
 	if(system(cmdbuff.c_str())!=0)
-		{abort();}
+		{throw Error("It was not possible to compile filter ",src);}
 	}
 
 static std::string objectGenerate(const char* src)
@@ -67,7 +68,7 @@ static std::string objectGenerate(const char* src)
 	MagicHandle m;
 	auto mime=m.identify(src);
 	if(mime==nullptr)
-		{abort();}
+		{throw Error(src," has unknown MIME type");}
 	if(begins_with(mime,"text/x-c"))
 		{
 		std::string ret("/tmp/tiger_");
@@ -80,7 +81,7 @@ static std::string objectGenerate(const char* src)
 		}
 	if(begins_with(mime,"application/x-sharedlib"))
 		{return std::string(src);}
-	abort();
+	throw Error("Tiger cannot use a filter of type ",mime);
 	}
 
 static void lookup_fill(const char* const* names
@@ -93,7 +94,7 @@ static void lookup_fill(const char* const* names
 		{
 		auto ip=index_map.insert({*names,N});
 		if(!ip.second)
-			{abort();}
+			{throw Error(*names," is already used within this context");}
 		++names;
 		++N;
 		}
@@ -103,16 +104,12 @@ Filter::Filter(const char* src):Plugin(objectGenerate(src))
 	{
 		{
 		auto fn=entryPoint<decltype(&parameters)>("_Z10parametersv");
-		if(fn==nullptr)
-			{abort();}
 		lookup_fill(fn(),m_param_index);
 		m_params.resize(m_param_index.size());
 		}
 
 		{
 		auto fn=entryPoint<decltype(&channels)>("_Z8channelsv");
-		if(fn==nullptr)
-			{abort();}
 		lookup_fill(fn(),m_channel_index);
 		}
 
@@ -122,7 +119,7 @@ void Filter::paramSet(const Parameter& param)
 	{
 	auto i=m_param_index.find(param.name());
 	if(i==m_param_index.end())
-		{abort();}
+		{throw Error(name()," does not take a parameter with name ",param.name());}
 	m_params[i->second]=param.value();
 	}
 

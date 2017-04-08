@@ -32,12 +32,15 @@ namespace Tiger
 			~Plugin();
 
 			template<class Entry>
-			Entry entryPoint(const char* name) const
+			Entry __attribute__((returns_nonnull)) entryPoint(const char* name) const
 				{
 				Entry ret;
 				entryPoint(name,reinterpret_cast<intptr_t*>(&ret));
 				return ret;
 				}
+
+			const char* name() const noexcept
+				{return m_name.c_str();}
 
 		private:
 			std::string m_name;

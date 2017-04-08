@@ -4,7 +4,8 @@
         "paths_reject":[
             "..",
             ".",
-            "__targets"
+            "__targets",
+            "__targets_rel"
         ],
         "recursive":0
     },

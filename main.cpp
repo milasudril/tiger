@@ -9,6 +9,7 @@
 #include "filter.hpp"
 #include "parameter.hpp"
 #include "channel.hpp"
+#include "error.hpp"
 #include <cstdio>
 #include <alice/alice.hpp>
 
@@ -125,6 +126,11 @@ int main(int argc,char** argv)
 	catch(const Alice::ErrorMessage& message)
 		{
 		fprintf(stderr,"%s\n",message.data);
+		return -1;
+		}
+	catch(const Tiger::Error& e)
+		{
+		fprintf(stderr,"%s\n",e.message());
 		return -1;
 		}
 	return 0;
