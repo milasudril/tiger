@@ -108,6 +108,18 @@ int main(int argc,char** argv)
 
 		Tiger::Filter filter(cmdline.get<Alice::Stringkey("filter")>().valueGet().c_str());
 		params_set(cmdline.get<Alice::Stringkey("params")>().valueGet(),filter);
+		if(cmdline.get<Alice::Stringkey("params-list")>())
+			{
+		//TODO: If set, use argument value as filename
+			filter.paramsList(stdout);
+			}
+
+		if(cmdline.get<Alice::Stringkey("channels-list")>())
+			{
+		//TODO: If set, use argument value as filename
+			filter.channelsList(stdout);
+			}
+
 		simulation_run(cmdline.get<Alice::Stringkey("iterations")>().valueGet(),filter);
 		}
 	catch(const Alice::ErrorMessage& message)

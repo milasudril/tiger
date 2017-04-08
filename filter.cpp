@@ -125,3 +125,27 @@ void Filter::paramSet(const Parameter& param)
 		{abort();}
 	m_params[i->second]=param.value();
 	}
+
+void Filter::paramsList(FILE* output)
+	{
+	auto ptr=m_param_index.begin();
+	auto ptr_end=m_param_index.end();
+	fprintf(output,"\nParameters\n----------\n");
+	while(ptr!=ptr_end)
+		{
+		fprintf(output," * `%s`=%.9g\n",ptr->first.c_str(),m_params[ptr->second]);
+		++ptr;
+		}
+	}
+
+void Filter::channelsList(FILE* output)
+	{
+	auto ptr=m_channel_index.begin();
+	auto ptr_end=m_channel_index.end();
+	fprintf(output,"\nChannels\n--------\n");
+	while(ptr!=ptr_end)
+		{
+		fprintf(output," * `%s`\n",ptr->first.c_str());
+		++ptr;
+		}
+	}

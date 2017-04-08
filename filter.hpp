@@ -19,6 +19,8 @@ namespace Tiger
 		public:
 			explicit Filter(const char* src);
 			void paramSet(const Parameter& param);
+			void paramsList(FILE* output);
+			void channelsList(FILE* output);
 
 		private:
 			std::vector<float> m_params;
