@@ -28,6 +28,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "error.hpp"
 #include "cpuinfo.hpp"
 #include "datasource.hpp"
+#include "datasink.hpp"
 
 #include <png.h>
 #include <cmath>
@@ -361,4 +362,169 @@ Image::Image(uint32_t width,uint32_t height,uint32_t n_channels):
 	m_data(new SampleType[width*height*n_channels])
 	,m_width(width),m_height(height),m_channel_count(n_channels)
 	{
+	}
+
+
+namespace
+	{
+	class PNGWriter
+		{
+		public:
+			explicit inline PNGWriter(DataSink& dest);
+			inline ~PNGWriter();
+
+			PNGWriter& width(uint32_t w) noexcept
+				{
+				m_width=w;
+				return *this;
+				}
+
+			PNGWriter& height(uint32_t h) noexcept
+				{
+				m_height=h;
+				return *this;
+				}
+
+			PNGWriter& channelCount(uint32_t ch) noexcept
+				{
+				m_n_channels=ch;
+				return *this;
+				}
+
+			inline void headerWrite();
+
+			inline void pixelsWrite(const float* pixels_out);
+
+
+		private:
+			[[noreturn]] static void on_error(png_struct* pngptr,const char* message);
+
+			static void on_warning(png_struct* pngptr,const char* message);
+
+			static void on_write(png_struct* pngptr,uint8_t* data,png_size_t N);
+
+			static void on_flush(png_struct* pngptr);
+
+			static int colorType(uint32_t channel_count);
+
+			png_struct* m_handle;
+			png_info* m_info;
+			png_info* m_info_end;
+
+			uint32_t m_width;
+			uint32_t m_height;
+			uint32_t m_n_channels;
+			};
+	};
+
+
+void PNGWriter::on_warning(png_struct* pngptr,const char* message)
+	{
+//	Ignore warnings
+	}
+
+void PNGWriter::on_error(png_struct* pngptr,const char* message)
+	{
+	auto sink=reinterpret_cast<DataSink*>(png_get_io_ptr(pngptr));
+	throw Error(sink->name(),": An error occured while decoding the image. "
+		,message);
+	}
+
+void PNGWriter::on_write(png_struct* pngptr,uint8_t* data,png_size_t N)
+	{
+	auto sink=reinterpret_cast<DataSink*>(png_get_io_ptr(pngptr));
+	if(sink->write(data,N)!=N)
+		{
+		throw Error(sink->name(),": An error occured while writing the image. ");
+		}
+	}
+
+void PNGWriter::on_flush(png_struct* pngptr)
+	{
+	auto sink=reinterpret_cast<DataSink*>(png_get_io_ptr(pngptr));
+	sink->flush();
+	}
+
+int PNGWriter::colorType(uint32_t channel_count)
+	{
+	switch(channel_count)
+		{
+		case 1:
+			return PNG_COLOR_TYPE_GRAY;
+		case 2:
+			return PNG_COLOR_TYPE_GRAY_ALPHA;
+		case 3:
+			return PNG_COLOR_TYPE_RGB;
+		case 4:
+			return PNG_COLOR_TYPE_RGBA;
+		default:
+			throw Error("The current image has an invalid channel count");
+		}
+	}
+
+PNGWriter::PNGWriter(DataSink& dest)
+	{
+	m_handle=png_create_write_struct(PNG_LIBPNG_VER_STRING
+		,&dest,on_error,on_warning);
+	png_set_write_fn(m_handle,&dest,on_write,on_flush);
+	m_info=png_create_info_struct(m_handle);
+	png_set_compression_level(m_handle,Z_BEST_COMPRESSION);
+	png_set_compression_strategy(m_handle,Z_DEFAULT_STRATEGY);
+	}
+
+PNGWriter::~PNGWriter()
+	{
+	png_write_end(m_handle,m_info);
+	png_destroy_write_struct(&m_handle, &m_info);
+	}
+
+void PNGWriter::headerWrite()
+	{
+	png_set_IHDR(m_handle,m_info,m_width,m_height,16,colorType(m_n_channels)
+		,PNG_INTERLACE_NONE,PNG_COMPRESSION_TYPE_DEFAULT,PNG_FILTER_TYPE_DEFAULT);
+	png_set_compression_level(m_handle,Z_BEST_COMPRESSION);
+	png_set_compression_strategy(m_handle,Z_DEFAULT_STRATEGY);
+	png_set_gAMA(m_handle,m_info,1.0);
+
+	png_write_info(m_handle,m_info);
+	}
+
+void PNGWriter::pixelsWrite(const Image::SampleType* pixels_in)
+	{
+	std::unique_ptr<uint16_t[]> buffer_temp(new uint16_t[m_width*m_height*m_n_channels]);
+
+	if(!CPUInfo::bigEndianIs())
+		{png_set_swap(m_handle);}
+
+		{
+		auto ptr=pixels_in;
+		auto ptr_out=buffer_temp.get();
+		auto N=m_width*m_height*m_n_channels;
+		while(N!=0)
+			{
+			*ptr_out=static_cast<uint16_t>( 0xffff* (*ptr));
+			++ptr;
+			++ptr_out;
+			--N;
+			}
+		}
+
+		{
+		auto row=buffer_temp.get();
+		std::unique_ptr<uint16_t*[]> rows(new uint16_t*[m_height]);
+		for(uint32_t n=0;n<m_height;++n)
+			{rows.get()[n]=row + n*m_width*m_n_channels;}
+
+		png_write_image(m_handle,reinterpret_cast<uint8_t**>(rows.get()));
+		}
+	}
+
+void Image::store(DataSink& sink) const
+	{
+	PNGWriter writer(sink);
+	writer.channelCount(m_channel_count)
+		.height(m_height)
+		.width(m_width)
+		.headerWrite();
+	writer.pixelsWrite(m_data.get());
 	}

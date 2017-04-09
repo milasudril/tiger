@@ -30,6 +30,8 @@
     <File Name="cpuinfo.hpp"/>
     <File Name="datasource.hpp"/>
     <File Name="srcstdio.hpp"/>
+    <File Name="datasink.hpp"/>
+    <File Name="sinkstdio.hpp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

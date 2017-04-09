@@ -30,6 +30,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 namespace Tiger
 	{
 	class DataSource;
+	class DataSink;
 	class Image
 		{
 		public:
@@ -42,6 +43,11 @@ namespace Tiger
 			explicit Image(DataSource& source);
 
 			explicit Image(uint32_t width,uint32_t height,uint32_t n_channels);
+
+			void store(DataSink&& sink) const
+				{store(sink);}
+
+			void store(DataSink& sink) const;
 
 			bool valid() const noexcept
 				{return static_cast<bool>(m_data);}

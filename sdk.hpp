@@ -37,6 +37,9 @@ namespace Tiger
 				return m_src[y*m_height + x + n];
 				}
 
+			const float* buffer_current() const noexcept
+				{return m_current;}
+
 			int width() const noexcept
 				{return m_width;}
 

@@ -12,6 +12,7 @@
 #include "error.hpp"
 #include "image.hpp"
 #include "srcstdio.hpp"
+#include "sinkstdio.hpp"
 #include "sdk.hpp"
 #include <alice/alice.hpp>
 #include <cassert>
@@ -91,7 +92,7 @@ static void params_set(const std::vector<Tiger::Parameter>& params,Tiger::Filter
 		}
 	}
 
-void imageFill(const Tiger::Image& src,unsigned int ch,Tiger::Image& dest)
+static void imageSoA2AoS(const Tiger::Image& src,unsigned int ch,Tiger::Image& dest)
 	{
 	assert(src.height()==dest.height() && src.width()==dest.width() 
 		&& src.channelCount()==1 && ch<dest.channelCount() );
@@ -111,7 +112,7 @@ void imageFill(const Tiger::Image& src,unsigned int ch,Tiger::Image& dest)
 		}
 	}
 
-Tiger::Image imagesLoad(const std::vector<Tiger::Channel>& files,const Tiger::Filter& f)
+static Tiger::Image imagesLoad(const std::vector<Tiger::Channel>& files,const Tiger::Filter& f)
 	{
 	auto ptr=files.begin();
 	auto ptr_end=files.end();
@@ -130,19 +131,44 @@ Tiger::Image imagesLoad(const std::vector<Tiger::Channel>& files,const Tiger::Fi
 			}
 
 		auto ch=f.channelIndex(ptr->name());
-		imageFill(src,ch,ret);
+		imageSoA2AoS(src,ch,ret);
 		++ptr;
 		}
 	return std::move(ret);
 	}
 
-void imagesStore(const std::vector<Tiger::Channel>& files)
+static void imageAoS2SoA(const Tiger::ProcessData& src,unsigned int ch_count
+	,unsigned int ch,Tiger::Image& dest)
+	{
+	assert(src.height()==static_cast<int>(dest.height())
+		&& src.width()==static_cast<int>(dest.width())
+		&& dest.channelCount()==1 && ch<ch_count );;
+
+	auto w=dest.width();
+	auto h=dest.height();
+	auto N=w*h;
+	auto pixels_in=src.buffer_current() + ch;
+	auto pixels_out=dest.pixels();
+	while(N)
+		{
+		*pixels_out=*pixels_in;
+		pixels_in+=ch_count;
+		++pixels_in;
+		--N;
+		}
+	}
+
+static void imagesStore(const Tiger::Filter& f,const Tiger::ProcessData& d
+	,const std::vector<Tiger::Channel>& files)
 	{
 	auto ptr=files.begin();
 	auto ptr_end=files.end();
+	Tiger::Image img_out(d.width(),d.height(),1);
 	while(ptr!=ptr_end)
 		{
-		fprintf(stderr,"%s->%s\n",ptr->filename(),ptr->name());
+		auto ch=f.channelIndex(ptr->name());
+		imageAoS2SoA(d,f.channelCount(),ch,img_out);
+		img_out.store(Tiger::SinkStdio{ptr->filename()});
 		++ptr;
 		}
 	}
@@ -167,7 +193,11 @@ int main(int argc,char** argv)
 
 		if(cmdline.get<Alice::Stringkey("help")>())
 			{
-			cmdline.help(0);
+			auto& v=cmdline.get<Alice::Stringkey("help")>().valueGet();
+			if(v.size()!=0)
+				{cmdline.help(0,Tiger::SinkStdio(v[0].c_str()).handle());}
+			else
+				{cmdline.help(0,stdout);}
 			return 0;
 			}
 
@@ -175,14 +205,20 @@ int main(int argc,char** argv)
 		params_set(cmdline.get<Alice::Stringkey("params")>().valueGet(),filter);
 		if(cmdline.get<Alice::Stringkey("params-list")>())
 			{
-		//TODO: If set, use argument value as filename
-			filter.paramsList(stdout);
+			auto& v=cmdline.get<Alice::Stringkey("params-list")>().valueGet();
+			if(v.size()!=0)
+				{filter.paramsList(Tiger::SinkStdio(v[0].c_str()).handle());}
+			else
+				{filter.paramsList(stdout);}
 			}
 
 		if(cmdline.get<Alice::Stringkey("channels-list")>())
 			{
-		//TODO: If set, use argument value as filename
-			filter.channelsList(stdout);
+			auto& v=cmdline.get<Alice::Stringkey("channels-list")>().valueGet();
+			if(v.size()!=0)
+				{filter.channelsList(Tiger::SinkStdio(v[0].c_str()).handle());}
+			else
+				{filter.channelsList(stdout);}
 			}
 
 		if(!(cmdline.get<Alice::Stringkey("source")>()
@@ -220,7 +256,7 @@ int main(int argc,char** argv)
 		simulation_run(cmdline.get<Alice::Stringkey("iterations")>().valueGet()
 			,filter,procdata);
 
-		imagesStore(cmdline.get<Alice::Stringkey("dest")>().valueGet());
+		imagesStore(filter,procdata,cmdline.get<Alice::Stringkey("dest")>().valueGet());
 		}
 	catch(const Alice::ErrorMessage& message)
 		{
