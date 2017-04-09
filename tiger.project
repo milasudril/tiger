@@ -19,7 +19,6 @@
     <File Name="filter.cpp"/>
     <File Name="parameter.hpp"/>
     <File Name="parameter.cpp"/>
-    <File Name="sdk.hpp"/>
     <File Name="test.cpp"/>
     <File Name="channel.hpp"/>
     <File Name="channel.cpp"/>
@@ -32,6 +31,9 @@
     <File Name="srcstdio.hpp"/>
     <File Name="datasink.hpp"/>
     <File Name="sinkstdio.hpp"/>
+    <File Name="test.sh"/>
+    <File Name="host.hpp"/>
+    <File Name="client.hpp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

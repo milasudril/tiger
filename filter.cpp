@@ -113,7 +113,7 @@ Filter::Filter(const char* src):Plugin(objectGenerate(src))
 		lookup_fill(fn(),m_channel_index);
 		}
 
-	m_process=entryPoint<decltype(m_process)>("_Z7processRKN5Tiger11ProcessDataE");
+	m_process=entryPoint<decltype(m_process)>("_ZN5Tiger9__processERKNS_11ProcessDataE");
 	}
 
 void Filter::paramSet(const Parameter& param)

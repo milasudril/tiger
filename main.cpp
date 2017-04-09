@@ -13,7 +13,7 @@
 #include "image.hpp"
 #include "srcstdio.hpp"
 #include "sinkstdio.hpp"
-#include "sdk.hpp"
+#include "host.hpp"
 #include <alice/alice.hpp>
 #include <cassert>
 #include <cstdio>
@@ -153,7 +153,7 @@ static void imageAoS2SoA(const Tiger::ProcessData& src,unsigned int ch_count
 		{
 		*pixels_out=*pixels_in;
 		pixels_in+=ch_count;
-		++pixels_in;
+		++pixels_out;
 		--N;
 		}
 	}
@@ -226,17 +226,16 @@ int main(int argc,char** argv)
 			|| cmdline.get<Alice::Stringkey("dest")>() ) )
 			{return 0;}
 
-		if(!cmdline.get<Alice::Stringkey("source")>())
-			{throw Tiger::Error("Source files are missing");}
-
 		if(!cmdline.get<Alice::Stringkey("init")>())
 			{throw Tiger::Error("Initial condition is missing");}
 
 		if(!cmdline.get<Alice::Stringkey("dest")>())
 			{throw Tiger::Error("List of destination files is missing");}
 
-		const auto img_src=imagesLoad(cmdline.get<Alice::Stringkey("source")>().valueGet(),filter);
+		auto img_src=imagesLoad(cmdline.get<Alice::Stringkey("source")>().valueGet(),filter);
 		auto img_init=imagesLoad(cmdline.get<Alice::Stringkey("init")>().valueGet(),filter);
+		if(!img_src.valid())
+			{img_src=layoutClone(img_init);}
 
 		if(!layoutSame(img_src,img_init))
 			{throw Tiger::Error("Source image and initial image must have the same size.");}
