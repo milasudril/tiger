@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="tiger" Version="10.0.0" InternalType="Console">
+  <Reconciliation>
+    <Regexes/>
+    <Excludepaths/>
+    <Ignorefiles/>
+    <Extensions>
+      <![CDATA[cpp;c;h;hpp;xrc;wxcp;fbp]]>
+    </Extensions>
+    <Topleveldir>../tiger</Topleveldir>
+  </Reconciliation>
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
@@ -16,6 +25,10 @@
     <File Name="channel.cpp"/>
     <File Name=".gitignore"/>
     <File Name="error.hpp"/>
+    <File Name="image.cpp"/>
+    <File Name="image.hpp"/>
+    <File Name="cpuinfo.hpp"/>
+    <File Name="datasource.hpp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
