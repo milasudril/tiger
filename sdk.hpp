@@ -10,26 +10,31 @@ namespace Tiger
 	struct ProcessData
 		{
 		public:
-			ProcessData(const ProcessData&)=delete;
-			ProcessData& operator=(const ProcessData&)=delete;
-
-			ProcessData(const float* params,float* src,float* d
-				,int w,int h) noexcept:m_params(params),m_src(src),m_dest(d)
+			ProcessData(float* buffer_a,float* buffer_b,const float* src
+				,const float* params,int w,int h) noexcept:
+				 m_next(buffer_a),m_current(buffer_b),m_src(src),m_params(params)
 				,m_width(w),m_height(h)
 				{}
 
 			template<int n>
-			float& dest(int x,int y) const noexcept
+			float& value_next(int x,int y) const noexcept
 				{
 				static_assert(n>=0,"Channel not found");
-				return m_dest[y*m_width + x + n];
+				return m_next[y*m_width + x + n];
+				}
+
+			template<int n>
+			float value_current(int x,int y) const noexcept
+				{
+				static_assert(n>=0,"Channel not found");
+				return m_current[y*m_height + x + n];
 				}
 
 			template<int n>
 			float source(int x,int y) const noexcept
 				{
 				static_assert(n>=0,"Channel not found");
-				return m_dest[y*m_height + x + n];
+				return m_src[y*m_height + x + n];
 				}
 
 			int width() const noexcept
@@ -46,12 +51,13 @@ namespace Tiger
 				}
 
 			void swap() noexcept
-				{std::swap(m_src,m_dest);}
+				{std::swap(m_next,m_current);}
 				
 		private:
+			float* m_next;
+			float* m_current;
+			const float* m_src;
 			const float* m_params;
-			float* m_src;
-			float* m_dest;
 			int m_width;
 			int m_height;
 		};

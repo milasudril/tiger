@@ -103,7 +103,7 @@ static void lookup_fill(const char* const* names
 Filter::Filter(const char* src):Plugin(objectGenerate(src))
 	{
 		{
-		auto fn=entryPoint<decltype(&parameters)>("_Z10parametersv");
+		auto fn=entryPoint<decltype(&::parameters)>("_Z10parametersv");
 		lookup_fill(fn(),m_param_index);
 		m_params.resize(m_param_index.size());
 		}
@@ -113,6 +113,7 @@ Filter::Filter(const char* src):Plugin(objectGenerate(src))
 		lookup_fill(fn(),m_channel_index);
 		}
 
+	m_process=entryPoint<decltype(m_process)>("_Z7processRKN5Tiger11DataE");
 	}
 
 void Filter::paramSet(const Parameter& param)
@@ -123,7 +124,7 @@ void Filter::paramSet(const Parameter& param)
 	m_params[i->second]=param.value();
 	}
 
-void Filter::paramsList(FILE* output)
+void Filter::paramsList(FILE* output) const
 	{
 	auto ptr=m_param_index.begin();
 	auto ptr_end=m_param_index.end();
@@ -135,7 +136,7 @@ void Filter::paramsList(FILE* output)
 		}
 	}
 
-void Filter::channelsList(FILE* output)
+void Filter::channelsList(FILE* output) const
 	{
 	auto ptr=m_channel_index.begin();
 	auto ptr_end=m_channel_index.end();
@@ -147,10 +148,13 @@ void Filter::channelsList(FILE* output)
 		}
 	}
 
-unsigned int Filter::channelIndex(const std::string& ch)
+unsigned int Filter::channelIndex(const std::string& ch) const
 	{
 	auto i=m_channel_index.find(ch);
-	if(i==m_param_index.end())
+	if(i==m_channel_index.end())
 		{throw Error(name()," does use a channel with name ",ch.c_str());}
 	return i->second;
 	}
+
+unsigned int Filter::channelCount() const noexcept
+	{return m_channel_index.size();}

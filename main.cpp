@@ -10,8 +10,12 @@
 #include "parameter.hpp"
 #include "channel.hpp"
 #include "error.hpp"
-#include <cstdio>
+#include "image.hpp"
+#include "srcstdio.hpp"
+#include "sdk.hpp"
 #include <alice/alice.hpp>
+#include <cassert>
+#include <cstdio>
 
 namespace Alice
 	{
@@ -87,23 +91,49 @@ static void params_set(const std::vector<Tiger::Parameter>& params,Tiger::Filter
 		}
 	}
 
-static void simulation_run(unsigned int N,Tiger::Filter& filter)
+void imageFill(const Tiger::Image& src,unsigned int ch,Tiger::Image& dest)
 	{
-	while(N!=0)
+	assert(src.height()==dest.height() && src.width()==dest.width() 
+		&& src.channelCount()==1 && ch<dest.channelCount() );
+
+	auto w=dest.width();
+	auto h=dest.height();
+	auto N=w*h;
+	auto ch_count=dest.channelCount();
+	auto pixels_in=src.pixels();
+	auto pixels_out=dest.pixels() + ch;
+	while(N)
 		{
+		*pixels_out=*pixels_in;
+		pixels_out+=ch_count;
+		++pixels_in;
 		--N;
 		}
 	}
 
-void imagesLoad(const std::vector<Tiger::Channel>& files)
+Tiger::Image imagesLoad(const std::vector<Tiger::Channel>& files,const Tiger::Filter& f)
 	{
 	auto ptr=files.begin();
 	auto ptr_end=files.end();
+	Tiger::Image ret;
 	while(ptr!=ptr_end)
 		{
-		fprintf(stderr,"%s->%s\n",ptr->filename(),ptr->name());
+		Tiger::Image src{Tiger::SrcStdio(ptr->filename())};
+		if(src.channelCount()!=1)
+			{throw Tiger::Error(ptr->filename(),": Only grayscale images are supported.");}
+		if(!ret.valid())
+			{ret=Tiger::Image(src.width(),src.height(),f.channelCount());}
+		if( ret.width()!=src.width() || ret.height()!=src.height() )
+			{
+			throw Tiger::Error(ptr->filename()
+				,": Image has a different size comared to other loaded images.");
+			}
+
+		auto ch=f.channelIndex(ptr->name());
+		imageFill(src,ch,ret);
 		++ptr;
 		}
+	return std::move(ret);
 	}
 
 void imagesStore(const std::vector<Tiger::Channel>& files)
@@ -114,6 +144,18 @@ void imagesStore(const std::vector<Tiger::Channel>& files)
 		{
 		fprintf(stderr,"%s->%s\n",ptr->filename(),ptr->name());
 		++ptr;
+		}
+	}
+
+
+static void simulation_run(unsigned int N,const Tiger::Filter& filter
+	,Tiger::ProcessData& data)
+	{
+	while(N!=0)
+		{
+		filter.run(data);
+		data.swap();
+		--N;
 		}
 	}
 
@@ -143,8 +185,13 @@ int main(int argc,char** argv)
 			filter.channelsList(stdout);
 			}
 
-		if(!cmdline.get<Alice::Stringkey("source")>())
+		if(!(cmdline.get<Alice::Stringkey("source")>()
+			|| cmdline.get<Alice::Stringkey("init")>()
+			|| cmdline.get<Alice::Stringkey("dest")>() ) )
 			{return 0;}
+
+		if(!cmdline.get<Alice::Stringkey("source")>())
+			{throw Tiger::Error("Source files are missing");}
 
 		if(!cmdline.get<Alice::Stringkey("init")>())
 			{throw Tiger::Error("Initial condition is missing");}
@@ -152,18 +199,26 @@ int main(int argc,char** argv)
 		if(!cmdline.get<Alice::Stringkey("dest")>())
 			{throw Tiger::Error("List of destination files is missing");}
 
-		if(! (cmdline.get<Alice::Stringkey("source")>().valueGet().size()
-			==cmdline.get<Alice::Stringkey("init")>().valueGet().size()
-			&&cmdline.get<Alice::Stringkey("source")>().valueGet().size()
-			==cmdline.get<Alice::Stringkey("dest")>().valueGet().size()) )
-			{throw Tiger::Error("snit, source, and dest must have the same number of components.");}
+		const auto img_src=imagesLoad(cmdline.get<Alice::Stringkey("source")>().valueGet(),filter);
+		auto img_init=imagesLoad(cmdline.get<Alice::Stringkey("init")>().valueGet(),filter);
 
-		imagesLoad(cmdline.get<Alice::Stringkey("source")>().valueGet());
-		imagesLoad(cmdline.get<Alice::Stringkey("init")>().valueGet());
+		if(!layoutSame(img_src,img_init))
+			{throw Tiger::Error("Source image and initial image must have the same size.");}
 
-	/*	if(!sizesEqual(...))*/
+		auto img_next=layoutClone(img_init);
 
-		simulation_run(cmdline.get<Alice::Stringkey("iterations")>().valueGet(),filter);
+		Tiger::ProcessData procdata
+			{
+			 img_next.pixels()
+			,img_init.pixels()
+			,img_src.pixels()
+			,filter.parameters()
+			,static_cast<int>( img_init.width() )
+			,static_cast<int>( img_init.height() )
+			};
+
+		simulation_run(cmdline.get<Alice::Stringkey("iterations")>().valueGet()
+			,filter,procdata);
 
 		imagesStore(cmdline.get<Alice::Stringkey("dest")>().valueGet());
 		}

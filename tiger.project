@@ -29,6 +29,7 @@
     <File Name="image.hpp"/>
     <File Name="cpuinfo.hpp"/>
     <File Name="datasource.hpp"/>
+    <File Name="srcstdio.hpp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

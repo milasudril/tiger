@@ -35,12 +35,16 @@ namespace Tiger
 		public:
 			typedef float SampleType;
 
+			Image(){}
+
 			explicit Image(DataSource&& source):Image(source){}
 
 			explicit Image(DataSource& source);
 
-			explicit Image(uint32_t width,uint32_t height,uint32_t n_channels
-				,uint32_t id);
+			explicit Image(uint32_t width,uint32_t height,uint32_t n_channels);
+
+			bool valid() const noexcept
+				{return static_cast<bool>(m_data);}
 
 			SampleType* pixels() noexcept
 				{return m_data.get();}
@@ -63,6 +67,15 @@ namespace Tiger
 			uint32_t m_height;
 			uint32_t m_channel_count;
 		};
+
+	inline Image layoutClone(const Image& img)
+		{return Image(img.width(),img.height(),img.channelCount());}
+
+	inline bool layoutSame(const Image& img_a,const Image& img_b)
+		{
+		return img_a.width()==img_b.width() && img_a.height()==img_b.height()
+			&& img_a.channelCount()==img_b.channelCount();
+		}
 	}
 
 #endif

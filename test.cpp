@@ -17,19 +17,19 @@ void process(const Tiger::ProcessData& data)
 		{
 		for(int x=1;x<w-1;++x)
 			{
-			data.dest<C("red")>(x,y)=amount*mean(data.source<C("red")>(x+1,y)
+			data.value_next<C("red")>(x,y)=amount*mean(data.source<C("red")>(x+1,y)
 				,data.source<C("red")>(x-1,y)
 				,data.source<C("red")>(x,y+1)
 				,data.source<C("red")>(x,y-1)
 				,data.source<C("red")>(x,y)) + (1.0f - amount)*data.source<C("red")>(x,y);
 
-			data.dest<C("green")>(x,y)=amount*mean(data.source<C("green")>(x+1,y)
+			data.value_next<C("green")>(x,y)=amount*mean(data.source<C("green")>(x+1,y)
 				,data.source<C("green")>(x-1,y)
 				,data.source<C("green")>(x,y+1)
 				,data.source<C("green")>(x,y-1)
 				,data.source<C("green")>(x,y)) + (1.0f - amount)*data.source<C("green")>(x,y);
 
-			data.dest<C("blue")>(x,y)=amount*mean(data.source<C("blue")>(x+1,y)
+			data.value_next<C("blue")>(x,y)=amount*mean(data.source<C("blue")>(x+1,y)
 				,data.source<C("blue")>(x-1,y)
 				,data.source<C("blue")>(x,y+1)
 				,data.source<C("blue")>(x,y-1)

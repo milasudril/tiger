@@ -357,7 +357,7 @@ Image::Image(DataSource& source)
 	convert(*this,reader);
 	}
 
-Image::Image(uint32_t width,uint32_t height,uint32_t n_channels,uint32_t id):
+Image::Image(uint32_t width,uint32_t height,uint32_t n_channels):
 	m_data(new SampleType[width*height*n_channels])
 	,m_width(width),m_height(height),m_channel_count(n_channels)
 	{
