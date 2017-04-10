@@ -113,7 +113,7 @@ static void compile(const char* src,const char* dest)
 		{throw Error("It was not possible to compile filter ",src);}
 	}
 
-static std::string objectGenerate(const char* src)
+static std::string objectGenerate(const char* src,const char* objdir)
 	{
 	MagicHandle m;
 	auto mime=m.identify(src);
@@ -121,8 +121,10 @@ static std::string objectGenerate(const char* src)
 		{throw Error(src," has unknown MIME type");}
 	if(begins_with(mime,"text/x-c") || begins_with(mime,"text/plain"))
 		{
-		std::string ret(src);
-		ret+=".cpp.so";
+		std::string ret(objdir);
+		ret+='/';
+		ret+=src;
+		ret+=".so";
 		compile(src,ret.c_str());
 		return ret;
 		}
@@ -147,7 +149,7 @@ static void lookup_fill(const char* const* names
 		}
 	}
 
-Filter::Filter(const char* src):Plugin(objectGenerate(src))
+Filter::Filter(const char* src,const char* objdir):Plugin(objectGenerate(src,objdir))
 	{
 		{
 		auto fn=entryPoint<decltype(&::parameters)>("_Z10parametersv");

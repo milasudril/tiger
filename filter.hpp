@@ -17,7 +17,7 @@ namespace Tiger
 	class Filter:public Plugin
 		{
 		public:
-			explicit Filter(const char* src);
+			explicit Filter(const char* src,const char* objdir);
 			void paramSet(const Parameter& param);
 			void paramsList(FILE* output) const;
 			void channelsList(FILE* output) const;

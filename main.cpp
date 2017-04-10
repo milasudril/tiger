@@ -19,6 +19,22 @@
 #include <cassert>
 #include <cstdio>
 
+ALICE_OPTION_DESCRIPTOR(OptionDescriptor
+	,{"","help","Prints usage information to either `stdout`, or to the chosen file.","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
+	,{"","example","Generates source code for an example filter. "
+		"The output is printed to either `stdout`, or to the chosen file.","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
+	,{"","objdir","Specifies where to store any copiled binary","string",Alice::Option::Multiplicity::ONE}
+	,{"","filter","Specifies the filter file. The filter is either a shared object, or C++ source file. "
+		"A filter tempalte can be extracted with the `--example` option.","string",Alice::Option::Multiplicity::ONE}
+	,{"","params","Sets filter parameters.","Parameter",Alice::Option::Multiplicity::ZERO_OR_MORE}
+	,{"","params-list","Lists all parameters availible for *filter*","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
+	,{"","channels-list","Lists all channel names used by *filter","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
+	,{"","source","Selects static source images","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
+	,{"","init","Selects initial images","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
+	,{"","dest","Selects output images","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
+	,{"","iterations","Selects the number of iterations to apply the filter","unsigned int",Alice::Option::Multiplicity::ONE}
+	);
+
 namespace Alice
 	{
 	template<>
@@ -69,19 +85,6 @@ namespace Alice
 	Tiger::Channel MakeValue<Tiger::Channel,ErrorHandler>::make_value(const std::string& str)
 		{return Tiger::Channel(str.c_str());}
 	}
-
-ALICE_OPTION_DESCRIPTOR(OptionDescriptor
-	,{"","help","Print usage information","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
-	,{"","example","Generate source code for an example filter","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
-	,{"","filter","Name of filter","string",Alice::Option::Multiplicity::ONE}
-	,{"","params","Filter parameters","Parameter",Alice::Option::Multiplicity::ZERO_OR_MORE}
-	,{"","params-list","Lists all parameters availible for *filter*","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
-	,{"","channels-list","Lists all channel names used by *filter","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
-	,{"","source","Select static source image","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
-	,{"","init","Select initial image","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
-	,{"","dest","Select output image","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
-	,{"","iterations","Select the number of iterations to apply the filter","unsigned int",Alice::Option::Multiplicity::ONE}
-	);
 
 static void params_set(const std::vector<Tiger::Parameter>& params,Tiger::Filter& filter)
 	{
@@ -215,7 +218,9 @@ int main(int argc,char** argv)
 			return 0;
 			}
 
-		Tiger::Filter filter(cmdline.get<Alice::Stringkey("filter")>().valueGet().c_str());
+		Tiger::Filter filter(cmdline.get<Alice::Stringkey("filter")>().valueGet().c_str()
+			,cmdline.get<Alice::Stringkey("objdir")>()?
+				cmdline.get<Alice::Stringkey("objdir")>().valueGet().c_str():".");
 		params_set(cmdline.get<Alice::Stringkey("params")>().valueGet(),filter);
 		if(cmdline.get<Alice::Stringkey("params-list")>())
 			{
