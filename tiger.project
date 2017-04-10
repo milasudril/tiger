@@ -36,6 +36,8 @@
     <File Name="example.cpp"/>
     <File Name="blob.hpp"/>
     <File Name="sinkstdio.cpp"/>
+    <File Name="LICENSE"/>
+    <File Name="README.md"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

@@ -1,3 +1,20 @@
+/*
+Tiger
+Copyright (C) 2017  Torbjörn Rathsman
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
 //@	{
 //@	"targets":
 //@		[{
@@ -24,8 +41,10 @@ static constexpr const char* PROGRAM_DESCRIPTION
 "=====\n"
 "Tiger (Texture/Image GenEatoR) loads a set of images and applies a filter multiple times. "
 "The result of the filter, can be descriped by the equation\n"
-"\n"
-"    \\vec{y_{k+1}}(x,y) = \\vec{f}(x,y,\\vec{y_k}(x,y),\\vec{g}(x,y),\\vec{p})\n\n";
+"\n$$\n"
+"    \\vec{y_{k+1}}(x,y) = \\vec{f}(x,y,\\vec{y_k}(x,y),\\vec{g}(x,y),\\vec{p})\n"
+"$$\n"
+"\n\n";
 
 ALICE_OPTION_DESCRIPTOR(OptionDescriptor
 	,{"","help","Prints usage information to either `stdout`, or to the chosen file."

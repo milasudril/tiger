@@ -14,13 +14,11 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 */
 //@	{"targets":[{"name":"datasink.hpp","type":"include"}]}
 
 /**\file datasink.hpp \brief Definition of an abstract data sink
  */
-
 #ifndef TIGER_DATASINK_HPP
 #define TIGER_DATASINK_HPP
 
