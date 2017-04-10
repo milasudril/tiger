@@ -38,6 +38,7 @@
     <File Name="sinkstdio.cpp"/>
     <File Name="LICENSE"/>
     <File Name="README.md"/>
+    <File Name="grayscott.cpp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
