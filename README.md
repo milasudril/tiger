@@ -32,7 +32,7 @@ This is a summary of all command line options. Values inside square brackets are
     Lists all parameters availible for *filter*
 
 --channels-list[=string]
-    Lists all channel names used by *filter
+    Lists all channel names used by *filter*
 
 --source=Channel mapping,...
     Selects static source images. These images determines $\vec{g}$ in the equation above.

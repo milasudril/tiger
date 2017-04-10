@@ -60,7 +60,7 @@ ALICE_OPTION_DESCRIPTOR(OptionDescriptor
 	,{"","objdir","Specifies where to store any copiled binary, relative to the working directory.","string",Alice::Option::Multiplicity::ONE}
 	,{"","params","Sets filter parameters. This is the content of $\\vec{p}$ in the equation above.","Parameter",Alice::Option::Multiplicity::ZERO_OR_MORE}
 	,{"","params-list","Lists all parameters availible for *filter*","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
-	,{"","channels-list","Lists all channel names used by *filter","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
+	,{"","channels-list","Lists all channel names used by *filter*","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
 	,{"","source","Selects static source images. These images determines $\\vec{g}$ in the equation above.","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
 	,{"","init","Selects initial images. These images determines $\\vec{y_{0}}$ in the equation above.","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
 	,{"","dest","Selects output images","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
