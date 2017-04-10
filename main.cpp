@@ -14,6 +14,7 @@
 #include "srcstdio.hpp"
 #include "sinkstdio.hpp"
 #include "host.hpp"
+#include "blob.hpp"
 #include <alice/alice.hpp>
 #include <cassert>
 #include <cstdio>
@@ -71,14 +72,15 @@ namespace Alice
 
 ALICE_OPTION_DESCRIPTOR(OptionDescriptor
 	,{"","help","Print usage information","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
+	,{"","example","Generate source code for an example filter","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
 	,{"","filter","Name of filter","string",Alice::Option::Multiplicity::ONE}
 	,{"","params","Filter parameters","Parameter",Alice::Option::Multiplicity::ZERO_OR_MORE}
 	,{"","params-list","Lists all parameters availible for *filter*","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
 	,{"","channels-list","Lists all channel names used by *filter","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
-	,{"","source","Selects static source image","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
-	,{"","init","Selects initial image","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
-	,{"","dest","Selects output image","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
-	,{"","iterations","Selects the number of iterations to apply the filter","unsigned int",Alice::Option::Multiplicity::ONE}
+	,{"","source","Select static source image","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
+	,{"","init","Select initial image","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
+	,{"","dest","Select output image","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
+	,{"","iterations","Select the number of iterations to apply the filter","unsigned int",Alice::Option::Multiplicity::ONE}
 	);
 
 static void params_set(const std::vector<Tiger::Parameter>& params,Tiger::Filter& filter)
@@ -185,6 +187,8 @@ static void simulation_run(unsigned int N,const Tiger::Filter& filter
 		}
 	}
 
+TIGER_BLOB(char,example,"example.cpp");
+
 int main(int argc,char** argv)
 	{
 	try
@@ -198,6 +202,16 @@ int main(int argc,char** argv)
 				{cmdline.help(0,Tiger::SinkStdio(v[0].c_str()).handle());}
 			else
 				{cmdline.help(0,stdout);}
+			return 0;
+			}
+
+		if(cmdline.get<Alice::Stringkey("example")>())
+			{
+			auto& v=cmdline.get<Alice::Stringkey("example")>().valueGet();
+			if(v.size()!=0)
+				{printRange(example_begin,example_end,Tiger::SinkStdio(v[0].c_str()));}
+			else
+				{Tiger::printRange(example_begin,example_end,stdout);}
 			return 0;
 			}
 

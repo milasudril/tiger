@@ -1,33 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Session Name="/home/torbjorr/Dokument/tiger/tiger.workspace">
-  <int Value="3" Name="m_selectedTab"/>
+  <int Value="4" Name="m_selectedTab"/>
   <wxString Value="/home/torbjorr/Dokument/tiger/tiger.workspace" Name="m_workspaceName"/>
   <TabInfoArray Name="TabInfoArray">
     <TabInfo>
-      <wxString Value="/home/torbjorr/Dokument/tiger/plugin.cpp" Name="FileName"/>
+      <wxString Value="/home/torbjorr/Dokument/tiger/client.hpp" Name="FileName"/>
       <int Value="0" Name="FirstVisibleLine"/>
-      <int Value="7" Name="CurrentLine"/>
+      <int Value="21" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
       <IntVector Name="CollapsedFolds"/>
     </TabInfo>
     <TabInfo>
-      <wxString Value="/home/torbjorr/Dokument/tiger/test.sh" Name="FileName"/>
+      <wxString Value="/home/torbjorr/Dokument/tiger/host.hpp" Name="FileName"/>
+      <int Value="2" Name="FirstVisibleLine"/>
+      <int Value="16" Name="CurrentLine"/>
+      <wxArrayString Name="Bookmarks"/>
+      <IntVector Name="CollapsedFolds"/>
+    </TabInfo>
+    <TabInfo>
+      <wxString Value="/home/torbjorr/Dokument/tiger/main.cpp" Name="FileName"/>
       <int Value="0" Name="FirstVisibleLine"/>
-      <int Value="2" Name="CurrentLine"/>
+      <int Value="0" Name="CurrentLine"/>
+      <wxArrayString Name="Bookmarks"/>
+      <IntVector Name="CollapsedFolds"/>
+    </TabInfo>
+    <TabInfo>
+      <wxString Value="/home/torbjorr/Dokument/tiger/filter.hpp" Name="FileName"/>
+      <int Value="0" Name="FirstVisibleLine"/>
+      <int Value="0" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
       <IntVector Name="CollapsedFolds"/>
     </TabInfo>
     <TabInfo>
       <wxString Value="/home/torbjorr/Dokument/tiger/test.cpp" Name="FileName"/>
       <int Value="0" Name="FirstVisibleLine"/>
-      <int Value="17" Name="CurrentLine"/>
+      <int Value="11" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
       <IntVector Name="CollapsedFolds"/>
     </TabInfo>
     <TabInfo>
-      <wxString Value="/home/torbjorr/Dokument/tiger/sdk.hpp" Name="FileName"/>
+      <wxString Value="/home/torbjorr/Dokument/tiger/maikeconfig.json" Name="FileName"/>
       <int Value="24" Name="FirstVisibleLine"/>
-      <int Value="28" Name="CurrentLine"/>
+      <int Value="52" Name="CurrentLine"/>
+      <wxArrayString Name="Bookmarks"/>
+      <IntVector Name="CollapsedFolds"/>
+    </TabInfo>
+    <TabInfo>
+      <wxString Value="/home/torbjorr/Dokument/tiger/filter.cpp" Name="FileName"/>
+      <int Value="54" Name="FirstVisibleLine"/>
+      <int Value="71" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
       <IntVector Name="CollapsedFolds"/>
     </TabInfo>

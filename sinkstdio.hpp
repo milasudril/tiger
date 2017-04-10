@@ -1,8 +1,15 @@
+//@	{
+//@	 "targets":[{"name":"sinkstdio.hpp","type":"include"}]
+//@	,"dependencies_extra":[{"ref":"sinkstdio.o","rel":"implementation"}]
+//@	}
+
 #ifndef TIGER_SINKSTDIO_HPP
 #define TIGER_SINKSTDIO_HPP
 
 #include "datasink.hpp"
+#include "error.hpp"
 #include <cstdio>
+#include <string>
 
 namespace Tiger
 	{
@@ -44,6 +51,12 @@ namespace Tiger
 			FILE* m_sink;
 			std::string m_name;
 		};
+
+	void printRange(const char* begin,const char* end,FILE* sink);
+
+	inline void printRange(const char* begin,const char* end,SinkStdio&& sink)
+		{printRange(begin,end,sink.handle());}
+
 	}
 
 #endif // TIGER_SINKSTDIO_HPP

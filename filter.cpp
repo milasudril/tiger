@@ -9,12 +9,33 @@
 
 #include "filter.hpp"
 #include "error.hpp"
+#include "blob.hpp"
+#include "sinkstdio.hpp"
 #include <magic.h>
 #include <uuid.h>
+#include <unistd.h>
+#include <sys/stat.h>
 #include <cstring>
+#include <stack>
 #include <array>
 
+
 using namespace Tiger;
+
+inline bool begins_with(const char* str,const char* str2)
+	{return strncmp(str,str2,strlen(str2))==0;}
+
+TIGER_BLOB(char,host,"host.hpp");
+TIGER_BLOB(char,client,"client.hpp");
+
+static std::array<char,37> uuid_generate() noexcept
+	{
+	std::array<char,37> ret;
+	uuid_t id;
+	::uuid_generate(id);
+	uuid_unparse_upper(id,ret.begin());
+	return ret;
+	}
 
 namespace
 	{
@@ -35,25 +56,54 @@ namespace
 		private:
 			magic_t m_handle;
 		};
-	}
 
-inline bool begins_with(const char* str,const char* str2)
-	{return strncmp(str,str2,strlen(str2))==0;}
+	class DirectoryGuard
+		{
+		public:
+			DirectoryGuard& operator=(const DirectoryGuard&)=delete;
+			DirectoryGuard(const DirectoryGuard&)=delete;
 
-static std::array<char,37> uuid_generate() noexcept
-	{
-	std::array<char,37> ret;
-	uuid_t id;
-	::uuid_generate(id);
-	uuid_unparse_upper(id,ret.begin());
-	return ret;
+			DirectoryGuard(const std::string& dir):m_dir(dir)
+				{mkdir(m_dir.c_str(),S_IRWXU);}
+
+			~DirectoryGuard()
+				{	
+				while(!m_items.empty())
+					{
+					auto x=m_items.top();
+					m_items.pop();
+					remove(x.c_str());
+					}
+				rmdir(m_dir.c_str());
+				}
+
+			DirectoryGuard& itemAdd(const char* name)
+				{
+				m_items.push(m_dir + '/' + name);
+				return *this;
+				}
+
+		private:
+			std::stack<std::string> m_items;
+			std::string m_dir;
+		};
 	}
 
 static void compile(const char* src,const char* dest)
 	{
+	auto tmp=std::string("/dev/shm/");
+	tmp+=uuid_generate().data();
+	DirectoryGuard g(tmp);
+	printRange(host_begin,host_end,SinkStdio((tmp+"/host.hpp").c_str()));
+	g.itemAdd("host.hpp");
+	printRange(client_begin,client_end,SinkStdio((tmp+"/client.hpp").c_str()));
+	g.itemAdd("client.hpp");
+	
 //TODO: Use libmaike (somewhat overkill here) or fork/exec pair
-	std::string cmdbuff("g++ -std=c++14 -O3 --fast-math -march=native -fno-stack-protector "
-		"-fpic -shared -o '");
+	std::string cmdbuff("g++ -std=c++14 -O3 -iquote'");
+	cmdbuff+=tmp;
+	cmdbuff+="' -include client.hpp --fast-math -march=native -fno-stack-protector "
+		"-fpic -shared -o '";
 	cmdbuff+=dest;
 	cmdbuff+="' '";
 	cmdbuff+=src;
@@ -69,12 +119,9 @@ static std::string objectGenerate(const char* src)
 	auto mime=m.identify(src);
 	if(mime==nullptr)
 		{throw Error(src," has unknown MIME type");}
-	if(begins_with(mime,"text/x-c"))
+	if(begins_with(mime,"text/x-c") || begins_with(mime,"text/plain"))
 		{
-		std::string ret("/tmp/tiger_");
-		ret+=uuid_generate().begin();
-		ret+='_';
-		ret+=src;
+		std::string ret(src);
 		ret+=".cpp.so";
 		compile(src,ret.c_str());
 		return ret;

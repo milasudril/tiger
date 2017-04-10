@@ -1,6 +1,6 @@
 #!/bin/bash
 
-gdb --args __targets/tiger --filter=__targets/test.so \
+gdb --args __targets/tiger --filter=example.cpp\
 	--init=red:lenna-r.png,green:lenna-g.png,blue:lenna-b.png \
-	--dest=red:lenna-r1.png,green:lenna-g1.png,blue:lenna-b1.png \
+	--dest=red:__targets/lenna-r.png,green:__targets/lenna-g.png,blue:__targets/lenna-b.png \
 	--iterations=1

@@ -19,7 +19,6 @@
     <File Name="filter.cpp"/>
     <File Name="parameter.hpp"/>
     <File Name="parameter.cpp"/>
-    <File Name="test.cpp"/>
     <File Name="channel.hpp"/>
     <File Name="channel.cpp"/>
     <File Name=".gitignore"/>
@@ -34,6 +33,9 @@
     <File Name="test.sh"/>
     <File Name="host.hpp"/>
     <File Name="client.hpp"/>
+    <File Name="example.cpp"/>
+    <File Name="blob.hpp"/>
+    <File Name="sinkstdio.cpp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
@@ -59,7 +61,11 @@
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="yes">
         <DebuggerSearchPaths/>
         <PostConnectCommands/>
-        <StartupCommands/>
+        <StartupCommands>args --filter=example.cpp\
+	--init=red:lenna-r.png,green:lenna-g.png,blue:lenna-b.png \
+	--dest=red:__targets/lenna-r.png,green:__targets/lenna-g.png,blue:__targets/lenna-b.png \
+	--iterations=1
+</StartupCommands>
       </Debugger>
       <PreBuild/>
       <PostBuild/>
