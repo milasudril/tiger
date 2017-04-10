@@ -501,7 +501,7 @@ void PNGWriter::pixelsWrite(const Image::SampleType* pixels_in)
 		auto N=m_width*m_height*m_n_channels;
 		while(N!=0)
 			{
-			*ptr_out=static_cast<uint16_t>( 0xffff* (*ptr));
+			*ptr_out=static_cast<uint16_t>( 0xffff* (std::min( std::max(*ptr,0.0f),1.0f)));
 			++ptr;
 			++ptr_out;
 			--N;
