@@ -25,7 +25,7 @@ ALICE_OPTION_DESCRIPTOR(OptionDescriptor
 		"The output is printed to either `stdout`, or to the chosen file.","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
 	,{"","objdir","Specifies where to store any copiled binary","string",Alice::Option::Multiplicity::ONE}
 	,{"","filter","Specifies the filter file. The filter is either a shared object, or C++ source file. "
-		"A filter tempalte can be extracted with the `--example` option.","string",Alice::Option::Multiplicity::ONE}
+		"A template filter can be extracted with the `--example` option.","string",Alice::Option::Multiplicity::ONE}
 	,{"","params","Sets filter parameters.","Parameter",Alice::Option::Multiplicity::ZERO_OR_MORE}
 	,{"","params-list","Lists all parameters availible for *filter*","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
 	,{"","channels-list","Lists all channel names used by *filter","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
