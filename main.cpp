@@ -19,6 +19,14 @@
 #include <cassert>
 #include <cstdio>
 
+static constexpr const char* PROGRAM_DESCRIPTION
+	="TIGER\n"
+"=====\n"
+"Tiger (Texture/Image GenEatoR) loads a set of images and applies a filter multiple times. "
+"The result of the filter, can be descriped by the equation\n"
+"\n"
+"    \\vec{y_{k+1}}(x,y) = \\vec{f}(x,y,\\vec{y_k}(x,y),\\vec{g}(x,y),\\vec{p})\n\n";
+
 ALICE_OPTION_DESCRIPTOR(OptionDescriptor
 	,{"","help","Prints usage information to either `stdout`, or to the chosen file.","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
 	,{"","example","Generates source code for an example filter. "
@@ -26,11 +34,11 @@ ALICE_OPTION_DESCRIPTOR(OptionDescriptor
 	,{"","objdir","Specifies where to store any copiled binary","string",Alice::Option::Multiplicity::ONE}
 	,{"","filter","Specifies the filter file. The filter is either a shared object, or C++ source file. "
 		"A template filter can be extracted with the `--example` option.","string",Alice::Option::Multiplicity::ONE}
-	,{"","params","Sets filter parameters.","Parameter",Alice::Option::Multiplicity::ZERO_OR_MORE}
+	,{"","params","Sets filter parameters. This is the content of $\\vec{p}$ in the equation above.","Parameter",Alice::Option::Multiplicity::ZERO_OR_MORE}
 	,{"","params-list","Lists all parameters availible for *filter*","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
 	,{"","channels-list","Lists all channel names used by *filter","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
-	,{"","source","Selects static source images","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
-	,{"","init","Selects initial images","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
+	,{"","source","Selects static source images. These images determines $\\vec{g}$ in the equation above.","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
+	,{"","init","Selects initial images. These images determines $\\vec{y_{0}}$ in the equation above.","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
 	,{"","dest","Selects output images","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
 	,{"","iterations","Selects the number of iterations to apply the filter","unsigned int",Alice::Option::Multiplicity::ONE}
 	);
@@ -202,9 +210,16 @@ int main(int argc,char** argv)
 			{
 			auto& v=cmdline.get<Alice::Stringkey("help")>().valueGet();
 			if(v.size()!=0)
-				{cmdline.help(0,Tiger::SinkStdio(v[0].c_str()).handle());}
+				{
+				Tiger::SinkStdio s(v[0].c_str());
+				fprintf(s.handle(),"%s\n",PROGRAM_DESCRIPTION);
+				cmdline.help(0,s.handle());
+				}
 			else
-				{cmdline.help(0,stdout);}
+				{
+				fprintf(stdout,"%s\n",PROGRAM_DESCRIPTION);
+				cmdline.help(0,stdout);
+				}
 			return 0;
 			}
 
