@@ -28,12 +28,17 @@ static constexpr const char* PROGRAM_DESCRIPTION
 "    \\vec{y_{k+1}}(x,y) = \\vec{f}(x,y,\\vec{y_k}(x,y),\\vec{g}(x,y),\\vec{p})\n\n";
 
 ALICE_OPTION_DESCRIPTOR(OptionDescriptor
-	,{"","help","Prints usage information to either `stdout`, or to the chosen file.","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
+	,{"","help","Prints usage information to either `stdout`, or to the chosen file."
+		,"string",Alice::Option::Multiplicity::ZERO_OR_ONE}
 	,{"","example","Generates source code for an example filter. "
-		"The output is printed to either `stdout`, or to the chosen file.","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
-	,{"","objdir","Specifies where to store any copiled binary","string",Alice::Option::Multiplicity::ONE}
-	,{"","filter","Specifies the filter file. The filter is either a shared object, or C++ source file. "
-		"A template filter can be extracted with the `--example` option.","string",Alice::Option::Multiplicity::ONE}
+		"The output is printed to either `stdout`, or to the chosen file.","string"
+		,Alice::Option::Multiplicity::ZERO_OR_ONE}
+	,{"","filter","Specifies the filter file. The filter is either a shared object, "
+		"or C++ source file. A template filter can be extracted with the `--example` "
+		"option. When a C++ source file is specified, it will be compiled into a "
+		"shared object stored. The location of that object is controlled by the "
+		"option `--objdir`.","string",Alice::Option::Multiplicity::ONE}
+	,{"","objdir","Specifies where to store any copiled binary, relative to the working directory.","string",Alice::Option::Multiplicity::ONE}
 	,{"","params","Sets filter parameters. This is the content of $\\vec{p}$ in the equation above.","Parameter",Alice::Option::Multiplicity::ZERO_OR_MORE}
 	,{"","params-list","Lists all parameters availible for *filter*","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
 	,{"","channels-list","Lists all channel names used by *filter","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
