@@ -126,6 +126,7 @@ int main(int argc,char** argv)
 			auto& v=cmdline.get<Alice::Stringkey("help")>().valueGet();
 			Tiger::SinkStdio s(v.size()!=0?v[0].c_str():nullptr);
 			fprintf(s.handle(),"%s\n",PROGRAM_DESCRIPTION);
+			cmdline.help(0,s.handle());
 			return 0;
 			}
 
