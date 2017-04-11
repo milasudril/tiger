@@ -361,6 +361,7 @@ Image::Image(uint32_t width,uint32_t height,uint32_t n_channels):
 	m_data(new SampleType[width*height*n_channels])
 	,m_width(width),m_height(height),m_channel_count(n_channels)
 	{
+	memset(m_data.get(),0,width*height*n_channels);
 	}
 
 

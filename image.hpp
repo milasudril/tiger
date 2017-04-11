@@ -35,7 +35,7 @@ namespace Tiger
 		public:
 			typedef float SampleType;
 
-			Image(){}
+			Image():m_width(0),m_height(0),m_channel_count(0){}
 
 			explicit Image(DataSource&& source):Image(source){}
 
