@@ -26,6 +26,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "simulation.hpp"
 #include "channel.hpp"
 #include "blob.hpp"
+#include "sinkstdio.hpp"
 #include <alice/alice.hpp>
 #include <cassert>
 #include <cstdio>

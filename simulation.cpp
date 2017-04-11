@@ -19,7 +19,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "simulation.hpp"
 #include "channel.hpp"
-#include "parameter.hpp"
 #include "srcstdio.hpp"
 #include "sinkstdio.hpp"
 #include <cassert>

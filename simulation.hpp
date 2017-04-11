@@ -25,7 +25,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "filter.hpp"
 #include "image.hpp"
-#include "sinkstdio.hpp"
 #include <vector>
 
 namespace Tiger
