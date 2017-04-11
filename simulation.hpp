@@ -25,6 +25,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "filter.hpp"
 #include "image.hpp"
+#include "sinkstdio.hpp"
 #include <vector>
 
 namespace Tiger
@@ -35,7 +36,6 @@ namespace Tiger
 		{
 		public:
 			Simulation(const char* filter,const char* objdir);
-			~Simulation();
 			Simulation& run(unsigned long long n_iter) noexcept;
 
 			Simulation& sourceLoad(const std::vector<Channel>& files)
@@ -58,7 +58,14 @@ namespace Tiger
 
 			Simulation& paramsLoad(const std::vector<Parameter>& params);
 
-			Simulation& paramsStore();
+			const Simulation& paramsList(SinkStdio&& si) const
+				{return paramsList(si);}
+
+			const Simulation& paramsList(SinkStdio& si) const
+				{
+				m_filter.paramsList(si.handle());
+				return *this;
+				}
 
 		private:
 			static Image imagesLoad(const std::vector<Channel>& files

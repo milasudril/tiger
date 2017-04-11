@@ -1,3 +1,20 @@
+/*
+Tiger
+Copyright (C) 2017  Torbjörn Rathsman
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
 //@	{"targets":[{"name":"simulation.o","type":"object"}]}
 
 #include "simulation.hpp"
@@ -12,10 +29,6 @@ using namespace Tiger;
 Simulation::Simulation(const char* filter,const char* objdir):
 	m_filter(filter,objdir),m_frame_current(0)
 	{}
-
-Simulation::~Simulation()
-	{
-	}
 
 Simulation& Simulation::run(unsigned long long n_iter) noexcept
 	{
@@ -110,4 +123,16 @@ void Simulation::imagesStore(const Tiger::Filter& f,const Tiger::FilterState& d
 		img_out.store(Tiger::SinkStdio{ptr->filename()});
 		++ptr;
 		}
+	}
+
+Simulation& Simulation::paramsLoad(const std::vector<Parameter>& params)
+	{
+	auto ptr=params.begin();
+	auto ptr_end=params.end();
+	while(ptr!=ptr_end)
+		{
+		m_filter.paramSet(*ptr);
+		++ptr;
+		}
+	return *this;
 	}
