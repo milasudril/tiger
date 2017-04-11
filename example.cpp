@@ -19,7 +19,7 @@ TIGER_PARAMETERS(""); //Add parameter names here. These are accessed from data.p
 TIGER_CHANNELS("red","green","blue"); //Or suitable names
 TIGER_ENTRY(process); //Define the name of the entry point
 
-static void process(const Tiger::ProcessDataClient& data)
+static void process(const Tiger::FilterStateClient& data,unsigned long long int frame)
 	{
 	auto w=data.width();
 	auto h=data.height();

@@ -31,14 +31,22 @@
     <File Name="datasink.hpp"/>
     <File Name="sinkstdio.hpp"/>
     <File Name="test.sh"/>
-    <File Name="host.hpp"/>
-    <File Name="client.hpp"/>
     <File Name="example.cpp"/>
     <File Name="blob.hpp"/>
     <File Name="sinkstdio.cpp"/>
     <File Name="LICENSE"/>
     <File Name="README.md"/>
     <File Name="grayscott.cpp"/>
+    <File Name="simulation.hpp"/>
+    <File Name="simulation.cpp"/>
+    <File Name="filterstate.hpp"/>
+    <File Name="pluginmain.hpp"/>
+    <File Name="filterstateclient.hpp"/>
+    <File Name="lenna-b.png"/>
+    <File Name="lenna-g.png"/>
+    <File Name="lenna-r.png"/>
+    <File Name="maikeconfig.json"/>
+    <File Name="maikeconfig-rel.json"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

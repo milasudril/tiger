@@ -42,8 +42,9 @@ using namespace Tiger;
 inline bool begins_with(const char* str,const char* str2)
 	{return strncmp(str,str2,strlen(str2))==0;}
 
-TIGER_BLOB(char,host,"host.hpp");
-TIGER_BLOB(char,client,"client.hpp");
+TIGER_BLOB(char,filterstate,"filterstate.hpp");
+TIGER_BLOB(char,filterstateclient,"filterstateclient.hpp");
+TIGER_BLOB(char,pluginmain,"pluginmain.hpp");
 
 static std::array<char,37> uuid_generate() noexcept
 	{
@@ -111,15 +112,17 @@ static void compile(const char* src,const char* dest)
 	auto tmp=std::string("/dev/shm/");
 	tmp+=uuid_generate().data();
 	DirectoryGuard g(tmp);
-	printRange(host_begin,host_end,SinkStdio((tmp+"/host.hpp").c_str()));
-	g.itemAdd("host.hpp");
-	printRange(client_begin,client_end,SinkStdio((tmp+"/client.hpp").c_str()));
-	g.itemAdd("client.hpp");
+	printRange(filterstate_begin,filterstate_end,SinkStdio((tmp+"/filterstate.hpp").c_str()));
+	g.itemAdd("filterstate.hpp");
+	printRange(filterstateclient_begin,filterstateclient_end,SinkStdio((tmp+"/filterstateclient.hpp").c_str()));
+	g.itemAdd("filterstateclient.hpp");
+	printRange(pluginmain_begin,pluginmain_end,SinkStdio((tmp+"/pluginmain.hpp").c_str()));
 	
 //TODO: Use libmaike (somewhat overkill here) or fork/exec pair
-	std::string cmdbuff("g++ -std=c++14 -O3 -iquote'");
+	std::string cmdbuff("g++ -std=c++14 -O3 --fast-math -march=native "
+		"-fno-stack-protector -Wconversion -Wall -iquote'");
 	cmdbuff+=tmp;
-	cmdbuff+="' -include client.hpp --fast-math -march=native -fno-stack-protector "
+	cmdbuff+="' -include pluginmain.hpp -include filterstateclient.hpp "
 		"-fpic -shared -o '";
 	cmdbuff+=dest;
 	cmdbuff+="' '";
@@ -179,7 +182,7 @@ Filter::Filter(const char* src,const char* objdir):Plugin(objectGenerate(src,obj
 		lookup_fill(fn(),m_channel_index);
 		}
 
-	m_process=entryPoint<decltype(m_process)>("_ZN5Tiger9__processERKNS_11ProcessDataE");
+	m_process=entryPoint<decltype(m_process)>("_ZN5Tiger9__processERKNS_11FilterStateEy");
 	}
 
 void Filter::paramSet(const Parameter& param)
@@ -223,4 +226,4 @@ unsigned int Filter::channelIndex(const std::string& ch) const
 	}
 
 unsigned int Filter::channelCount() const noexcept
-	{return m_channel_index.size();}
+	{return static_cast<unsigned int>( m_channel_index.size() );}
