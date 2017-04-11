@@ -32,9 +32,10 @@ Simulation::Simulation(const char* filter,const char* objdir):
 Simulation& Simulation::run(unsigned long long n_iter) noexcept
 	{
 	auto k=m_frame_current;
+	auto filter_entry=m_filter.processEntry();
 	while(n_iter!=0)
 		{
-		m_filter.run(m_state,k);
+		filter_entry(m_state,k);
 		m_state.swap();
 		++k;
 		--n_iter;
@@ -57,7 +58,7 @@ Simulation& Simulation::imagesLoad(const std::vector<Channel>& files_src
 	m_current=std::move(current);
 	m_next=std::move(next);
 	m_state=FilterState(m_next.pixels(),m_current.pixels(),m_source.pixels()
-		,m_filter.parameters()
+		,m_params.data()
 		,m_next.width(),m_next.height());
 
 	return *this;
@@ -146,12 +147,30 @@ void Simulation::imagesStore(const Tiger::Filter& f,const Tiger::FilterState& d
 
 Simulation& Simulation::paramsLoad(const std::vector<Parameter>& params)
 	{
+	m_params.resize(m_filter.parameterCount());
 	auto ptr=params.begin();
 	auto ptr_end=params.end();
 	while(ptr!=ptr_end)
 		{
-		m_filter.paramSet(*ptr);
+		auto index=m_filter.parameterIndex(ptr->name());
+		m_params[index]=ptr->value();
 		++ptr;
 		}
+	return *this;
+	}
+
+const Simulation& Simulation::paramsList(ParamsListCallback cb,void* paramproc) const
+	{
+	auto N=m_filter.parameterCount();
+	for(decltype(N) k=0;k<N;++k)
+		{cb(paramproc,*this,m_filter.parameterName(k),m_params[k]);}
+	return *this;
+	}
+
+const Simulation& Simulation::channelsList(ChannelsListCallback cb,void* chproc) const
+	{
+	auto N=m_filter.channelCount();
+	for(decltype(N) k=0;k<N;++k)
+		{cb(chproc,*this,m_filter.channelName(k));}
 	return *this;
 	}

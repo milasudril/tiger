@@ -18,9 +18,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 //@	{"targets":[{"name":"pluginmain.hpp","type":"object"}]}
 
 namespace Tiger
-	{class FilterState;}
+	{
+	class FilterState;
+	void __process(const Tiger::FilterState& data,unsigned long long frame_count);
+	}
 
 const char* const* parameters() noexcept;
 const char* const* channels() noexcept;
-
-void process(const Tiger::FilterState& data,unsigned long long frame_count);

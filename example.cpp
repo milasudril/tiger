@@ -15,7 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
-TIGER_PARAMETERS(""); //Add parameter names here. These are accessed from data.param<P("name")>();
+TIGER_PARAMETERS(nullptr); //Add parameter names here. These are accessed from data.param<P("name")>();
 TIGER_CHANNELS("red","green","blue"); //Or suitable names
 TIGER_ENTRY(process); //Define the name of the entry point
 

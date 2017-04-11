@@ -36,21 +36,28 @@ namespace Tiger
 		{
 		public:
 			explicit Filter(const char* src,const char* objdir);
-			void paramSet(const Parameter& param);
-			void paramsList(FILE* output) const;
-			void channelsList(FILE* output) const;
+
 			unsigned int channelIndex(const std::string& name) const;
 			unsigned int channelCount() const noexcept;
-			const float* parameters() const noexcept
-				{return m_params.data();}
-			void run(const FilterState& procdata,unsigned long long frame_count) const
-				{m_process(procdata,frame_count);}
+			unsigned int parameterIndex(const std::string& name) const;
+			unsigned int parameterCount() const noexcept;
+
+			const char* channelName(unsigned int index) const noexcept
+				{return m_channel_names[index];}
+
+			const char* parameterName(unsigned int index) const noexcept	
+				{return m_param_names[index];}
+
+			auto processEntry() const noexcept
+				{return m_process;}
 
 		private:
-			decltype(&process) m_process;
-			std::vector<float> m_params;
+			decltype(&__process) m_process;
+			const char* const* m_channel_names;
+			const char* const* m_param_names;
 			std::map<std::string,unsigned int> m_param_index;
 			std::map<std::string,unsigned int> m_channel_index;
+			
 		};
 	}
 

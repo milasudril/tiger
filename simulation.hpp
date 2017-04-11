@@ -48,11 +48,35 @@ namespace Tiger
 
 			Simulation& paramsLoad(const std::vector<Parameter>& params);
 
-			const Simulation& paramsList(FILE* sink) const
-				{return paramsList(sink);}
+			template<class Paramproc>
+			const Simulation& paramsList(Paramproc&& proc) const
+				{return paramsList(proc);}
 
-			const Simulation& channelsList(FILE* sink) const
-				{return paramsList(sink);}
+			template<class Paramproc>
+			const Simulation& paramsList(Paramproc& proc) const
+				{
+				auto cb=[](void* paramproc,const Simulation& sim,const char* name,float value)
+					{
+					auto obj=reinterpret_cast<Paramproc*>(paramproc);
+					(*obj)(sim,name,value);
+					};
+				return paramsList(cb,&proc);
+				}
+
+			template<class ChannelProc>
+			const Simulation& channelsList(ChannelProc&& proc) const
+				{return channelsList(proc);}
+
+			template<class ChannelProc>
+			const Simulation& channelsList(ChannelProc& proc) const
+				{
+				auto cb=[](void* channelproc,const Simulation& sim,const char* name)
+					{
+					auto obj=reinterpret_cast<ChannelProc*>(channelproc);
+					(*obj)(sim,name);
+					};
+				return channelsList(cb,&proc);
+				}
 
 		private:
 			static Image imagesLoad(const std::vector<Channel>& files
@@ -60,12 +84,19 @@ namespace Tiger
 			static void imagesStore(const Filter& f,const FilterState& d
 				,const std::vector<Channel>& files);
 
+			typedef void(*ParamsListCallback)(void* paramproc,const Simulation&,const char*,float);
+			const Simulation& paramsList(ParamsListCallback cb,void* paramproc) const;
+
+			typedef void(*ChannelsListCallback)(void* chproc,const Simulation&,const char*);
+			const Simulation& channelsList(ChannelsListCallback cb,void* chproc) const;
+
 			Filter m_filter;
 			FilterState m_state;
 			Image m_source;
 			Image m_current;
 			Image m_next;
 			unsigned long long m_frame_current;
+			std::vector<float> m_params;
 		};
 	}
 

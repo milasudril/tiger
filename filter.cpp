@@ -174,49 +174,17 @@ Filter::Filter(const char* src,const char* objdir):Plugin(objectGenerate(src,obj
 		{
 		auto fn=entryPoint<decltype(&::parameters)>("_Z10parametersv");
 		lookup_fill(fn(),m_param_index);
-		m_params.resize(m_param_index.size());
+		m_param_names=fn();
 		}
 
 		{
 		auto fn=entryPoint<decltype(&channels)>("_Z8channelsv");
 		lookup_fill(fn(),m_channel_index);
+		m_channel_names=fn();
 		}
 
 	m_process=entryPoint<decltype(m_process)>("_ZN5Tiger9__processERKNS_11FilterStateEy");
 	}
-
-void Filter::paramSet(const Parameter& param)
-	{
-	auto i=m_param_index.find(param.name());
-	if(i==m_param_index.end())
-		{throw Error(name()," does not take a parameter with name ",param.name());}
-	m_params[i->second]=param.value();
-	}
-
-void Filter::paramsList(FILE* output) const
-	{
-	auto ptr=m_param_index.begin();
-	auto ptr_end=m_param_index.end();
-	fprintf(output,"\nParameters\n----------\n");
-	while(ptr!=ptr_end)
-		{
-		fprintf(output," * `%s`=%.9g\n",ptr->first.c_str(),m_params[ptr->second]);
-		++ptr;
-		}
-	}
-
-void Filter::channelsList(FILE* output) const
-	{
-	auto ptr=m_channel_index.begin();
-	auto ptr_end=m_channel_index.end();
-	fprintf(output,"\nChannels\n--------\n");
-	while(ptr!=ptr_end)
-		{
-		fprintf(output," * `%s`\n",ptr->first.c_str());
-		++ptr;
-		}
-	}
-
 unsigned int Filter::channelIndex(const std::string& ch) const
 	{
 	auto i=m_channel_index.find(ch);
@@ -227,3 +195,14 @@ unsigned int Filter::channelIndex(const std::string& ch) const
 
 unsigned int Filter::channelCount() const noexcept
 	{return static_cast<unsigned int>( m_channel_index.size() );}
+
+unsigned int Filter::parameterIndex(const std::string& param) const
+	{
+	auto i=m_param_index.find(param);
+	if(i==m_channel_index.end())
+		{throw Error(name()," does not take a parameter with name ",param.c_str());}
+	return i->second;
+	}
+
+unsigned int Tiger::Filter::parameterCount() const noexcept
+	{return static_cast<unsigned int>(m_param_index.size());}

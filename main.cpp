@@ -124,27 +124,16 @@ int main(int argc,char** argv)
 		if(cmdline.get<Alice::Stringkey("help")>())
 			{
 			auto& v=cmdline.get<Alice::Stringkey("help")>().valueGet();
-			if(v.size()!=0)
-				{
-				Tiger::SinkStdio s(v[0].c_str());
-				fprintf(s.handle(),"%s\n",PROGRAM_DESCRIPTION);
-				cmdline.help(0,s.handle());
-				}
-			else
-				{
-				fprintf(stdout,"%s\n",PROGRAM_DESCRIPTION);
-				cmdline.help(0,stdout);
-				}
+			Tiger::SinkStdio s(v.size()!=0?v[0].c_str():nullptr);
+			fprintf(s.handle(),"%s\n",PROGRAM_DESCRIPTION);
 			return 0;
 			}
 
 		if(cmdline.get<Alice::Stringkey("example")>())
 			{
 			auto& v=cmdline.get<Alice::Stringkey("example")>().valueGet();
-			if(v.size()!=0)
-				{printRange(example_begin,example_end,Tiger::SinkStdio(v[0].c_str()));}
-			else
-				{Tiger::printRange(example_begin,example_end,stdout);}
+			Tiger::SinkStdio s(v.size()!=0?v[0].c_str():nullptr);
+			printRange(example_begin,example_end,s);
 			return 0;
 			}
 
@@ -155,19 +144,17 @@ int main(int argc,char** argv)
 		if(cmdline.get<Alice::Stringkey("params-list")>())
 			{
 			auto& v=cmdline.get<Alice::Stringkey("params-list")>().valueGet();
-			if(v.size()!=0)
-				{sim.paramsList(Tiger::SinkStdio(v[0].c_str()).handle());}
-			else
-				{sim.paramsList(stdout);}
+			Tiger::SinkStdio dest(v.size()!=0?v[0].c_str():nullptr);
+			sim.paramsList([&dest](const Tiger::Simulation& sim,const char* name,float value)
+				{fprintf(dest.handle()," * `%s`=%.9g\n",name,value);});
 			}
 
 		if(cmdline.get<Alice::Stringkey("channels-list")>())
 			{
 			auto& v=cmdline.get<Alice::Stringkey("channels-list")>().valueGet();
-			if(v.size()!=0)
-				{sim.channelsList(Tiger::SinkStdio(v[0].c_str()).handle());}
-			else
-				{sim.channelsList(stdout);}
+			Tiger::SinkStdio dest(v.size()!=0?v[0].c_str():nullptr);
+			sim.channelsList([&dest](const Tiger::Simulation& sim,const char* name)
+				{fprintf(dest.handle()," * %s\n",name);});
 			}
 
 		if(!(cmdline.get<Alice::Stringkey("source")>()

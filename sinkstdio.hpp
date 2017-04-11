@@ -37,6 +37,12 @@ namespace Tiger
 			SinkStdio& operator=(const SinkStdio& rhs)=delete;
 			explicit SinkStdio(const char* filename)
 				{
+				if(filename==nullptr)
+					{
+					m_sink=stdout;
+					m_name="stdout";
+					return;
+					}
 				m_sink=fopen(filename,"wb");
 				if(m_sink==NULL)
 					{throw Error("It was not possible to open ",filename,".");}
@@ -45,10 +51,11 @@ namespace Tiger
 
 			~SinkStdio()
 				{
-				if(m_sink!=NULL)
+				if(m_sink!=NULL )
 					{
 					fflush(m_sink);
-					fclose(m_sink);
+					if(m_sink!=stdout)
+						{fclose(m_sink);}
 					}
 				}
 
@@ -70,6 +77,9 @@ namespace Tiger
 		};
 
 	void printRange(const char* begin,const char* end,FILE* sink);
+
+	inline void printRange(const char* begin,const char* end,SinkStdio& sink)
+		{printRange(begin,end,sink.handle());}
 
 	inline void printRange(const char* begin,const char* end,SinkStdio&& sink)
 		{printRange(begin,end,sink.handle());}
