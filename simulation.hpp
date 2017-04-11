@@ -38,17 +38,8 @@ namespace Tiger
 			Simulation(const char* filter,const char* objdir);
 			Simulation& run(unsigned long long n_iter) noexcept;
 
-			Simulation& sourceLoad(const std::vector<Channel>& files)
-				{
-				m_source=imagesLoad(files,m_filter);
-				return *this;
-				}
-
-			Simulation& initLoad(const std::vector<Channel>& files)
-				{
-				m_current=imagesLoad(files,m_filter);
-				return *this;
-				}
+			Simulation& imagesLoad(const std::vector<Channel>& files_src
+				,const std::vector<Channel>& files_init);
 
 			Simulation& imagesStore(const std::vector<Channel>& files)
 				{
@@ -58,14 +49,11 @@ namespace Tiger
 
 			Simulation& paramsLoad(const std::vector<Parameter>& params);
 
-			const Simulation& paramsList(SinkStdio&& si) const
-				{return paramsList(si);}
+			const Simulation& paramsList(FILE* sink) const
+				{return paramsList(sink);}
 
-			const Simulation& paramsList(SinkStdio& si) const
-				{
-				m_filter.paramsList(si.handle());
-				return *this;
-				}
+			const Simulation& channelsList(FILE* sink) const
+				{return paramsList(sink);}
 
 		private:
 			static Image imagesLoad(const std::vector<Channel>& files

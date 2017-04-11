@@ -44,6 +44,26 @@ Simulation& Simulation::run(unsigned long long n_iter) noexcept
 	return *this;
 	}
 
+Simulation& Simulation::imagesLoad(const std::vector<Channel>& files_src
+	,const std::vector<Channel>& files_init)
+	{
+	auto src=imagesLoad(files_src,m_filter);
+	auto current=imagesLoad(files_init,m_filter);
+	if(!src.valid())
+		{src=layoutClone(current);}
+	if(!layoutSame(src,current))
+		{throw Tiger::Error("Source image and initial image must have the same size.");}
+	auto next=layoutClone(current);
+	m_source=std::move(src);
+	m_current=std::move(current);
+	m_next=std::move(next);
+	m_state=FilterState(m_next.pixels(),m_current.pixels(),m_source.pixels()
+		,m_filter.parameters()
+		,m_next.width(),m_next.height());
+
+	return *this;
+	}
+
 static void imageSoA2AoS(const Tiger::Image& src,unsigned int ch,Tiger::Image& dest)
 	{
 	assert(src.height()==dest.height() && src.width()==dest.width() 

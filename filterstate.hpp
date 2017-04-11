@@ -35,9 +35,9 @@ namespace Tiger
 				memset(this,0,sizeof(*this));
 				}
 
-			FilterState(float* buffer_a,float* buffer_b,const float* src
+			FilterState(float* buffer_next,float* buffer_current,const float* src
 				,const float* params,int w,int h) noexcept:
-				 m_next(buffer_a),m_current(buffer_b),m_src(src),m_params(params)
+				 m_next(buffer_next),m_current(buffer_current),m_src(src),m_params(params)
 				,m_width(w),m_height(h)
 				{}
 
