@@ -30,7 +30,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "image.hpp"
 #include "srcstdio.hpp"
 #include "sinkstdio.hpp"
-#include "host.hpp"
+#include "filterstate.hpp"
 #include "blob.hpp"
 #include <alice/alice.hpp>
 #include <cassert>
@@ -174,7 +174,7 @@ static Tiger::Image imagesLoad(const std::vector<Tiger::Channel>& files,const Ti
 	return std::move(ret);
 	}
 
-static void imageAoS2SoA(const Tiger::ProcessData& src,unsigned int ch_count
+static void imageAoS2SoA(const Tiger::FilterState& src,unsigned int ch_count
 	,unsigned int ch,Tiger::Image& dest)
 	{
 	assert(src.height()==static_cast<int>(dest.height())
@@ -195,7 +195,7 @@ static void imageAoS2SoA(const Tiger::ProcessData& src,unsigned int ch_count
 		}
 	}
 
-static void imagesStore(const Tiger::Filter& f,const Tiger::ProcessData& d
+static void imagesStore(const Tiger::Filter& f,const Tiger::FilterState& d
 	,const std::vector<Tiger::Channel>& files)
 	{
 	auto ptr=files.begin();
@@ -212,12 +212,14 @@ static void imagesStore(const Tiger::Filter& f,const Tiger::ProcessData& d
 
 
 static void simulation_run(unsigned int N,const Tiger::Filter& filter
-	,Tiger::ProcessData& data)
+	,Tiger::FilterState& data)
 	{
+	unsigned int frame_count=0;
 	while(N!=0)
 		{
-		filter.run(data);
+		filter.run(data,frame_count);
 		data.swap();
+		++frame_count;
 		--N;
 		}
 	}
@@ -300,7 +302,7 @@ int main(int argc,char** argv)
 
 		auto img_next=layoutClone(img_init);
 
-		Tiger::ProcessData procdata
+		Tiger::FilterState procdata
 			{
 			 img_next.pixels()
 			,img_init.pixels()

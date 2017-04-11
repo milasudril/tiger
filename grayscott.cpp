@@ -19,7 +19,7 @@ TIGER_PARAMETERS("d","F","k");
 TIGER_CHANNELS("u","v");
 TIGER_ENTRY(gray_scott);
 
-static void gray_scott(const Tiger::ProcessDataClient& data)
+static void gray_scott(const Tiger::FilterStateClient& data,unsigned long long frame)
 	{
 	auto w=data.width();
 	auto h=data.height();

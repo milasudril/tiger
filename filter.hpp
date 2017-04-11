@@ -25,7 +25,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "plugin.hpp"
 #include "parameter.hpp"
-#include "host.hpp"
+#include "filterstate.hpp"
+#include "pluginmain.hpp"
 #include <map>
 #include <vector>
 
@@ -42,8 +43,8 @@ namespace Tiger
 			unsigned int channelCount() const noexcept;
 			const float* parameters() const noexcept
 				{return m_params.data();}
-			void run(const ProcessData& procdata) const
-				{m_process(procdata);}
+			void run(const FilterState& procdata,unsigned long long frame_count) const
+				{m_process(procdata,frame_count);}
 
 		private:
 			decltype(&process) m_process;
