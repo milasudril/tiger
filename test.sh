@@ -15,7 +15,7 @@ __targets/tiger --filter=grayscott.cpp --params-list --channels-list --objdir=__
 	--init=u:lenna-r.png,v:lenna-b.png --dest=u:__targets/gs-u.png,v:__targets/gs-v.png\
 	--iterations=100000
 
-__targets_rel/tiger --filter=grayscott.cpp --params-list --channels-list --objdir=__targets \
+valgrind --tool=cachegrind __targets_rel/tiger --filter=grayscott.cpp --params-list --channels-list --objdir=__targets \
 	--params=d:2,k:0.0610,F:0.0380\
 	--init=u:lenna-r.png,v:lenna-b.png --dest=u:__targets/gs-u.png,v:__targets/gs-v.png\
 	--iterations=1000
