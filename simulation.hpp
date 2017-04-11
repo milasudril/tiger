@@ -90,13 +90,13 @@ namespace Tiger
 			typedef void(*ChannelsListCallback)(void* chproc,const Simulation&,const char*);
 			const Simulation& channelsList(ChannelsListCallback cb,void* chproc) const;
 
-			Filter m_filter;
 			FilterState m_state;
 			Image m_source;
 			Image m_current;
 			Image m_next;
-			unsigned long long m_frame_current;
 			std::vector<float> m_params;
+			Filter m_filter;
+			unsigned long long m_frame_current;
 		};
 	}
 
