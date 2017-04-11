@@ -168,9 +168,11 @@ int main(int argc,char** argv)
 		if(!cmdline.get<Alice::Stringkey("dest")>())
 			{throw Tiger::Error("List of destination files is missing");}
 
+		auto iter_count=cmdline.get<Alice::Stringkey("iterations")>().valueGet();
 		sim.imagesLoad(cmdline.get<Alice::Stringkey("source")>().valueGet()
 				,cmdline.get<Alice::Stringkey("init")>().valueGet())
-			.run(cmdline.get<Alice::Stringkey("iterations")>().valueGet())
+			.run([iter_count](const Tiger::Simulation& sim,unsigned long long n)
+				{return n!=iter_count;})
 			.imagesStore(cmdline.get<Alice::Stringkey("dest")>().valueGet());
 		}
 	catch(const Alice::ErrorMessage& message)

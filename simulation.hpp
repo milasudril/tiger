@@ -35,7 +35,22 @@ namespace Tiger
 		{
 		public:
 			Simulation(const char* filter,const char* objdir);
-			Simulation& run(unsigned long long n_iter) noexcept;
+
+			template<class ProcessCallback>
+			Simulation& run(ProcessCallback&& pc) noexcept
+				{return run(pc);}
+	
+			template<class ProcessCallback>
+			Simulation& run(ProcessCallback& pc) noexcept
+				{
+				auto cb=[](void* processcallback,const Simulation& sim
+					,unsigned long long iter_count)
+					{
+					auto obj=reinterpret_cast<ProcessCallback*>(processcallback);
+					return (*obj)(sim,iter_count);
+					};
+				return run(cb,&pc);
+				}
 
 			Simulation& imagesLoad(const std::vector<Channel>& files_src
 				,const std::vector<Channel>& files_init);
@@ -78,11 +93,18 @@ namespace Tiger
 				return channelsList(cb,&proc);
 				}
 
+			unsigned long long frameStart() const noexcept
+				{return m_frame_current;}
+
 		private:
 			static Image imagesLoad(const std::vector<Channel>& files
 				,const Tiger::Filter& f);
 			static void imagesStore(const Filter& f,const FilterState& d
 				,const std::vector<Channel>& files);
+
+			typedef bool(*ProcessMonitor)(void* processcallback,const Simulation& sim
+				,unsigned long long iter_count);
+			Simulation& run(ProcessMonitor monitor,void* processcallback) noexcept;
 
 			typedef void(*ParamsListCallback)(void* paramproc,const Simulation&,const char*,float);
 			const Simulation& paramsList(ParamsListCallback cb,void* paramproc) const;

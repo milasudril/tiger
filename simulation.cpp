@@ -29,16 +29,15 @@ Simulation::Simulation(const char* filter,const char* objdir):
 	m_filter(filter,objdir),m_frame_current(0)
 	{}
 
-Simulation& Simulation::run(unsigned long long n_iter) noexcept
+Simulation& Simulation::run(ProcessMonitor monitor,void* processcallback) noexcept
 	{
 	auto k=m_frame_current;
 	auto filter_entry=m_filter.processEntry();
-	while(n_iter!=0)
+	while(monitor(processcallback,*this,k))
 		{
 		filter_entry(m_state,k);
 		m_state.swap();
 		++k;
-		--n_iter;
 		}
 	m_frame_current=k;
 	return *this;
