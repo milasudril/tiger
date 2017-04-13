@@ -12,42 +12,42 @@
     </TabInfo>
     <TabInfo>
       <wxString Value="/home/torbjorr/Dokument/tiger/maikeconfig-rel.json" Name="FileName"/>
-      <int Value="0" Name="FirstVisibleLine"/>
+      <int Value="5" Name="FirstVisibleLine"/>
       <int Value="6" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
       <IntVector Name="CollapsedFolds"/>
     </TabInfo>
     <TabInfo>
       <wxString Value="/home/torbjorr/Dokument/tiger/maikeconfig.json" Name="FileName"/>
-      <int Value="0" Name="FirstVisibleLine"/>
+      <int Value="29" Name="FirstVisibleLine"/>
       <int Value="30" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
       <IntVector Name="CollapsedFolds"/>
     </TabInfo>
     <TabInfo>
       <wxString Value="/home/torbjorr/Dokument/tiger/cli/main.cpp" Name="FileName"/>
-      <int Value="0" Name="FirstVisibleLine"/>
+      <int Value="19" Name="FirstVisibleLine"/>
       <int Value="20" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
       <IntVector Name="CollapsedFolds"/>
     </TabInfo>
     <TabInfo>
       <wxString Value="/home/torbjorr/Dokument/tiger/ui/main.cpp" Name="FileName"/>
-      <int Value="0" Name="FirstVisibleLine"/>
+      <int Value="9" Name="FirstVisibleLine"/>
       <int Value="10" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
       <IntVector Name="CollapsedFolds"/>
     </TabInfo>
     <TabInfo>
       <wxString Value="/home/torbjorr/Dokument/tiger/engine/filter.cpp" Name="FileName"/>
-      <int Value="25" Name="FirstVisibleLine"/>
+      <int Value="39" Name="FirstVisibleLine"/>
       <int Value="40" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
       <IntVector Name="CollapsedFolds"/>
     </TabInfo>
     <TabInfo>
       <wxString Value="/home/torbjorr/Dokument/tiger/testdata/grayscott.cpp" Name="FileName"/>
-      <int Value="30" Name="FirstVisibleLine"/>
+      <int Value="55" Name="FirstVisibleLine"/>
       <int Value="56" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
       <IntVector Name="CollapsedFolds"/>

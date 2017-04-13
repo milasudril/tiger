@@ -20,13 +20,15 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "rangeview.hpp"
 #include "range.hpp"
 #include "uimain.hpp"
+#include "box.hpp"
 #include <cstdio>
 
 int main(int argc, char *argv[])
 	{
 	Tiger::uiInit(argc,argv);
 	Tiger::Window mainwin("Tiger",1);
-	Tiger::RangeView rv(mainwin);
+	Tiger::Box box(mainwin,0);
+	Tiger::RangeView rv(box);
 	auto my_callback=[](Tiger::RangeView& rv)
 		{
 		auto r=rv.range();

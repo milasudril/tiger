@@ -191,18 +191,11 @@ gboolean RangeView::Impl::move_callback(GtkWidget* widget,GdkEvent* event,gpoint
 			{
 			auto mid_new=y/h;
 			auto l=range_new.length();
-			range_new.max( mid_new+0.5*l );
-			range_new.min( mid_new-0.5*l );
+			range_new=Range(mid_new-0.5*l,mid_new+0.5*l);
 			if(range_new.max()>1.0)
-				{
-				range_new.max(1.0);
-				range_new.min(1.0 - l);
-				}
+				{range_new=Range(1.0 - l,1.0);}
 			if(range_new.min()<0.0)
-				{
-				range_new.min(0.0);
-				range_new.max(l);
-				}
+				{range_new=Range(0.0,l);}
 			}
 			break;
 		default:
