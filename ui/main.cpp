@@ -23,27 +23,45 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "box.hpp"
 #include "entry.hpp"
 #include <cstdio>
+#include <algorithm>
 
 int main(int argc, char *argv[])
 	{
 	Tiger::uiInit(argc,argv);
 	Tiger::Window mainwin("Tiger",1);
-	Tiger::Box box(mainwin,0);
-	Tiger::Entry e(box);
-	Tiger::RangeView rv(box);
-	auto rv_callback=[&e](Tiger::RangeView& rv)
+	
+	Tiger::Box range_entries(mainwin,1);
+	Tiger::Entry e_max(range_entries);
+	range_entries.insertMode(Tiger::Box::InsertMode{0,1,1});
+	Tiger::Box range(range_entries,0);
+	Tiger::RangeView rv(range);
+	range_entries.insertMode(Tiger::Box::InsertMode{0,0,0});
+	Tiger::Entry e_min(range_entries);
+	auto rv_callback=[&e_min,&e_max](Tiger::RangeView& rv)
 		{
 		auto r=rv.range();
 		char buffer[12];
-		sprintf(buffer,"%.7f",r.min());
-		e.content(buffer);
+		sprintf(buffer,"%.2e",r.min());
+		e_min.content(buffer);
+		sprintf(buffer,"%.2e",r.max());
+		e_max.content(buffer);
 		};
-	auto e_callback=[&rv](Tiger::Entry& entry)
+	auto emin_callback=[&rv](Tiger::Entry& entry)
 		{
-		printf("Hello\n");
+		auto v_max=rv.range().max();
+		auto v=std::min(atof(entry.content()),v_max);
+		rv.range(Tiger::Range(v,v_max));
 		};
+	auto emax_callback=[&rv](Tiger::Entry& entry)
+		{
+		auto v_min=rv.range().min();
+		auto v=std::max(atof(entry.content()),v_min);
+		rv.range(Tiger::Range(v_min,v));
+		};
+	rv_callback(rv);
 	rv.callback(rv_callback);
-	e.callback(e_callback);
+	e_min.callback(emin_callback).width(8).small(1).alignment(1.0f);
+	e_max.callback(emax_callback).width(8).small(1).alignment(1.0f);
 	mainwin.show();
 	Tiger::uiRun();
 	return 0;

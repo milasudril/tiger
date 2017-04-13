@@ -51,6 +51,12 @@ namespace Tiger
 
 			Entry& content(const char* text);
 
+			Entry& width(int n) noexcept;
+
+			Entry& small(bool status) noexcept;
+
+			Entry& alignment(float x) noexcept;
+
 		private:
 			typedef void (*Callback)(void* cb_obj,Entry& self);
 			Entry& callback(Callback cb,void* cb_obj);

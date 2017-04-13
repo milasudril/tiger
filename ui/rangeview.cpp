@@ -35,7 +35,10 @@ class RangeView::Impl
 			{return m_range;}
 
 		void range(const Range& r) noexcept
-			{m_range=r;}
+			{
+			m_range=r;
+			gtk_widget_queue_draw(m_widget);
+			}
 
 		void callback(Callback cb,void* cb_obj)
 			{
@@ -56,6 +59,7 @@ class RangeView::Impl
 		static gboolean press_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data);
 		static gboolean release_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data);
 		static gboolean move_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data);
+		static gboolean leave_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data);
 		static void destroy_callback (GtkWidget* object,gpointer user_data);
 	};
 
@@ -101,10 +105,12 @@ RangeView::Impl::Impl(Container& cnt,RangeView& owner):m_cb(nullptr)
 	gtk_widget_set_size_request(widget,32,32);
 	g_signal_connect(widget,"draw",G_CALLBACK(draw_callback),this);
 	gtk_widget_add_events(widget
-		,GDK_POINTER_MOTION_MASK|GDK_BUTTON_PRESS_MASK|GDK_BUTTON_RELEASE_MASK);
+		,GDK_POINTER_MOTION_MASK|GDK_BUTTON_PRESS_MASK|GDK_BUTTON_RELEASE_MASK
+		|GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(widget,"button-press-event",G_CALLBACK(press_callback),this);
 	g_signal_connect(widget,"button-release-event",G_CALLBACK(release_callback),this);
 	g_signal_connect(widget,"motion-notify-event",G_CALLBACK(move_callback),this);
+	g_signal_connect(widget,"leave-notify-event",G_CALLBACK(leave_callback),this);
 	auto style=gtk_widget_get_style_context(widget);
 	gtk_style_context_add_class(style,GTK_STYLE_CLASS_ENTRY);
 	m_widget=widget;
@@ -124,8 +130,13 @@ RangeView::Impl::~Impl()
 	g_object_unref(m_widget);
 	}
 
-static int move_detect(double y,double h,const Range& r)
+static int move_detect(double x,double y,double w,double h,const Range& r)
 	{
+	if(x<0 || x>w)
+		{return 0;}
+	if(y<0 || y>h)
+		{return 0;}
+
 	if(std::abs(y - h*r.max())<4)
 		{return 1;}
 	if(std::abs(y - h*r.min())<4)
@@ -143,7 +154,6 @@ gboolean RangeView::Impl::draw_callback(GtkWidget *widget, cairo_t *cr, gpointer
 
 	auto context = gtk_widget_get_style_context (widget);
 	gtk_render_background(context,cr,0,0,width,height);
-	gtk_render_frame(context,cr,0,0,width,height);
 
 	cairo_rectangle(cr,0,height*(1.0 - state->m_range.max())
 			,width,height*state->m_range.length());
@@ -155,6 +165,8 @@ gboolean RangeView::Impl::draw_callback(GtkWidget *widget, cairo_t *cr, gpointer
 	cairo_move_to(cr,0, mid);
 	cairo_line_to(cr,width,mid);
 	cairo_stroke(cr);
+
+	gtk_render_frame(context,cr,0,0,width,height);
 	
 	return FALSE;
 	}
@@ -163,8 +175,10 @@ gboolean RangeView::Impl::press_callback(GtkWidget* widget,GdkEvent* event,gpoin
 	{
 	auto state=reinterpret_cast<Impl*>(user_data);
 	auto h=gtk_widget_get_allocated_height(widget);
+	auto w=gtk_widget_get_allocated_width(widget);
 	auto y=h-event->button.y;
-	state->m_move=move_detect(y,h,state->m_range);
+	auto x=event->button.x;
+	state->m_move=move_detect(x,y,w,h,state->m_range);
 	return FALSE;
 	}
 
@@ -178,9 +192,11 @@ gboolean RangeView::Impl::release_callback(GtkWidget* widget,GdkEvent* event,gpo
 gboolean RangeView::Impl::move_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data)
 	{
 	auto state=reinterpret_cast<Impl*>(user_data);
+	auto w=gtk_widget_get_allocated_width(widget);
 	auto h=gtk_widget_get_allocated_height(widget);
 	auto range_new=state->m_range;
 	auto y=h-event->motion.y;
+	auto x=event->motion.x;
 	switch(state->m_move)
 		{
 		case 1:
@@ -217,7 +233,7 @@ gboolean RangeView::Impl::move_callback(GtkWidget* widget,GdkEvent* event,gpoint
 	if(state->m_move==0)
 		{
 		gdk_window_set_cursor(parent
-			,state->m_cursors[move_detect(y,h,state->m_range)]);
+			,state->m_cursors[move_detect(x,y,w,h,state->m_range)]);
 		}
 	else
 		{
@@ -225,5 +241,13 @@ gboolean RangeView::Impl::move_callback(GtkWidget* widget,GdkEvent* event,gpoint
 		if(state->m_cb!=nullptr)
 			{state->m_cb(state->m_cb_obj,state->r_owner);}
 		}
+	return FALSE;
+	}
+
+gboolean RangeView::Impl::leave_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data)
+	{
+	auto parent=gtk_widget_get_parent_window(widget);
+	auto state=reinterpret_cast<Impl*>(user_data);
+	gdk_window_set_cursor(parent,state->m_cursors[0]);
 	return FALSE;
 	}

@@ -31,7 +31,7 @@ namespace Tiger
 
 			explicit Range(double mi,double ma)
 				{
-				assert(ma >  mi);
+				assert(ma >=  mi);
 				m_min=mi;
 				m_max=ma;
 				}
@@ -44,14 +44,14 @@ namespace Tiger
 
 			Range& max(double x) noexcept
 				{
-				assert(x - m_min>=0.0);
+				assert(x - m_min >= 0.0);
 				m_max=x;
 				return *this;
 				}
 
 			Range& min(double x) noexcept
 				{
-				assert(m_max - x>=0.0);
+				assert(m_max - x >= 0.0);
 				m_min=x;
 				return *this;
 				}

@@ -34,7 +34,7 @@ class Entry::Impl
 		void callback(Callback cb,void* cb_obj)
 			{
 			m_cb=cb;
-			cb_obj=m_cb_obj;
+			m_cb_obj=cb_obj;
 			}
 
 		const char* content() const noexcept
@@ -42,6 +42,19 @@ class Entry::Impl
 
 		void content(const char* text) noexcept
 			{return gtk_entry_set_text(m_handle,text);}
+
+		void width(int n) noexcept
+			{
+			gtk_entry_set_width_chars(m_handle,n);
+			gtk_entry_set_max_width_chars(m_handle,n);
+			}
+
+		void small(bool status)
+			{gtk_entry_set_has_frame(m_handle,!status);}
+
+		void alignment(float x)
+			{gtk_entry_set_alignment(m_handle,x);}
+
 
 	private:
 		Callback m_cb;
@@ -78,6 +91,25 @@ Entry& Entry::content(const char* text)
 	return *this;
 	}
 
+Entry& Entry::width(int n) noexcept
+	{
+	m_impl->width(n);
+	return *this;
+	}
+
+Entry& Entry::small(bool status) noexcept
+	{
+	m_impl->small(status);
+	return *this;
+	}
+
+Entry& Entry::alignment(float x) noexcept
+	{
+	m_impl->alignment(x);
+	return *this;
+	}
+
+
 
 Entry::Impl::Impl(Container& cnt,Entry& owner):m_cb(nullptr)
 	,r_owner(owner)
@@ -85,7 +117,6 @@ Entry::Impl::Impl(Container& cnt,Entry& owner):m_cb(nullptr)
 	printf("Entry %p ctor\n",this);
 
 	auto widget=gtk_entry_new();
-	gtk_widget_set_size_request(widget,32,32);
 	g_signal_connect(widget,"focus-out-event",G_CALLBACK(focus_callback),this);
 	m_handle=GTK_ENTRY(widget);
 	cnt.add(widget);
