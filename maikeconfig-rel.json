@@ -5,9 +5,12 @@
             "..",
             ".",
             "__targets",
-            "__targets_rel"
+            "__targets_rel",
+			".git",
+			".codelite",
+			".clang"
         ],
-        "recursive":0
+        "recursive":1
     },
     "source_files":[
         "."

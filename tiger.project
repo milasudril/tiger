@@ -2,51 +2,60 @@
 <CodeLite_Project Name="tiger" Version="10.0.0" InternalType="Console">
   <Reconciliation>
     <Regexes/>
-    <Excludepaths/>
+    <Excludepaths>
+      <Path>.clang/</Path>
+      <Path>.codelite/</Path>
+      <Path>.git/</Path>
+      <Path>__targets_rel/</Path>
+      <Path>__targets/</Path>
+    </Excludepaths>
     <Ignorefiles/>
     <Extensions>
-      <![CDATA[cpp;c;h;hpp;xrc;wxcp;fbp]]>
+      <![CDATA[cpp;c;h;hpp;xrc;wxcp;fbp;png;json]]>
     </Extensions>
     <Topleveldir>../tiger</Topleveldir>
   </Reconciliation>
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
-    <File Name="main.cpp"/>
-    <File Name="filter.hpp"/>
-    <File Name="plugin.hpp"/>
-    <File Name="plugin.cpp"/>
-    <File Name="filter.cpp"/>
-    <File Name="parameter.hpp"/>
-    <File Name="parameter.cpp"/>
-    <File Name="channel.hpp"/>
-    <File Name="channel.cpp"/>
     <File Name=".gitignore"/>
-    <File Name="error.hpp"/>
-    <File Name="image.cpp"/>
-    <File Name="image.hpp"/>
-    <File Name="cpuinfo.hpp"/>
-    <File Name="datasource.hpp"/>
-    <File Name="srcstdio.hpp"/>
-    <File Name="datasink.hpp"/>
-    <File Name="sinkstdio.hpp"/>
-    <File Name="test.sh"/>
-    <File Name="example.cpp"/>
-    <File Name="blob.hpp"/>
-    <File Name="sinkstdio.cpp"/>
+    <VirtualDirectory Name="engine">
+      <File Name="engine/blob.hpp"/>
+      <File Name="engine/channel.cpp"/>
+      <File Name="engine/channel.hpp"/>
+      <File Name="engine/cpuinfo.hpp"/>
+      <File Name="engine/datasink.hpp"/>
+      <File Name="engine/datasource.hpp"/>
+      <File Name="engine/error.hpp"/>
+      <File Name="engine/example.cpp"/>
+      <File Name="engine/filter.cpp"/>
+      <File Name="engine/filter.hpp"/>
+      <File Name="engine/filterstate.hpp"/>
+      <File Name="engine/filterstateclient.hpp"/>
+      <File Name="engine/image.cpp"/>
+      <File Name="engine/image.hpp"/>
+      <File Name="engine/parameter.cpp"/>
+      <File Name="engine/parameter.hpp"/>
+      <File Name="engine/plugin.cpp"/>
+      <File Name="engine/plugin.hpp"/>
+      <File Name="engine/pluginmain.hpp"/>
+      <File Name="engine/simulation.cpp"/>
+      <File Name="engine/simulation.hpp"/>
+      <File Name="engine/sinkstdio.cpp"/>
+      <File Name="engine/sinkstdio.hpp"/>
+      <File Name="engine/srcstdio.hpp"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="ui">
+      <File Name="ui/main.cpp"/>
+    </VirtualDirectory>
     <File Name="LICENSE"/>
-    <File Name="README.md"/>
-    <File Name="grayscott.cpp"/>
-    <File Name="simulation.hpp"/>
-    <File Name="simulation.cpp"/>
-    <File Name="filterstate.hpp"/>
-    <File Name="pluginmain.hpp"/>
-    <File Name="filterstateclient.hpp"/>
-    <File Name="lenna-b.png"/>
-    <File Name="lenna-g.png"/>
-    <File Name="lenna-r.png"/>
-    <File Name="maikeconfig.json"/>
     <File Name="maikeconfig-rel.json"/>
+    <File Name="maikeconfig.json"/>
+    <File Name="README.md"/>
+    <File Name="test.sh"/>
+    <VirtualDirectory Name="cli">
+      <File Name="cli/main.cpp"/>
+    </VirtualDirectory>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
@@ -64,7 +73,7 @@
       </Compiler>
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./__targets" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="__targets" Command="$(IntermediateDirectory)/tiger-ui" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="." PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="Default"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
@@ -142,4 +151,6 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Release"/>
 </CodeLite_Project>
