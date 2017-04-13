@@ -40,7 +40,7 @@ class RangeView::Impl
 		void callback(Callback cb,void* cb_obj)
 			{
 			m_cb=cb;
-			cb_obj=m_cb_obj;
+			m_cb_obj=cb_obj;
 			}
 
 	private:
@@ -66,7 +66,7 @@ RangeView::RangeView(Container& cnt) noexcept
 
 RangeView::~RangeView()
 	{
-//	GTK will destroy us! Do NOT delete m_impl
+	delete m_impl;
 	}
 
 Range RangeView::range() const noexcept
@@ -105,10 +105,10 @@ RangeView::Impl::Impl(Container& cnt,RangeView& owner):m_cb(nullptr)
 	g_signal_connect(widget,"button-press-event",G_CALLBACK(press_callback),this);
 	g_signal_connect(widget,"button-release-event",G_CALLBACK(release_callback),this);
 	g_signal_connect(widget,"motion-notify-event",G_CALLBACK(move_callback),this);
-	g_signal_connect(widget,"destroy",G_CALLBACK(destroy_callback),this);
 	auto style=gtk_widget_get_style_context(widget);
 	gtk_style_context_add_class(style,GTK_STYLE_CLASS_ENTRY);
 	m_widget=widget;
+	g_object_ref_sink(widget);
 	cnt.add(widget);
 	}
 
@@ -121,6 +121,7 @@ RangeView::Impl::~Impl()
 	g_object_unref(m_cursors[2]);
 	g_object_unref(m_cursors[1]);
 	g_object_unref(m_cursors[0]);
+	g_object_unref(m_widget);
 	}
 
 static int move_detect(double y,double h,const Range& r)
@@ -225,10 +226,4 @@ gboolean RangeView::Impl::move_callback(GtkWidget* widget,GdkEvent* event,gpoint
 			{state->m_cb(state->m_cb_obj,state->r_owner);}
 		}
 	return FALSE;
-	}
-
-void RangeView::Impl::destroy_callback(GtkWidget* object,gpointer user_data)
-	{
-	auto state=reinterpret_cast<Impl*>(user_data);
-	delete state;
 	}

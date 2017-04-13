@@ -21,6 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "range.hpp"
 #include "uimain.hpp"
 #include "box.hpp"
+#include "entry.hpp"
 #include <cstdio>
 
 int main(int argc, char *argv[])
@@ -28,14 +29,22 @@ int main(int argc, char *argv[])
 	Tiger::uiInit(argc,argv);
 	Tiger::Window mainwin("Tiger",1);
 	Tiger::Box box(mainwin,0);
+	Tiger::Entry e(box);
 	Tiger::RangeView rv(box);
-	auto my_callback=[](Tiger::RangeView& rv)
+	auto rv_callback=[&e](Tiger::RangeView& rv)
 		{
 		auto r=rv.range();
-		printf("\r%.7f %.7f",r.min(),r.max());
-		fflush(stdout);
+		char buffer[12];
+		sprintf(buffer,"%.7f",r.min());
+		e.content(buffer);
 		};
-	rv.callback(my_callback);
+	auto e_callback=[&rv](Tiger::Entry& entry)
+		{
+		printf("Hello\n");
+		};
+	rv.callback(rv_callback);
+	e.callback(e_callback);
 	mainwin.show();
+	Tiger::uiRun();
 	return 0;
 	}

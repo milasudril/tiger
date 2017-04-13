@@ -54,14 +54,10 @@ class Window::Impl
 	};
 
 Window::Window(const char* title,bool mainwin)
-	{
-	m_impl=new Window::Impl(title,mainwin);
-	}
+	{m_impl=new Window::Impl(title,mainwin);}
 
 Window::~Window()
-	{
-	delete m_impl;
-	}
+	{delete m_impl;}
 
 const char* Window::title() const noexcept
 	{return m_impl->title();}
@@ -71,7 +67,6 @@ Window& Window::title(const char* title_new)
 	m_impl->title(title_new);
 	return *this;
 	}
-
 
 Window& Window::add(void* handle)
 	{
@@ -95,12 +90,10 @@ Window::Impl::Impl(const char* ti,bool mainwin):m_mainwin(mainwin)
 
 Window::Impl::~Impl()
 	{
-	if(m_mainwin)
-		{gtk_main();}
 	printf("Window %p dtor\n",this);
 	}
 
-void Window::Impl::destroy_callback (GtkWidget* object,gpointer user_data)
+void Window::Impl::destroy_callback(GtkWidget* object,gpointer user_data)
 	{
 	auto self=reinterpret_cast<Impl*>(user_data);
 	if(self->m_mainwin)

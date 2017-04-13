@@ -54,7 +54,7 @@ Box::Box(Container& cnt,bool vertical)
 	}
 
 Box::~Box()
-	{}
+	{delete m_impl;}
 
 Box& Box::add(void* handle)
 	{
@@ -81,7 +81,6 @@ Box::Impl::Impl(Container& cnt,bool vertical):m_mode{0,0,0}
 	{
 	printf("Box %p ctor\n",this);
 	auto widget=gtk_box_new(vertical?GTK_ORIENTATION_VERTICAL:GTK_ORIENTATION_HORIZONTAL,4);
-	g_signal_connect(widget,"destroy",G_CALLBACK(destroy_callback),this);
 	cnt.add(widget);
 	m_handle=GTK_BOX(widget);
 	}
@@ -91,8 +90,3 @@ Box::Impl::~Impl()
 	printf("Box %p dtor\n",this);
 	}
 
-void Box::Impl::destroy_callback (GtkWidget* object,gpointer user_data)
-	{
-	auto self=reinterpret_cast<Impl*>(user_data);
-	delete self;
-	}

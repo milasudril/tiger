@@ -57,6 +57,8 @@
       <File Name="ui/uimain.cpp"/>
       <File Name="ui/box.hpp"/>
       <File Name="ui/box.cpp"/>
+      <File Name="ui/entry.hpp"/>
+      <File Name="ui/entry.cpp"/>
     </VirtualDirectory>
     <File Name="LICENSE"/>
     <File Name="maikeconfig-rel.json"/>
