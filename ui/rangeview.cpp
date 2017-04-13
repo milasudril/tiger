@@ -50,6 +50,7 @@ class RangeView::Impl
 		RangeView& r_owner;
 		int m_move;
 		GdkCursor* m_cursors[4];
+		GtkWidget* m_widget;
 
 		static gboolean draw_callback(GtkWidget* widget,cairo_t* cr,gpointer data);
 		static gboolean press_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data);
@@ -105,12 +106,17 @@ RangeView::Impl::Impl(Container& cnt,RangeView& owner):m_cb(nullptr)
 	g_signal_connect(widget,"button-release-event",G_CALLBACK(release_callback),this);
 	g_signal_connect(widget,"motion-notify-event",G_CALLBACK(move_callback),this);
 	g_signal_connect(widget,"destroy",G_CALLBACK(destroy_callback),this);
+	auto style=gtk_widget_get_style_context(widget);
+	gtk_style_context_add_class(style,GTK_STYLE_CLASS_ENTRY);
+	m_widget=widget;
 	cnt.add(widget);
 	}
 
 RangeView::Impl::~Impl()
 	{
 	printf("RangeView %p dtor\n",this);
+	auto style=gtk_widget_get_style_context(m_widget);
+	gtk_style_context_remove_class(style,GTK_STYLE_CLASS_ENTRY);
 	g_object_unref(m_cursors[3]);
 	g_object_unref(m_cursors[2]);
 	g_object_unref(m_cursors[1]);
@@ -136,6 +142,7 @@ gboolean RangeView::Impl::draw_callback(GtkWidget *widget, cairo_t *cr, gpointer
 
 	auto context = gtk_widget_get_style_context (widget);
 	gtk_render_background(context,cr,0,0,width,height);
+	gtk_render_frame(context,cr,0,0,width,height);
 
 	cairo_rectangle(cr,0,height*(1.0 - state->m_range.max())
 			,width,height*state->m_range.length());
