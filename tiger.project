@@ -47,6 +47,14 @@
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/main.cpp"/>
+      <File Name="ui/rangeview.hpp"/>
+      <File Name="ui/rangeview.cpp"/>
+      <File Name="ui/range.hpp"/>
+      <File Name="ui/container.hpp"/>
+      <File Name="ui/window.hpp"/>
+      <File Name="ui/window.cpp"/>
+      <File Name="ui/uimain.hpp"/>
+      <File Name="ui/uimain.cpp"/>
     </VirtualDirectory>
     <File Name="LICENSE"/>
     <File Name="maikeconfig-rel.json"/>
