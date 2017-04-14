@@ -42,6 +42,8 @@ class Box::Impl
 		void insertMode(const InsertMode& mode) noexcept
 			{m_mode=mode;}
 
+		void alignment(float x) noexcept;
+
 	private:
 		static void destroy_callback (GtkWidget* object,gpointer user_data);
 		GtkBox* m_handle;
@@ -77,16 +79,34 @@ Box& Box::insertMode(const InsertMode& mode) noexcept
 	return *this;
 	}
 
+Box& Box::alignment(float x) noexcept
+	{
+	m_impl->alignment(x);
+	return *this;
+	}
+
 Box::Impl::Impl(Container& cnt,bool vertical):m_mode{0,0,0}
 	{
 	printf("Box %p ctor\n",this);
 	auto widget=gtk_box_new(vertical?GTK_ORIENTATION_VERTICAL:GTK_ORIENTATION_HORIZONTAL,4);
 	cnt.add(widget);
+	g_object_ref_sink(widget);
 	m_handle=GTK_BOX(widget);
 	}
 
 Box::Impl::~Impl()
 	{
+	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	printf("Box %p dtor\n",this);
 	}
 
+void Box::Impl::alignment(float x) noexcept
+	{
+	if(x<1.0f/3.0f)
+		{gtk_box_set_baseline_position(m_handle,GTK_BASELINE_POSITION_TOP);}
+	else
+	if(x>2.0f/3.0f)
+		{gtk_box_set_baseline_position(m_handle,GTK_BASELINE_POSITION_BOTTOM);}
+	else
+		{{gtk_box_set_baseline_position(m_handle,GTK_BASELINE_POSITION_CENTER);}}
+	}

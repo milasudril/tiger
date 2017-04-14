@@ -120,6 +120,7 @@ RangeView::Impl::Impl(Container& cnt,RangeView& owner):m_cb(nullptr)
 
 RangeView::Impl::~Impl()
 	{
+	m_cb=nullptr;
 	printf("RangeView %p dtor\n",this);
 	auto style=gtk_widget_get_style_context(m_widget);
 	gtk_style_context_remove_class(style,GTK_STYLE_CLASS_ENTRY);
@@ -127,7 +128,7 @@ RangeView::Impl::~Impl()
 	g_object_unref(m_cursors[2]);
 	g_object_unref(m_cursors[1]);
 	g_object_unref(m_cursors[0]);
-	g_object_unref(m_widget);
+	gtk_widget_destroy(m_widget);
 	}
 
 static int move_detect(double x,double y,double w,double h,const Range& r)
