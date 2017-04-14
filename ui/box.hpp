@@ -48,6 +48,8 @@ namespace Tiger
 			Box& homogenous(bool status) noexcept;
 			Box& insertMode(const InsertMode& mode) noexcept;
 
+			Box& alignment(float x) noexcept;
+
 		private:
 			class Impl;
 			Impl* m_impl;

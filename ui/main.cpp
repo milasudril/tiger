@@ -19,24 +19,32 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "window.hpp"
 #include "rangeview.hpp"
 #include "range.hpp"
-#include "uimain.hpp"
+#include "uicontext.hpp"
 #include "box.hpp"
-#include "entry.hpp"
+#include "textentry.hpp"
+#include "separator.hpp"
 #include <cstdio>
 #include <algorithm>
 
 int main(int argc, char *argv[])
 	{
-	Tiger::uiInit(argc,argv);
+	Tiger::UiContext ctx(argc,argv);
 	Tiger::Window mainwin("Tiger",1);
-	
+	auto mainwin_cb=[&ctx](Tiger::Window& window)
+		{ctx.exit();};
+	mainwin.callback(mainwin_cb);
 	Tiger::Box range_entries(mainwin,1);
-	Tiger::Entry e_max(range_entries);
+	Tiger::TextEntry e_max(range_entries);
 	range_entries.insertMode(Tiger::Box::InsertMode{0,1,1});
 	Tiger::Box range(range_entries,0);
+	range.insertMode(Tiger::Box::InsertMode{0,1,1});
+	Tiger::Separator dec_left(range,1);
+	range.insertMode(Tiger::Box::InsertMode{0,0,0});
 	Tiger::RangeView rv(range);
+	range.insertMode(Tiger::Box::InsertMode{0,1,1});
+	Tiger::Separator dec_right(range,1);
 	range_entries.insertMode(Tiger::Box::InsertMode{0,0,0});
-	Tiger::Entry e_min(range_entries);
+	Tiger::TextEntry e_min(range_entries);
 	auto rv_callback=[&e_min,&e_max](Tiger::RangeView& rv)
 		{
 		auto r=rv.range();
@@ -46,13 +54,13 @@ int main(int argc, char *argv[])
 		sprintf(buffer,"%.2e",r.max());
 		e_max.content(buffer);
 		};
-	auto emin_callback=[&rv](Tiger::Entry& entry)
+	auto emin_callback=[&rv](Tiger::TextEntry& entry)
 		{
 		auto v_max=rv.range().max();
 		auto v=std::min(atof(entry.content()),v_max);
 		rv.range(Tiger::Range(v,v_max));
 		};
-	auto emax_callback=[&rv](Tiger::Entry& entry)
+	auto emax_callback=[&rv](Tiger::TextEntry& entry)
 		{
 		auto v_min=rv.range().min();
 		auto v=std::max(atof(entry.content()),v_min);
@@ -63,6 +71,6 @@ int main(int argc, char *argv[])
 	e_min.callback(emin_callback).width(8).small(1).alignment(1.0f);
 	e_max.callback(emax_callback).width(8).small(1).alignment(1.0f);
 	mainwin.show();
-	Tiger::uiRun();
+	ctx.run();
 	return 0;
 	}

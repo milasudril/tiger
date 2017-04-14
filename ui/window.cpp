@@ -28,7 +28,7 @@ using namespace Tiger;
 class Window::Impl
 	{
 	public:
-		Impl(const char* ti,bool mainwin);
+		Impl(const char* ti,Window& owner);
 		~Impl();
 
 		const char* title() const noexcept
@@ -46,15 +46,23 @@ class Window::Impl
 		void show()
 			{gtk_widget_show_all(GTK_WIDGET(m_handle));}
 
+		void callback(Callback cb,void* cb_obj)
+			{
+			m_cb=cb;
+			m_cb_obj=cb_obj;
+			}
+
 	private:
-		static void destroy_callback (GtkWidget* object,gpointer user_data);
-		bool m_mainwin;
+		static gboolean delete_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data);
+		Callback m_cb;
+		void* m_cb_obj;
+		Window& r_owner;
 		GtkWindow* m_handle;
 		std::string m_title;
 	};
 
 Window::Window(const char* title,bool mainwin)
-	{m_impl=new Window::Impl(title,mainwin);}
+	{m_impl=new Window::Impl(title,*this);}
 
 Window::~Window()
 	{delete m_impl;}
@@ -79,11 +87,20 @@ void Window::show()
 	m_impl->show();
 	}
 
-Window::Impl::Impl(const char* ti,bool mainwin):m_mainwin(mainwin)
+
+Window& Window::callback(Callback cb,void* cb_obj)
+	{
+	m_impl->callback(cb,cb_obj);
+	return *this;
+	}
+
+
+
+Window::Impl::Impl(const char* ti,Window& owner):m_cb(nullptr),r_owner(owner)
 	{
 	printf("Window %p ctor\n",this);
 	auto widget=gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	g_signal_connect(widget,"destroy",G_CALLBACK(destroy_callback),this);
+	g_signal_connect(widget,"delete-event",G_CALLBACK(delete_callback),this);
 	m_handle=GTK_WINDOW(widget);
 	title(ti);
 	}
@@ -91,11 +108,13 @@ Window::Impl::Impl(const char* ti,bool mainwin):m_mainwin(mainwin)
 Window::Impl::~Impl()
 	{
 	printf("Window %p dtor\n",this);
+	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	}
 
-void Window::Impl::destroy_callback(GtkWidget* object,gpointer user_data)
+gboolean Window::Impl::delete_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data)
 	{
 	auto self=reinterpret_cast<Impl*>(user_data);
-	if(self->m_mainwin)
-		{gtk_main_quit();}
+	if(self->m_cb!=nullptr)
+		{self->m_cb(self->m_cb_obj,self->r_owner);}
+	return TRUE;
 	}

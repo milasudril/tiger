@@ -40,7 +40,21 @@ namespace Tiger
 			const char* title() const noexcept;
 			Window& title(const char* title_new);
 
+			template<class WindowCallback>
+			Window& callback(WindowCallback& cb) noexcept
+				{
+				auto cb_wrapper=[](void* wc,Window& self)
+					{
+					auto x=reinterpret_cast<WindowCallback*>(wc);
+					(*x)(self);
+					};
+				return callback(cb_wrapper,&cb); 
+				}
+
 		private:
+			typedef void (*Callback)(void* cb_obj,Window& self);
+			Window& callback(Callback cb,void* cb_obj);
+
 			class Impl;
 			Impl* m_impl;
 		};

@@ -53,12 +53,14 @@
       <File Name="ui/container.hpp"/>
       <File Name="ui/window.hpp"/>
       <File Name="ui/window.cpp"/>
-      <File Name="ui/uimain.hpp"/>
-      <File Name="ui/uimain.cpp"/>
       <File Name="ui/box.hpp"/>
       <File Name="ui/box.cpp"/>
-      <File Name="ui/entry.hpp"/>
-      <File Name="ui/entry.cpp"/>
+      <File Name="ui/textentry.hpp"/>
+      <File Name="ui/textentry.cpp"/>
+      <File Name="ui/separator.hpp"/>
+      <File Name="ui/separator.cpp"/>
+      <File Name="ui/uicontext.hpp"/>
+      <File Name="ui/uicontext.cpp"/>
     </VirtualDirectory>
     <File Name="LICENSE"/>
     <File Name="maikeconfig-rel.json"/>
