@@ -30,7 +30,7 @@ namespace Tiger
 		public:
 			UiContext(const UiContext&)=delete;
 			UiContext& operator=(const UiContext&)=delete;
-			explicit UiContext(int& argc,char**& argv);
+			UiContext();
 			~UiContext();
 			void exit();
 			void run();

@@ -28,7 +28,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 int main(int argc, char *argv[])
 	{
-	Tiger::UiContext ctx(argc,argv);
+	Tiger::UiContext ctx;
 	Tiger::Window mainwin("Tiger",1);
 	auto mainwin_cb=[&ctx](Tiger::Window& window)
 		{ctx.exit();};

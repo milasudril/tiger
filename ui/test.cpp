@@ -20,6 +20,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "uicontext.hpp"
 #include "mapview.hpp"
 #include "window.hpp"
+#include "../engine/simulation.hpp"
 
 #include <string>
 #include <map>
@@ -47,7 +48,8 @@ class MyMapData
 
 int main(int argc, char *argv[])
 	{
-	Tiger::UiContext ctx(argc,argv);
+	Tiger::UiContext ctx;
+	Tiger::Simulation sim("testdata/grayscott.cpp","__targets");
 	Tiger::Window mainwin("Tiger Test",1);
 	auto mainwin_cb=[&ctx](Tiger::Window& window)
 		{ctx.exit();};

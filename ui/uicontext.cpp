@@ -27,8 +27,8 @@ using namespace Tiger;
 class UiContext::Impl
 	{
 	public:
-		Impl(int& argc,char**& argv):m_stop(0)
-			{gtk_init(&argc,&argv);}
+		Impl():m_stop(0)
+			{gtk_init(NULL,NULL);}
 
 		~Impl();
 
@@ -41,8 +41,8 @@ class UiContext::Impl
 		volatile bool m_stop;
 	};
 
-UiContext::UiContext(int& argc,char**& argv)
-	{m_impl=new Impl(argc,argv);}
+UiContext::UiContext()
+	{m_impl=new Impl;}
 
 UiContext::~UiContext()
 	{delete m_impl;}
