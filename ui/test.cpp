@@ -29,10 +29,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 class MyMapData
 	{
 	public:
-		typedef std::string key_type;
+		typedef const char* key_type;
 		typedef float mapped_type;
-		const std::string& keyString(const std::string& str) const noexcept
-			{return str;}
+		std::string keyString(const char* str) const noexcept
+			{return str==nullptr?std::string("(null)"):std::string(str);}
 		std::string valueString(float x) const noexcept
 			{
 			std::string ret;
@@ -58,23 +58,13 @@ int main(int argc, char *argv[])
 	auto mv_cb=[](Tiger::MapView<MyMapData>& src,float* address	
 		,const char* value_new)
 		{*address=strtof(value_new,nullptr);};
-	mv.callback(mv_cb);
-	std::map<std::string,float> vals;
-	vals["pi"]=3.14f;
-	vals["e"]=2.72f;
-	vals["Answer to the ultimate question about universe life and everything"]=42.0f;
+	mv.callback(mv_cb).valueAlignment(1.0f);
+	sim.paramsList([&mv](const Tiger::Simulation& sim	
+		,const Tiger::Simulation::ParamName& name,float& value)
 		{
-		auto ptr=vals.begin();
-		auto ptr_end=vals.end();
-		while(ptr!=ptr_end)
-			{
-			mv.recordAppend(ptr->first,ptr->second);
-			++ptr;
-			}
-		}
-
-	mv.valueAlignment(1.0f);
-
+		printf("%s\n",name);
+		mv.recordAppend(name,value);
+		});
 	mainwin.callback(mainwin_cb);
 	mainwin.show();
 	ctx.run();

@@ -27,7 +27,9 @@ using namespace Tiger;
 
 Simulation::Simulation(const char* filter,const char* objdir):
 	m_filter(filter,objdir),m_frame_current(0)
-	{}
+	{
+	m_params.resize(m_filter.parameterCount());
+	}
 
 Simulation& Simulation::run(ProcessMonitor monitor,void* processcallback) noexcept
 	{
@@ -146,7 +148,6 @@ void Simulation::imagesStore(const Tiger::Filter& f,const Tiger::FilterState& d
 
 Simulation& Simulation::paramsLoad(const std::vector<Parameter>& params)
 	{
-	m_params.resize(m_filter.parameterCount());
 	auto ptr=params.begin();
 	auto ptr_end=params.end();
 	while(ptr!=ptr_end)
@@ -159,6 +160,14 @@ Simulation& Simulation::paramsLoad(const std::vector<Parameter>& params)
 	}
 
 const Simulation& Simulation::paramsList(ParamsListCallback cb,void* paramproc) const
+	{
+	auto N=m_filter.parameterCount();
+	for(decltype(N) k=0;k<N;++k)
+		{cb(paramproc,*this,m_filter.parameterName(k),m_params[k]);}
+	return *this;
+	}
+
+Simulation& Simulation::paramsList(ParamsListByRefCallback cb,void* paramproc)
 	{
 	auto N=m_filter.parameterCount();
 	for(decltype(N) k=0;k<N;++k)

@@ -34,6 +34,8 @@ namespace Tiger
 	class Simulation
 		{
 		public:
+			typedef const char* ParamName;
+
 			Simulation(const char* filter,const char* objdir);
 
 			template<class ProcessCallback>
@@ -70,7 +72,22 @@ namespace Tiger
 			template<class Paramproc>
 			const Simulation& paramsList(Paramproc& proc) const
 				{
-				auto cb=[](void* paramproc,const Simulation& sim,const char* name,float value)
+				auto cb=[](void* paramproc,const Simulation& sim,const ParamName& name,const float& value)
+					{
+					auto obj=reinterpret_cast<Paramproc*>(paramproc);
+					(*obj)(sim,name,value);
+					};
+				return paramsList(cb,&proc);
+				}
+
+			template<class Paramproc>
+			Simulation& paramsList(Paramproc&& proc)
+				{return paramsList(proc);}
+
+			template<class Paramproc>
+			Simulation& paramsList(Paramproc& proc)
+				{
+				auto cb=[](void* paramproc,const Simulation& sim,const ParamName& name,float& value)
 					{
 					auto obj=reinterpret_cast<Paramproc*>(paramproc);
 					(*obj)(sim,name,value);
@@ -106,8 +123,11 @@ namespace Tiger
 				,unsigned long long iter_count);
 			Simulation& run(ProcessMonitor monitor,void* processcallback) noexcept;
 
-			typedef void(*ParamsListCallback)(void* paramproc,const Simulation&,const char*,float);
+			typedef void(*ParamsListCallback)(void* paramproc,const Simulation&,const ParamName&,const float&);
 			const Simulation& paramsList(ParamsListCallback cb,void* paramproc) const;
+
+			typedef void(*ParamsListByRefCallback)(void* paramproc,const Simulation&,const ParamName&,float&);
+			Simulation& paramsList(ParamsListByRefCallback cb,void* paramproc);
 
 			typedef void(*ChannelsListCallback)(void* chproc,const Simulation&,const char*);
 			const Simulation& channelsList(ChannelsListCallback cb,void* chproc) const;

@@ -45,7 +45,7 @@ namespace Tiger
 			const char* channelName(unsigned int index) const noexcept
 				{return m_channel_names[index];}
 
-			const char* parameterName(unsigned int index) const noexcept	
+			const char* const& parameterName(unsigned int index) const noexcept	
 				{return m_param_names[index];}
 
 			auto processEntry() const noexcept
