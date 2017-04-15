@@ -20,6 +20,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "uicontext.hpp"
 #include "mapview.hpp"
 #include "window.hpp"
+#include "button.hpp"
+#include "box.hpp"
 #include "../engine/simulation.hpp"
 
 #include <string>
@@ -51,10 +53,17 @@ int main(int argc, char *argv[])
 	Tiger::UiContext ctx;
 	Tiger::Simulation sim("testdata/grayscott.cpp","__targets");
 	Tiger::Window mainwin("Tiger Test",1);
+	Tiger::Box box(mainwin,0);
 	auto mainwin_cb=[&ctx](Tiger::Window& window)
 		{ctx.exit();};
 	MyMapData map_data;
-	Tiger::MapView<MyMapData> mv(mainwin,map_data);
+	Tiger::Box channels(box,1);
+	Tiger::Button b1(channels);
+	b1.label("u");
+	Tiger::Button b2(channels);
+	b2.label("v");
+	box.insertMode({0,1,1});
+	Tiger::MapView<MyMapData> mv(box,map_data);
 	auto mv_cb=[](Tiger::MapView<MyMapData>& src,float* address	
 		,const char* value_new)
 		{*address=strtof(value_new,nullptr);};
