@@ -62,6 +62,8 @@
       <File Name="ui/uicontext.hpp"/>
       <File Name="ui/uicontext.cpp"/>
       <File Name="ui/test.cpp"/>
+      <File Name="ui/mapview.hpp"/>
+      <File Name="ui/mapview.cpp"/>
     </VirtualDirectory>
     <File Name="LICENSE"/>
     <File Name="maikeconfig-rel.json"/>
