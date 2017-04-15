@@ -108,6 +108,7 @@ Window::Impl::Impl(const char* ti,Window& owner):m_cb(nullptr),r_owner(owner)
 Window::Impl::~Impl()
 	{
 	printf("Window %p dtor\n",this);
+	m_cb=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	}
 

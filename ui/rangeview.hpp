@@ -33,7 +33,7 @@ namespace Tiger
 			RangeView(const RangeView& rhs)=delete;
 			RangeView& operator=(const RangeView& rhs)=delete;
 
-			RangeView(Container& container) noexcept;
+			explicit RangeView(Container& container) noexcept;
 			~RangeView();
 			
 			template<class RangeViewCallback>

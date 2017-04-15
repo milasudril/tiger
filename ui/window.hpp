@@ -32,7 +32,7 @@ namespace Tiger
 		public:
 			Window(const Window& rhs)=delete;
 			Window& operator=(const Window& rhs)=delete;
-			Window(const char* title,bool mainwin);
+			explicit Window(const char* title,bool mainwin);
 			~Window();
 
 			virtual	Window& add(void* handle);

@@ -33,7 +33,7 @@ namespace Tiger
 			Separator(const Separator& rhs)=delete;
 			Separator& operator=(const Separator& rhs)=delete;
 
-			Separator(Container& container,bool vertical) noexcept;
+			explicit Separator(Container& container,bool vertical) noexcept;
 			~Separator();
 
 		private:

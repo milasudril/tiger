@@ -33,7 +33,7 @@ namespace Tiger
 			TextEntry(const TextEntry& rhs)=delete;
 			TextEntry& operator=(const TextEntry& rhs)=delete;
 
-			TextEntry(Container& container) noexcept;
+			explicit TextEntry(Container& container) noexcept;
 			~TextEntry();
 			
 			template<class EntryCallback>

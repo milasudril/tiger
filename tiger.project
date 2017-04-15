@@ -61,6 +61,7 @@
       <File Name="ui/separator.cpp"/>
       <File Name="ui/uicontext.hpp"/>
       <File Name="ui/uicontext.cpp"/>
+      <File Name="ui/test.cpp"/>
     </VirtualDirectory>
     <File Name="LICENSE"/>
     <File Name="maikeconfig-rel.json"/>

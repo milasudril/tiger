@@ -39,7 +39,7 @@ namespace Tiger
 
 			Box(const Box& rhs)=delete;
 			Box& operator=(const Box& rhs)=delete;
-			Box(Container& parent,bool vertical);
+			explicit Box(Container& parent,bool vertical);
 			~Box();
 
 			virtual	Box& add(void* handle);
