@@ -48,14 +48,6 @@ namespace Tiger
 				}
 
 			template<int n>
-			float source(int x,int y) const noexcept
-				{
-				static_assert(n>=0,"Channel not found");
-				static_assert(n<N,"Channel count out of bounds");
-				return m_src[N*(y*m_height + x) + n];
-				}
-
-			template<int n>
 			float param() const noexcept
 				{
 				static_assert(n>=0,"Parameter not found");

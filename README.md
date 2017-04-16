@@ -3,7 +3,7 @@ TIGER
 Tiger (Texture/Image GenEatoR) loads a set of images and applies a filter multiple times. The result of the filter, can be descriped by the equation
 
 $$
-    \vec{y_{k+1}}(x,y) = \vec{f}(x,y,\vec{y_k}(x,y),\vec{g}(x,y),\vec{p})
+    \vec{y_{k+1}}(x,y) = \vec{f}(x,y,\vec{y_k}(x,y),\vec{p})
 $$
 
 
@@ -33,9 +33,6 @@ This is a summary of all command line options. Values inside square brackets are
 
 --channels-list[=string]
     Lists all channel names used by *filter*
-
---source=Channel mapping,...
-    Selects static source images. These images determines $\vec{g}$ in the equation above.
 
 --init=Channel mapping,...
     Selects initial images. These images determines $\vec{y_{0}}$ in the equation above.

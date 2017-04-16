@@ -54,8 +54,7 @@ namespace Tiger
 				return run(cb,&pc);
 				}
 
-			Simulation& imagesLoad(const std::vector<Channel>& files_src
-				,const std::vector<Channel>& files_init);
+			Simulation& imagesLoad(const std::vector<Channel>& files_init);
 
 			Simulation& imagesStore(const std::vector<Channel>& files)
 				{
@@ -133,7 +132,6 @@ namespace Tiger
 			const Simulation& channelsList(ChannelsListCallback cb,void* chproc) const;
 
 			FilterState m_state;
-			Image m_source;
 			Image m_current;
 			Image m_next;
 			std::vector<float> m_params;

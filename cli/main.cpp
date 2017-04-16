@@ -38,7 +38,7 @@ static constexpr const char* PROGRAM_DESCRIPTION
 "Tiger (Texture/Image GenEatoR) loads a set of images and applies a filter multiple times. "
 "The result of the filter, can be descriped by the equation\n"
 "\n$$\n"
-"    \\vec{y_{k+1}}(x,y) = \\vec{f}(x,y,\\vec{y_k}(x,y),\\vec{g}(x,y),\\vec{p})\n"
+"    \\vec{y_{k+1}}(x,y) = \\vec{f}(x,y,\\vec{y_k}(x,y),\\vec{p})\n"
 "$$\n"
 "\n\n";
 
@@ -57,7 +57,6 @@ ALICE_OPTION_DESCRIPTOR(OptionDescriptor
 	,{"","params","Sets filter parameters. This is the content of $\\vec{p}$ in the equation above.","Parameter",Alice::Option::Multiplicity::ZERO_OR_MORE}
 	,{"","params-list","Lists all parameters availible for *filter*","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
 	,{"","channels-list","Lists all channel names used by *filter*","string",Alice::Option::Multiplicity::ZERO_OR_ONE}
-	,{"","source","Selects static source images. These images determines $\\vec{g}$ in the equation above.","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
 	,{"","init","Selects initial images. These images determines $\\vec{y_{0}}$ in the equation above.","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
 	,{"","dest","Selects output images","Channel mapping",Alice::Option::Multiplicity::ONE_OR_MORE}
 	,{"","iterations","Selects the number of iterations to apply the filter","unsigned int",Alice::Option::Multiplicity::ONE}
@@ -159,8 +158,7 @@ int main(int argc,char** argv)
 				{fprintf(dest.handle()," * %s\n",name);});
 			}
 
-		if(!(cmdline.get<Alice::Stringkey("source")>()
-			|| cmdline.get<Alice::Stringkey("init")>()
+		if(!(cmdline.get<Alice::Stringkey("init")>()
 			|| cmdline.get<Alice::Stringkey("dest")>() ) )
 			{return 0;}
 
@@ -171,8 +169,7 @@ int main(int argc,char** argv)
 			{throw Tiger::Error("List of destination files is missing");}
 
 		auto iter_count=cmdline.get<Alice::Stringkey("iterations")>().valueGet();
-		sim.imagesLoad(cmdline.get<Alice::Stringkey("source")>().valueGet()
-				,cmdline.get<Alice::Stringkey("init")>().valueGet())
+		sim.imagesLoad(cmdline.get<Alice::Stringkey("init")>().valueGet())
 			.run([iter_count](const Tiger::Simulation& sim,unsigned long long n)
 				{return n!=iter_count;})
 			.imagesStore(cmdline.get<Alice::Stringkey("dest")>().valueGet());
