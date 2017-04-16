@@ -20,8 +20,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 //@	,"dependencies_extra":[{"ref":"separator.o","rel":"implementation"}]
 //@	}
 
-#ifndef TIGER_DECORATOR_HPP
-#define TIGER_DECORATOR_HPP
+#ifndef TIGER_SEPARATOR_HPP
+#define TIGER_SEPARATOR_HPP
+
+#include <memory>
 
 namespace Tiger
 	{
@@ -38,7 +40,7 @@ namespace Tiger
 
 		private:
 			class Impl;
-			Impl* m_impl;
+			std::unique_ptr<Impl> m_impl;
 		};
 	}
 

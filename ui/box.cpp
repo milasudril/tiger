@@ -31,7 +31,10 @@ class Box::Impl
 		~Impl();
 
 		void add(GtkWidget* handle) noexcept
-			{gtk_box_pack_start(m_handle,handle,m_mode.expand,m_mode.fill,m_mode.padding);}
+			{
+			gtk_box_pack_start(m_handle,handle,m_mode.flags&EXPAND,m_mode.flags&FILL
+				,m_mode.padding);
+			}
 
 		void show() noexcept 
 			{gtk_widget_show_all(GTK_WIDGET(m_handle));}
@@ -51,12 +54,10 @@ class Box::Impl
 	};
 
 Box::Box(Container& cnt,bool vertical)
-	{
-	m_impl=new Box::Impl(cnt,vertical);
-	}
+	{m_impl.reset(new Box::Impl(cnt,vertical));}
 
 Box::~Box()
-	{delete m_impl;}
+	{}
 
 Box& Box::add(void* handle)
 	{
@@ -85,7 +86,7 @@ Box& Box::alignment(float x) noexcept
 	return *this;
 	}
 
-Box::Impl::Impl(Container& cnt,bool vertical):m_mode{0,0,0}
+Box::Impl::Impl(Container& cnt,bool vertical):m_mode{0,0}
 	{
 	printf("Box %p ctor\n",this);
 	auto widget=gtk_box_new(vertical?GTK_ORIENTATION_VERTICAL:GTK_ORIENTATION_HORIZONTAL,4);

@@ -62,10 +62,10 @@ class Window::Impl
 	};
 
 Window::Window(const char* title,bool mainwin)
-	{m_impl=new Window::Impl(title,*this);}
+	{m_impl.reset(new Window::Impl(title,*this));}
 
 Window::~Window()
-	{delete m_impl;}
+	{}
 
 const char* Window::title() const noexcept
 	{return m_impl->title();}

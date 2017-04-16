@@ -76,10 +76,10 @@ class MapViewBase::Impl
 	};
 
 MapViewBase::MapViewBase(Container& cnt,const DataDescriptorImpl& descriptor)
-	{m_impl=new Impl(cnt,descriptor,this);}
+	{m_impl.reset(new Impl(cnt,descriptor,this));}
 
 MapViewBase::~MapViewBase()
-	{delete m_impl;}
+	{}
 
 MapViewBase& MapViewBase::clear()
 	{

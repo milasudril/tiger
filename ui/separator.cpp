@@ -35,15 +35,15 @@ class Separator::Impl
 
 Separator::Separator(Container& cnt,bool vertical) noexcept
 	{
-	m_impl=new Impl(cnt,vertical);
+	m_impl.reset(new Impl(cnt,vertical));
 	}
 
 Separator::~Separator()
-	{delete m_impl;}
+	{}
 
 Separator::Impl::Impl(Container& cnt,bool vertical)
 	{
-	printf("Decorator %p ctor\n",this);
+	printf("Separator %p ctor\n",this);
 
 	auto widget=gtk_separator_new(vertical?GTK_ORIENTATION_VERTICAL
 		:GTK_ORIENTATION_HORIZONTAL);
@@ -56,5 +56,5 @@ Separator::Impl::Impl(Container& cnt,bool vertical)
 Separator::Impl::~Impl()
 	{
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
-	printf("Decorator %p dtor\n",this);
+	printf("Separator %p dtor\n",this);
 	}

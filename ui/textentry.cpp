@@ -65,13 +65,11 @@ class TextEntry::Impl
 
 TextEntry::TextEntry(Container& cnt) noexcept
 	{
-	m_impl=new Impl(cnt,*this);
+	m_impl.reset(new Impl(cnt,*this));
 	}
 
 TextEntry::~TextEntry()
-	{
-	delete m_impl;
-	}
+	{}
 
 TextEntry& TextEntry::callback(Callback cb,void* cb_obj)
 	{

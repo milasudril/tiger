@@ -64,14 +64,10 @@ class RangeView::Impl
 	};
 
 RangeView::RangeView(Container& cnt) noexcept
-	{
-	m_impl=new Impl(cnt,*this);
-	}
+	{m_impl.reset(new Impl(cnt,*this));}
 
 RangeView::~RangeView()
-	{
-	delete m_impl;
-	}
+	{}
 
 Range RangeView::range() const noexcept
 	{return m_impl->range();}

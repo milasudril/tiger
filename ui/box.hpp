@@ -23,22 +23,22 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #ifndef TIGER_BOX_HPP
 #define TIGER_BOX_HPP
 
-#include "container.hpp" // Base class: Tiger::Container
+#include "container.hpp"
+#include <memory>
 
 namespace Tiger
 	{
 	class Box final:public Container
 		{
 		public:
+			static constexpr unsigned short FILL=1;
+			static constexpr unsigned short EXPAND=2;
 			struct InsertMode
 				{
 				unsigned short padding;
-				bool fill;
-				bool expand;
+				unsigned short flags;
 				};
 
-			Box(const Box& rhs)=delete;
-			Box& operator=(const Box& rhs)=delete;
 			explicit Box(Container& parent,bool vertical);
 			~Box();
 
@@ -52,7 +52,7 @@ namespace Tiger
 
 		private:
 			class Impl;
-			Impl* m_impl;
+			std::unique_ptr<Impl> m_impl;
 		};
 	}
 

@@ -23,6 +23,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #ifndef TIGER_RANGEVIEW_HPP
 #define TIGER_RANGEVIEW_HPP
 
+#include <memory>
+
 namespace Tiger
 	{
 	class Container;
@@ -55,7 +57,7 @@ namespace Tiger
 			RangeView& callback(Callback cb,void* cb_obj);
 
 			class Impl;
-			Impl* m_impl;
+			std::unique_ptr<Impl> m_impl;
 		};
 	}
 

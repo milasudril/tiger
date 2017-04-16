@@ -23,7 +23,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #ifndef TIGER_WINDOW_HPP
 #define TIGER_WINDOW_HPP
 
-#include "container.hpp" // Base class: Tiger::Container
+#include "container.hpp"
+#include <memory>
 
 namespace Tiger
 	{
@@ -56,7 +57,7 @@ namespace Tiger
 			Window& callback(Callback cb,void* cb_obj);
 
 			class Impl;
-			Impl* m_impl;
+			std::unique_ptr<Impl> m_impl;
 		};
 	}
 

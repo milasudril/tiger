@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 	b1.label("u");
 	Tiger::Button b2(channels);
 	b2.label("v");
-	box.insertMode({0,1,1});
+	box.insertMode({0,Tiger::Box::EXPAND|Tiger::Box::FILL});
 	Tiger::MapView<MyMapData> mv(box,map_data);
 	auto mv_cb=[](Tiger::MapView<MyMapData>& src,float* address	
 		,const char* value_new)

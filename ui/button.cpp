@@ -53,13 +53,11 @@ class Button::Impl
 
 Button::Button(Container& cnt) noexcept
 	{
-	m_impl=new Impl(cnt,*this);
+	m_impl.reset(new Impl(cnt,*this));
 	}
 
 Button::~Button()
-	{
-	delete m_impl;
-	}
+	{}
 
 Button& Button::callback(Callback cb,void* cb_obj)
 	{

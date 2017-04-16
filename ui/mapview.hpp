@@ -25,6 +25,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <type_traits>
 #include <string>
+#include <memory>
 
 namespace Tiger
 	{
@@ -66,7 +67,7 @@ namespace Tiger
 
 		private:
 			class Impl;
-			Impl* m_impl;
+			std::unique_ptr<Impl> m_impl;
 		};
 
 	template<class DataDescriptor>

@@ -35,15 +35,15 @@ int main(int argc, char *argv[])
 	mainwin.callback(mainwin_cb);
 	Tiger::Box range_entries(mainwin,1);
 	Tiger::TextEntry e_max(range_entries);
-	range_entries.insertMode(Tiger::Box::InsertMode{0,1,1});
+	range_entries.insertMode(Tiger::Box::InsertMode{0,Tiger::Box::FILL|Tiger::Box::EXPAND});
 	Tiger::Box range(range_entries,0);
-	range.insertMode(Tiger::Box::InsertMode{0,1,1});
+	range.insertMode(Tiger::Box::InsertMode{0,Tiger::Box::FILL|Tiger::Box::EXPAND});
 	Tiger::Separator dec_left(range,1);
-	range.insertMode(Tiger::Box::InsertMode{0,0,0});
+	range.insertMode(Tiger::Box::InsertMode{0,0});
 	Tiger::RangeView rv(range);
-	range.insertMode(Tiger::Box::InsertMode{0,1,1});
+	range.insertMode(Tiger::Box::InsertMode{0,Tiger::Box::FILL|Tiger::Box::EXPAND});
 	Tiger::Separator dec_right(range,1);
-	range_entries.insertMode(Tiger::Box::InsertMode{0,0,0});
+	range_entries.insertMode(Tiger::Box::InsertMode{0,0});
 	Tiger::TextEntry e_min(range_entries);
 	auto rv_callback=[&e_min,&e_max](Tiger::RangeView& rv)
 		{
