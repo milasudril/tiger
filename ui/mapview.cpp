@@ -177,6 +177,7 @@ MapViewBase::Impl::Impl(Container& cnt,const DataDescriptorImpl& descriptor
 
 	auto scroll=gtk_scrolled_window_new(NULL,NULL);
 	g_object_ref_sink(tree);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scroll),GTK_SHADOW_IN);
 	gtk_container_add(GTK_CONTAINER(scroll),tree);
 	cnt.add(scroll);
 	}
