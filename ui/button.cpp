@@ -44,11 +44,14 @@ class Button::Impl
 		int id() const noexcept
 			{return m_id;}
 
+		void owner(Button& ow)
+			{r_owner=&ow;}
+
 	private:
 		int m_id;
 		Callback m_cb;
 		void* m_cb_obj;
-		Button& r_owner;
+		Button* r_owner;
 		GtkButton* m_handle;
 
 		static void clicked_callback(GtkWidget* widget,gpointer data);
@@ -59,6 +62,18 @@ Button::Button(Container& cnt,int id,const char* label)
 
 Button::~Button()
 	{}
+
+Button& Button::operator=(Button&& b) noexcept
+	{
+	std::swap(b.m_impl,m_impl);
+	m_impl->owner(*this);
+	return *this;
+	}
+
+Button::Button(Button&& b) noexcept:m_impl(std::move(b.m_impl))
+	{
+	m_impl->owner(*this);
+	}
 
 Button& Button::callback(Callback cb,void* cb_obj)
 	{
@@ -79,10 +94,10 @@ int Button::id() const noexcept
 	{return m_impl->id();}
 
 
-Button::Impl::Impl(Container& cnt,int id,const char* lab,Button& owner):m_id(id),m_cb(nullptr)
-	,r_owner(owner)
+Button::Impl::Impl(Container& cnt,int id,const char* lab,Button& owner):m_id(id)
+	,m_cb(nullptr),r_owner(&owner)
 	{
-	printf("Button %p ctor\n",this);
+	printf("Button %p (%d) ctor\n",this,m_id);
 
 	auto widget=gtk_button_new();
 	g_signal_connect(widget,"clicked",G_CALLBACK(clicked_callback),this);
@@ -103,5 +118,5 @@ void Button::Impl::clicked_callback(GtkWidget* widget,gpointer data)
 	{
 	auto state=reinterpret_cast<Impl*>(data);
 	if(state->m_cb!=nullptr)
-		{(state->m_cb)(state->m_cb_obj,state->r_owner);}
+		{(state->m_cb)(state->m_cb_obj,*state->r_owner);}
 	}

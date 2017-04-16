@@ -26,6 +26,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "box.hpp"
 #include "mapview.hpp"
 #include "label.hpp"
+#include "buttonlist.hpp"
 #include <cassert>
 
 namespace Tiger
@@ -36,6 +37,7 @@ namespace Tiger
 		public:
 			SimulationEditor(Container& cnt,int id);
 			SimulationEditor& simulation(Simulation& sim);
+			void operator()(ButtonList<SimulationEditor>& list,Button& btn);
 
 		private:
 			class ParamDataDescriptor
@@ -69,6 +71,7 @@ namespace Tiger
 			Box m_top;
 				Box m_left;
 					Label m_init_label;
+					ButtonList<SimulationEditor> m_init_list;
 				Box m_right;
 					Label m_param_label;
 					MapView<ParamDataDescriptor> m_params;

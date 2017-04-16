@@ -34,6 +34,9 @@ namespace Tiger
 		public:
 			explicit Button(Container& container,int id,const char* label);
 			~Button();
+
+			Button& operator=(Button&& b) noexcept;
+			Button(Button&& b) noexcept;
 			
 			template<class Callback>
 			Button& callback(Callback& cb)
