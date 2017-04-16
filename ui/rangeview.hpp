@@ -32,7 +32,7 @@ namespace Tiger
 	class RangeView
 		{
 		public:
-			explicit RangeView(Container& container,int id) noexcept;
+			explicit RangeView(Container& container,int id);
 			~RangeView();
 			
 			template<class RangeViewCallback>

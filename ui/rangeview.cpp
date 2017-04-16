@@ -67,7 +67,7 @@ class RangeView::Impl
 		static void destroy_callback (GtkWidget* object,gpointer user_data);
 	};
 
-RangeView::RangeView(Container& cnt,int id) noexcept
+RangeView::RangeView(Container& cnt,int id)
 	{m_impl.reset(new Impl(cnt,id,*this));}
 
 RangeView::~RangeView()

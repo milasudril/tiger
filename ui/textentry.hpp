@@ -32,7 +32,7 @@ namespace Tiger
 	class TextEntry
 		{
 		public:
-			explicit TextEntry(Container& container,int id) noexcept;
+			explicit TextEntry(Container& container,int id);
 			~TextEntry();
 			
 			template<class EntryCallback>

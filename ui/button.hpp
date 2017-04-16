@@ -32,7 +32,7 @@ namespace Tiger
 	class Button
 		{
 		public:
-			explicit Button(Container& container,int id,const char* label) noexcept;
+			explicit Button(Container& container,int id,const char* label);
 			~Button();
 			
 			template<class Callback>

@@ -54,7 +54,7 @@ class Button::Impl
 		static void clicked_callback(GtkWidget* widget,gpointer data);
 	};
 
-Button::Button(Container& cnt,int id,const char* label) noexcept
+Button::Button(Container& cnt,int id,const char* label)
 	{m_impl.reset(new Impl(cnt,id,label,*this));}
 
 Button::~Button()

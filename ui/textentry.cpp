@@ -66,7 +66,7 @@ class TextEntry::Impl
 		static gboolean focus_callback(GtkWidget* widget,GdkEvent* event,gpointer data);
 	};
 
-TextEntry::TextEntry(Container& cnt,int id) noexcept
+TextEntry::TextEntry(Container& cnt,int id)
 	{
 	m_impl.reset(new Impl(cnt,id,*this));
 	}

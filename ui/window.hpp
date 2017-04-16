@@ -31,8 +31,6 @@ namespace Tiger
 	class Window final:public Container
 		{
 		public:
-			Window(const Window& rhs)=delete;
-			Window& operator=(const Window& rhs)=delete;
 			explicit Window(const char* title,int id);
 			~Window();
 
