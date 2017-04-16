@@ -76,7 +76,6 @@ namespace Tiger
 			typedef typename DataDescriptor::key_type key_type;
 			typedef typename DataDescriptor::mapped_type mapped_type;
 
-			explicit MapView(Container& cnt,DataDescriptor&& desc)=delete;
 			explicit MapView(Container& cnt,int id,const DataDescriptor& desc):
 				MapViewBase(cnt,id
 					,{

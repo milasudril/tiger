@@ -68,6 +68,10 @@
       <File Name="ui/button.cpp"/>
       <File Name="ui/label.hpp"/>
       <File Name="ui/label.cpp"/>
+      <File Name="ui/simulationeditor.hpp"/>
+      <File Name="ui/simulationeditor.cpp"/>
+      <File Name="ui/scrolledwindow.hpp"/>
+      <File Name="ui/scrolledwindow.cpp"/>
     </VirtualDirectory>
     <File Name="LICENSE"/>
     <File Name="maikeconfig-rel.json"/>

@@ -18,60 +18,22 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 //@	{"targets":[{"name":"../tiger-ui-test","type":"application"}]}
 
 #include "uicontext.hpp"
+#include "simulationeditor.hpp"
 #include "mapview.hpp"
 #include "window.hpp"
-#include "button.hpp"
-#include "box.hpp"
 #include "../engine/simulation.hpp"
 
 #include <string>
-#include <map>
-#include <cstdio>
-
-class MyMapData
-	{
-	public:
-		typedef const char* key_type;
-		typedef float mapped_type;
-		std::string keyString(const char* str) const noexcept
-			{return str==nullptr?std::string("(null)"):std::string(str);}
-		std::string valueString(float x) const noexcept
-			{
-			std::string ret;
-			ret.reserve(16);
-			sprintf(const_cast<char*>(ret.data()),"%.9g",x);
-			return std::move(ret);
-			}
-		const char* key() const noexcept
-			{return "Name";}
-		const char* value() const noexcept
-			{return "Value";}
-	};
 
 int main(int argc, char *argv[])
 	{
 	Tiger::UiContext ctx;
 	Tiger::Simulation sim("testdata/grayscott.cpp","__targets");
 	Tiger::Window mainwin("Tiger Test",0);
-	Tiger::Box box(mainwin,0);
 	auto mainwin_cb=[&ctx](Tiger::Window& window)
 		{ctx.exit();};
-	MyMapData map_data;
-	Tiger::Box channels(box,1);
-	Tiger::Button b1(channels,0,"u");
-	Tiger::Button b2(channels,0,"v");
-	box.insertMode({0,Tiger::Box::EXPAND|Tiger::Box::FILL});
-	Tiger::MapView<MyMapData> mv(box,0,map_data);
-	auto mv_cb=[](Tiger::MapView<MyMapData>& src,float* address	
-		,const char* value_new)
-		{*address=strtof(value_new,nullptr);};
-	mv.callback(mv_cb).valueAlignment(1.0f);
-	sim.paramsList([&mv](const Tiger::Simulation& sim	
-		,const Tiger::Simulation::ParamName& name,float& value)
-		{
-		printf("%s\n",name);
-		mv.recordAppend(name,value);
-		});
+	Tiger::SimulationEditor m_simedit(mainwin,0);
+	m_simedit.simulation(sim);
 	mainwin.callback(mainwin_cb);
 	mainwin.show();
 	ctx.run();

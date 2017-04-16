@@ -61,4 +61,4 @@ namespace Tiger
 		};
 	}
 
-#endif // TIGER_WINDOW_HPP
+#endif
