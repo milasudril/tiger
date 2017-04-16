@@ -32,9 +32,6 @@ namespace Tiger
 	class RangeView
 		{
 		public:
-			RangeView(const RangeView& rhs)=delete;
-			RangeView& operator=(const RangeView& rhs)=delete;
-
 			explicit RangeView(Container& container,int id) noexcept;
 			~RangeView();
 			

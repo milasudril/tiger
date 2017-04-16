@@ -48,9 +48,6 @@ namespace Tiger
 				bool value_const;
 				};
 
-			MapViewBase(const MapViewBase&)=delete;
-			MapViewBase& operator=(const MapViewBase&)=delete;
-
 			explicit MapViewBase(Container& cnt,int id,const DataDescriptorImpl& descriptor);
 			
 			~MapViewBase();

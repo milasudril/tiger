@@ -66,6 +66,8 @@
       <File Name="ui/mapview.cpp"/>
       <File Name="ui/button.hpp"/>
       <File Name="ui/button.cpp"/>
+      <File Name="ui/label.hpp"/>
+      <File Name="ui/label.cpp"/>
     </VirtualDirectory>
     <File Name="LICENSE"/>
     <File Name="maikeconfig-rel.json"/>

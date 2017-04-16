@@ -32,9 +32,6 @@ namespace Tiger
 	class Button
 		{
 		public:
-			Button(const Button& rhs)=delete;
-			Button& operator=(const Button& rhs)=delete;
-
 			explicit Button(Container& container,int id,const char* label) noexcept;
 			~Button();
 			

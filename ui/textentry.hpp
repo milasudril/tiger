@@ -32,9 +32,6 @@ namespace Tiger
 	class TextEntry
 		{
 		public:
-			TextEntry(const TextEntry& rhs)=delete;
-			TextEntry& operator=(const TextEntry& rhs)=delete;
-
 			explicit TextEntry(Container& container,int id) noexcept;
 			~TextEntry();
 			

@@ -79,7 +79,7 @@ int Button::id() const noexcept
 	{return m_impl->id();}
 
 
-Button::Impl::Impl(Container& cnt,int id,const char* lab,Button& owner):m_cb(nullptr),m_id(id)
+Button::Impl::Impl(Container& cnt,int id,const char* lab,Button& owner):m_id(id),m_cb(nullptr)
 	,r_owner(owner)
 	{
 	printf("Button %p ctor\n",this);

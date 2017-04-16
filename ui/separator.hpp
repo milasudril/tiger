@@ -32,9 +32,6 @@ namespace Tiger
 	class Separator
 		{
 		public:
-			Separator(const Separator& rhs)=delete;
-			Separator& operator=(const Separator& rhs)=delete;
-
 			explicit Separator(Container& container,bool vertical) noexcept;
 			~Separator();
 
@@ -44,4 +41,4 @@ namespace Tiger
 		};
 	}
 
-#endif // TIGER_RANGEVIEW_HPP
+#endif
