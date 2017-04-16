@@ -35,7 +35,7 @@ namespace Tiger
 			Button(const Button& rhs)=delete;
 			Button& operator=(const Button& rhs)=delete;
 
-			explicit Button(Container& container) noexcept;
+			explicit Button(Container& container,int id,const char* label) noexcept;
 			~Button();
 			
 			template<class Callback>
@@ -54,6 +54,8 @@ namespace Tiger
 			Button& label(const char* text);
 
 			Button& width(int n) noexcept;
+			
+			int id() const noexcept;
 
 		private:
 			typedef void (*Callback)(void* cb_obj,Button& self);

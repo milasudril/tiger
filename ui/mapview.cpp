@@ -27,7 +27,7 @@ class MapViewBase::Impl
 	{
 	public:
 		explicit Impl(Container& cnt,const DataDescriptorImpl& descriptor
-			,void* owner);
+			,int id,void* owner);
 		~Impl();
 
 		void clear();
@@ -43,15 +43,19 @@ class MapViewBase::Impl
 			m_value_update=cb;
 			m_cb_obj=cb_obj;
 			}
+			
+		int id() const noexcept
+			{return m_id;}
 
 	private:
+		int m_id;
 		StringCallback m_string_from_key;
 		StringCallback m_string_from_value;
 		const void* m_cb_user_data;
 		ValueSetCallback m_value_update;
 		void* m_cb_obj;
 		void* r_owner;
-
+		
 		GtkTreeView* m_handle;
 		GtkListStore* m_list;
 		GtkCellRendererText* m_key_renderer;
@@ -75,8 +79,8 @@ class MapViewBase::Impl
 
 	};
 
-MapViewBase::MapViewBase(Container& cnt,const DataDescriptorImpl& descriptor)
-	{m_impl.reset(new Impl(cnt,descriptor,this));}
+MapViewBase::MapViewBase(Container& cnt,int id,const DataDescriptorImpl& descriptor)
+	{m_impl.reset(new Impl(cnt,descriptor,id,this));}
 
 MapViewBase::~MapViewBase()
 	{}
@@ -110,15 +114,20 @@ MapViewBase& MapViewBase::callback(ValueSetCallback cb,void* cb_obj)
 	m_impl->callback(cb,cb_obj);
 	return *this;
 	}
+	
+int MapViewBase::id() const noexcept
+	{return m_impl->id();}
+
 
 
 
 MapViewBase::Impl::Impl(Container& cnt,const DataDescriptorImpl& descriptor
-	,void* owner):m_cb_obj(nullptr),r_owner(owner)
+	,int id,void* owner):m_cb_obj(nullptr),r_owner(owner)
 	{
 	m_string_from_key=descriptor.string_from_key;
 	m_string_from_value=descriptor.string_from_value;
 	m_cb_user_data=descriptor.cb_user_data;
+	m_id=id;
 
 	auto content=gtk_list_store_new(2, G_TYPE_UINT64, G_TYPE_UINT64);
 	m_list=content;

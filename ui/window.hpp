@@ -33,7 +33,7 @@ namespace Tiger
 		public:
 			Window(const Window& rhs)=delete;
 			Window& operator=(const Window& rhs)=delete;
-			explicit Window(const char* title,bool mainwin);
+			explicit Window(const char* title,int id);
 			~Window();
 
 			virtual	Window& add(void* handle);
@@ -51,6 +51,8 @@ namespace Tiger
 					};
 				return callback(cb_wrapper,&cb); 
 				}
+
+			int id() const noexcept;
 
 		private:
 			typedef void (*Callback)(void* cb_obj,Window& self);

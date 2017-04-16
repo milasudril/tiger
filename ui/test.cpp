@@ -52,18 +52,16 @@ int main(int argc, char *argv[])
 	{
 	Tiger::UiContext ctx;
 	Tiger::Simulation sim("testdata/grayscott.cpp","__targets");
-	Tiger::Window mainwin("Tiger Test",1);
+	Tiger::Window mainwin("Tiger Test",0);
 	Tiger::Box box(mainwin,0);
 	auto mainwin_cb=[&ctx](Tiger::Window& window)
 		{ctx.exit();};
 	MyMapData map_data;
 	Tiger::Box channels(box,1);
-	Tiger::Button b1(channels);
-	b1.label("u");
-	Tiger::Button b2(channels);
-	b2.label("v");
+	Tiger::Button b1(channels,0,"u");
+	Tiger::Button b2(channels,0,"v");
 	box.insertMode({0,Tiger::Box::EXPAND|Tiger::Box::FILL});
-	Tiger::MapView<MyMapData> mv(box,map_data);
+	Tiger::MapView<MyMapData> mv(box,0,map_data);
 	auto mv_cb=[](Tiger::MapView<MyMapData>& src,float* address	
 		,const char* value_new)
 		{*address=strtof(value_new,nullptr);};

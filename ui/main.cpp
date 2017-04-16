@@ -34,17 +34,17 @@ int main(int argc, char *argv[])
 		{ctx.exit();};
 	mainwin.callback(mainwin_cb);
 	Tiger::Box range_entries(mainwin,1);
-	Tiger::TextEntry e_max(range_entries);
+	Tiger::TextEntry e_max(range_entries,0);
 	range_entries.insertMode(Tiger::Box::InsertMode{0,Tiger::Box::FILL|Tiger::Box::EXPAND});
 	Tiger::Box range(range_entries,0);
 	range.insertMode(Tiger::Box::InsertMode{0,Tiger::Box::FILL|Tiger::Box::EXPAND});
 	Tiger::Separator dec_left(range,1);
 	range.insertMode(Tiger::Box::InsertMode{0,0});
-	Tiger::RangeView rv(range);
+	Tiger::RangeView rv(range,0);
 	range.insertMode(Tiger::Box::InsertMode{0,Tiger::Box::FILL|Tiger::Box::EXPAND});
 	Tiger::Separator dec_right(range,1);
 	range_entries.insertMode(Tiger::Box::InsertMode{0,0});
-	Tiger::TextEntry e_min(range_entries);
+	Tiger::TextEntry e_min(range_entries,1);
 	auto rv_callback=[&e_min,&e_max](Tiger::RangeView& rv)
 		{
 		auto r=rv.range();
@@ -54,22 +54,33 @@ int main(int argc, char *argv[])
 		sprintf(buffer,"%.2e",r.max());
 		e_max.content(buffer);
 		};
-	auto emin_callback=[&rv](Tiger::TextEntry& entry)
+	auto entry_callback=[&rv](Tiger::TextEntry& entry)
 		{
-		auto v_max=rv.range().max();
-		auto v=std::min(atof(entry.content()),v_max);
-		rv.range(Tiger::Range(v,v_max));
-		};
-	auto emax_callback=[&rv](Tiger::TextEntry& entry)
-		{
-		auto v_min=rv.range().min();
-		auto v=std::max(atof(entry.content()),v_min);
-		rv.range(Tiger::Range(v_min,v));
+		switch(entry.id())
+			{
+			case 1:
+				{
+				auto v_max=rv.range().max();
+				auto v=std::min(atof(entry.content()),v_max);
+				rv.range(Tiger::Range(v,v_max));
+				break;
+				}
+			case 0:
+				{
+				auto v_min=rv.range().min();
+				auto v=std::max(atof(entry.content()),v_min);
+				rv.range(Tiger::Range(v_min,v));
+				break;
+				}
+			default:
+				break;
+			}
+	
 		};
 	rv_callback(rv);
 	rv.callback(rv_callback);
-	e_min.callback(emin_callback).width(8).small(1).alignment(1.0f);
-	e_max.callback(emax_callback).width(8).small(1).alignment(1.0f);
+	e_min.callback(entry_callback).width(8).small(1).alignment(1.0f);
+	e_max.callback(entry_callback).width(8).small(1).alignment(1.0f);
 	mainwin.show();
 	ctx.run();
 	return 0;

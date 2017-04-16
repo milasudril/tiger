@@ -35,7 +35,7 @@ namespace Tiger
 			TextEntry(const TextEntry& rhs)=delete;
 			TextEntry& operator=(const TextEntry& rhs)=delete;
 
-			explicit TextEntry(Container& container) noexcept;
+			explicit TextEntry(Container& container,int id) noexcept;
 			~TextEntry();
 			
 			template<class EntryCallback>
@@ -58,6 +58,8 @@ namespace Tiger
 			TextEntry& small(bool status) noexcept;
 
 			TextEntry& alignment(float x) noexcept;
+
+			int id() const noexcept;
 
 		private:
 			typedef void (*Callback)(void* cb_obj,TextEntry& self);

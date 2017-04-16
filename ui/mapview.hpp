@@ -51,7 +51,7 @@ namespace Tiger
 			MapViewBase(const MapViewBase&)=delete;
 			MapViewBase& operator=(const MapViewBase&)=delete;
 
-			explicit MapViewBase(Container& cnt,const DataDescriptorImpl& descriptor);
+			explicit MapViewBase(Container& cnt,int id,const DataDescriptorImpl& descriptor);
 			
 			~MapViewBase();
 
@@ -64,6 +64,8 @@ namespace Tiger
 			MapViewBase& clear();
 
 			MapViewBase& callback(ValueSetCallback cb,void* cb_obj);
+			
+			int id() const noexcept;
 
 		private:
 			class Impl;
@@ -78,9 +80,9 @@ namespace Tiger
 			typedef typename DataDescriptor::mapped_type mapped_type;
 
 			explicit MapView(Container& cnt,DataDescriptor&& desc)=delete;
-			explicit MapView(Container& cnt,const DataDescriptor& desc):
-				MapViewBase(cnt,
-					{
+			explicit MapView(Container& cnt,int id,const DataDescriptor& desc):
+				MapViewBase(cnt,id
+					,{
 					 [](const void* user_data,const void* key)
 						{
 						auto self=reinterpret_cast<const DataDescriptor*>(user_data);
@@ -138,6 +140,8 @@ namespace Tiger
 				MapViewBase::clear();
 				return *this;
 				}
+				
+			using MapViewBase::id;
 		};
 	}
 

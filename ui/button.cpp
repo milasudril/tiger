@@ -26,8 +26,8 @@ using namespace Tiger;
 class Button::Impl
 	{
 	public:
-		Impl(Container& cnt,Button& owner);
-		~Impl();
+		Impl(Container& cnt,int id,const char* label,Button& owner);
+		~Impl();	
 
 		void callback(Callback cb,void* cb_obj)
 			{
@@ -41,8 +41,11 @@ class Button::Impl
 		void label(const char* text) noexcept
 			{return gtk_button_set_label(m_handle,text);}
 
+		int id() const noexcept
+			{return m_id;}
 
 	private:
+		int m_id;
 		Callback m_cb;
 		void* m_cb_obj;
 		Button& r_owner;
@@ -51,10 +54,8 @@ class Button::Impl
 		static void clicked_callback(GtkWidget* widget,gpointer data);
 	};
 
-Button::Button(Container& cnt) noexcept
-	{
-	m_impl.reset(new Impl(cnt,*this));
-	}
+Button::Button(Container& cnt,int id,const char* label) noexcept
+	{m_impl.reset(new Impl(cnt,id,label,*this));}
 
 Button::~Button()
 	{}
@@ -73,9 +74,12 @@ Button& Button::label(const char* text)
 	m_impl->label(text);
 	return *this;
 	}
+	
+int Button::id() const noexcept
+	{return m_impl->id();}
 
 
-Button::Impl::Impl(Container& cnt,Button& owner):m_cb(nullptr)
+Button::Impl::Impl(Container& cnt,int id,const char* lab,Button& owner):m_cb(nullptr),m_id(id)
 	,r_owner(owner)
 	{
 	printf("Button %p ctor\n",this);
@@ -85,6 +89,7 @@ Button::Impl::Impl(Container& cnt,Button& owner):m_cb(nullptr)
 	m_handle=GTK_BUTTON(widget);
 	g_object_ref_sink(widget);
 	cnt.add(widget);
+	label(lab);
 	}
 
 Button::Impl::~Impl()

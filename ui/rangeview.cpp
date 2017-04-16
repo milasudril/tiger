@@ -28,7 +28,7 @@ using namespace Tiger;
 class RangeView::Impl
 	{
 	public:
-		Impl(Container& cnt,RangeView& owner);
+		Impl(Container& cnt,int id,RangeView& owner);
 		~Impl();
 
 		Range range() const noexcept
@@ -45,8 +45,12 @@ class RangeView::Impl
 			m_cb=cb;
 			m_cb_obj=cb_obj;
 			}
+			
+		int id() const noexcept
+			{return m_id;}
 
 	private:
+		int m_id;
 		Range m_range;
 		Callback m_cb;
 		void* m_cb_obj;
@@ -63,8 +67,8 @@ class RangeView::Impl
 		static void destroy_callback (GtkWidget* object,gpointer user_data);
 	};
 
-RangeView::RangeView(Container& cnt) noexcept
-	{m_impl.reset(new Impl(cnt,*this));}
+RangeView::RangeView(Container& cnt,int id) noexcept
+	{m_impl.reset(new Impl(cnt,id,*this));}
 
 RangeView::~RangeView()
 	{}
@@ -84,10 +88,12 @@ RangeView& RangeView::callback(Callback cb,void* cb_obj)
 	return *this;
 	}
 
+int RangeView::id() const noexcept
+	{return m_impl->id();}
 
 
 
-RangeView::Impl::Impl(Container& cnt,RangeView& owner):m_cb(nullptr)
+RangeView::Impl::Impl(Container& cnt,int id,RangeView& owner):m_id(id),m_cb(nullptr)
 	,r_owner(owner),m_move(0)
 	{
 	printf("RangeView %p ctor\n",this);

@@ -35,7 +35,7 @@ namespace Tiger
 			RangeView(const RangeView& rhs)=delete;
 			RangeView& operator=(const RangeView& rhs)=delete;
 
-			explicit RangeView(Container& container) noexcept;
+			explicit RangeView(Container& container,int id) noexcept;
 			~RangeView();
 			
 			template<class RangeViewCallback>
@@ -51,6 +51,8 @@ namespace Tiger
 
 			Range range() const noexcept;
 			RangeView& range(const Range& range) noexcept;
+			
+			int id() const noexcept;
 
 		private:
 			typedef void (*Callback)(void* cb_obj,RangeView& self);

@@ -26,7 +26,7 @@ using namespace Tiger;
 class TextEntry::Impl
 	{
 	public:
-		Impl(Container& cnt,TextEntry& owner);
+		Impl(Container& cnt,int id,TextEntry& owner);
 		~Impl();
 
 		void callback(Callback cb,void* cb_obj)
@@ -53,8 +53,11 @@ class TextEntry::Impl
 		void alignment(float x)
 			{gtk_entry_set_alignment(m_handle,x);}
 
+		int id() const noexcept
+			{return m_id;}
 
 	private:
+		int m_id;
 		Callback m_cb;
 		void* m_cb_obj;
 		TextEntry& r_owner;
@@ -63,9 +66,9 @@ class TextEntry::Impl
 		static gboolean focus_callback(GtkWidget* widget,GdkEvent* event,gpointer data);
 	};
 
-TextEntry::TextEntry(Container& cnt) noexcept
+TextEntry::TextEntry(Container& cnt,int id) noexcept
 	{
-	m_impl.reset(new Impl(cnt,*this));
+	m_impl.reset(new Impl(cnt,id,*this));
 	}
 
 TextEntry::~TextEntry()
@@ -104,10 +107,13 @@ TextEntry& TextEntry::alignment(float x) noexcept
 	return *this;
 	}
 
+int TextEntry::id() const noexcept
+	{return m_impl->id();}
 
 
-TextEntry::Impl::Impl(Container& cnt,TextEntry& owner):m_cb(nullptr)
-	,r_owner(owner)
+
+TextEntry::Impl::Impl(Container& cnt,int id,TextEntry& owner):m_id(id)
+	,m_cb(nullptr),r_owner(owner)
 	{
 	printf("Entry %p ctor\n",this);
 
