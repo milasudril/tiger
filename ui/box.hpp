@@ -52,7 +52,8 @@ namespace Tiger
 				{obj.m_impl=nullptr;}
 
 			Box& add(void* handle);
-			void show();
+			Box& show();
+			Box& sensitive(bool val);
 
 			Box& homogenous(bool status) noexcept;
 			Box& insertMode(const InsertMode& mode) noexcept;

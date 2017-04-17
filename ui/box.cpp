@@ -36,8 +36,11 @@ class Box::Impl:private Box
 				,m_mode.padding);
 			}
 
-		void show() noexcept 
+		void _show() noexcept 
 			{gtk_widget_show_all(GTK_WIDGET(m_handle));}
+
+		void _sensitive(bool val)
+			{gtk_widget_set_sensitive(GTK_WIDGET(m_handle),val);}
 
 		void homogenous(bool status) noexcept
 			{gtk_box_set_homogeneous(m_handle,status);}
@@ -71,8 +74,17 @@ Box& Box::add(void* handle)
 	return *this;
 	}
 
-void Box::show()
-	{m_impl->show();}
+Box& Box::show()
+	{
+	m_impl->_show();
+	return *this;
+	}
+
+Box& Box::sensitive(bool val)
+	{
+	m_impl->_sensitive(val);
+	return *this;
+	}
 
 Box& Box::homogenous(bool status) noexcept
 	{

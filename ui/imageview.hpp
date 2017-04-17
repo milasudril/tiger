@@ -39,6 +39,7 @@ namespace Tiger
 				{
 				assert(channel>=0 && channel<static_cast<int>(img.channelCount()));
 				m_img_display.image(img,channel);
+				m_box.sensitive(1);
 				return *this;
 				}
 

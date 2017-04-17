@@ -74,11 +74,13 @@ void SimulationEditor::operator()(Window& src)
 
 SimulationEditor& SimulationEditor::simulation(Simulation& sim)
 	{
+	m_params.clear();
 	sim.paramsList([this](const Simulation& sim,const char* const& name
 		,float& value)
 		{m_params.recordAppend(name,value);});
 
 	r_sim=&sim;
+	m_init_list.clear();
 	sim.channelsList([this](const Simulation& sim,const char* ch)
 		{m_init_list.append(ch);});
 	m_init_list.append("Load all");

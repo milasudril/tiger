@@ -43,8 +43,11 @@ class Window::Impl:private Window
 		void add(GtkWidget* handle)
 			{gtk_container_add(GTK_CONTAINER(m_handle),handle);}
 
-		void show()
+		void _show()
 			{gtk_widget_show_all(GTK_WIDGET(m_handle));}
+
+		void _sensitive(bool val)
+			{gtk_widget_set_sensitive(GTK_WIDGET(m_handle),val);}
 
 		void callback(Callback cb,void* cb_obj)
 			{
@@ -85,9 +88,16 @@ Window& Window::add(void* handle)
 	return *this;
 	}
 
-void Window::show()
+Window& Window::show()
 	{
-	m_impl->show();
+	m_impl->_show();
+	return *this;
+	}
+
+Window& Window::sensitive(bool val)
+	{
+	m_impl->_sensitive(val);
+	return *this;
 	}
 
 int Window::id() const noexcept

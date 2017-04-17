@@ -44,7 +44,8 @@ namespace Tiger
 				{obj.m_impl=nullptr;}
 
 			ScrolledWindow& add(void* handle);
-			void show();
+			ScrolledWindow& show();
+			ScrolledWindow& sensitive(bool val);
 
 		protected:
 			class Impl;

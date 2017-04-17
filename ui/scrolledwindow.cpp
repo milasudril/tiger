@@ -33,9 +33,11 @@ class ScrolledWindow::Impl:private ScrolledWindow
 		void add(GtkWidget* handle) noexcept
 			{gtk_container_add(GTK_CONTAINER(m_handle),handle);}
 
-		void show() noexcept 
+		void _show() noexcept 
 			{gtk_widget_show_all(GTK_WIDGET(m_handle));}
 
+		void _sensitive(bool val)
+			{gtk_widget_set_sensitive(GTK_WIDGET(m_handle),val);}
 
 	private:
 		static void destroy_callback (GtkWidget* object,gpointer user_data);
@@ -54,8 +56,17 @@ ScrolledWindow& ScrolledWindow::add(void* handle)
 	return *this;
 	}
 
-void ScrolledWindow::show()
-	{m_impl->show();}
+ScrolledWindow& ScrolledWindow::show()
+	{
+	m_impl->_show();
+	return *this;
+	}
+
+ScrolledWindow& ScrolledWindow::sensitive(bool val)
+	{
+	m_impl->_sensitive(val);
+	return *this;
+	}
 
 ScrolledWindow::Impl::Impl(Container& cnt):ScrolledWindow(*this)
 	{

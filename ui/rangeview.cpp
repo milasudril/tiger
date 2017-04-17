@@ -149,6 +149,17 @@ static int move_detect(double x,double y,double w,double h,const Range& r)
 	return 0;
 	}
 
+namespace 
+	{
+	struct Color
+		{
+		double r;
+		double g;
+		double b;
+		double a;
+		};
+	}
+
 gboolean RangeView::Impl::draw_callback(GtkWidget *widget, cairo_t *cr, gpointer data)
 	{
 	auto state=reinterpret_cast<Impl*>(data);
@@ -159,12 +170,17 @@ gboolean RangeView::Impl::draw_callback(GtkWidget *widget, cairo_t *cr, gpointer
 	gtk_render_background(context,cr,0,0,width,height);
 
 	cairo_rectangle(cr,0,height*(1.0 - state->m_range.max())
-			,width,height*state->m_range.length());
-	cairo_set_source_rgb(cr, 0.05,0.6,0.15); //What color should be used here?
-	cairo_fill (cr);
+		,width,height*state->m_range.length());
 
-	cairo_set_source_rgb(cr,0.01,0.3,0.07);	//And here
+	auto widget_state=gtk_widget_is_sensitive(widget);
+	Color color_bar{0.05,0.6,0.15,widget_state?1.0:0.5}; //What color should be used here?
+	Color color_handle{0.03,0.4,0.01,widget_state?1.0:0.5}; //And here
+
+	cairo_set_source_rgba(cr,color_bar.r,color_bar.g,color_bar.b,color_handle.a);
+	cairo_fill (cr);
+	cairo_set_source_rgba(cr,color_handle.r,color_handle.g,color_handle.b,color_handle.a);	
 	auto mid=height*(1.0 - state->m_range.mid());
+
 	cairo_move_to(cr,0, mid);
 	cairo_line_to(cr,width,mid);
 	cairo_stroke(cr);

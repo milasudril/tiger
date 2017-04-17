@@ -64,6 +64,7 @@ ImageView::ImageView(Container& cnt,int id):m_id(id)
 	m_entry_min.alignment(1.0f).small(1).width(8).callback(*this);
 	m_btn_auto.callback(*this);
 	m_rv.callback(*this);
+	m_box.sensitive(0);
 	}
 
 void ImageView::operator()(Button& src)

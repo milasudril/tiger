@@ -44,7 +44,8 @@ namespace Tiger
 				{obj.m_impl=nullptr;}
 
 			Window& add(void* handle);
-			void show();
+			Window& show();
+			Window& sensitive(bool val);
 			const char* title() const noexcept;
 			Window& title(const char* title_new);
 
