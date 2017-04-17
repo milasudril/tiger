@@ -23,16 +23,16 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Tiger;
 
-class Button::Impl
+class Button::Impl:private Button
 	{
 	public:
-		Impl(Container& cnt,int id,const char* label,Button& owner);
+		Impl(Container& cnt,int id,const char* label);
 		~Impl();	
 
 		void callback(Callback cb,void* cb_obj)
 			{
-			m_cb=cb;
-			m_cb_obj=cb_obj;
+			r_cb=cb;
+			r_cb_obj=cb_obj;
 			}
 
 		const char* label() const noexcept
@@ -44,36 +44,20 @@ class Button::Impl
 		int id() const noexcept
 			{return m_id;}
 
-		void owner(Button& ow)
-			{r_owner=&ow;}
-
 	private:
 		int m_id;
-		Callback m_cb;
-		void* m_cb_obj;
-		Button* r_owner;
+		Callback r_cb;
+		void* r_cb_obj;
 		GtkButton* m_handle;
 
 		static void clicked_callback(GtkWidget* widget,gpointer data);
 	};
 
 Button::Button(Container& cnt,int id,const char* label)
-	{m_impl.reset(new Impl(cnt,id,label,*this));}
+	{m_impl=new Impl(cnt,id,label);}
 
 Button::~Button()
-	{}
-
-Button& Button::operator=(Button&& b) noexcept
-	{
-	std::swap(b.m_impl,m_impl);
-	m_impl->owner(*this);
-	return *this;
-	}
-
-Button::Button(Button&& b) noexcept:m_impl(std::move(b.m_impl))
-	{
-	m_impl->owner(*this);
-	}
+	{delete m_impl;}
 
 Button& Button::callback(Callback cb,void* cb_obj)
 	{
@@ -94,8 +78,8 @@ int Button::id() const noexcept
 	{return m_impl->id();}
 
 
-Button::Impl::Impl(Container& cnt,int id,const char* lab,Button& owner):m_id(id)
-	,m_cb(nullptr),r_owner(&owner)
+Button::Impl::Impl(Container& cnt,int id,const char* lab):Button(*this),m_id(id)
+	,r_cb(nullptr)
 	{
 	printf("Button %p (%d) ctor\n",this,m_id);
 
@@ -109,7 +93,8 @@ Button::Impl::Impl(Container& cnt,int id,const char* lab,Button& owner):m_id(id)
 
 Button::Impl::~Impl()
 	{
-	m_cb=nullptr;
+	m_impl=nullptr;
+	r_cb=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	printf("Button %p dtor\n",this);
 	}
@@ -117,6 +102,6 @@ Button::Impl::~Impl()
 void Button::Impl::clicked_callback(GtkWidget* widget,gpointer data)
 	{
 	auto state=reinterpret_cast<Impl*>(data);
-	if(state->m_cb!=nullptr)
-		{(state->m_cb)(state->m_cb_obj,*state->r_owner);}
+	if(state->r_cb!=nullptr)
+		{(state->r_cb)(state->r_cb_obj,*state);}
 	}

@@ -25,7 +25,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <type_traits>
 #include <string>
-#include <memory>
 
 namespace Tiger
 	{
@@ -35,7 +34,7 @@ namespace Tiger
 		{
 		public:
 			typedef std::string (*StringCallback)(const void* user_data,const void* value);
-			typedef void (*ValueSetCallback)(void* src_obj,void* user_data
+			typedef void (*ValueSetCallback)(MapViewBase& src_obj,void* user_data
 				,void* ptr,const char* value_new);
 
 			struct DataDescriptorImpl
@@ -52,6 +51,15 @@ namespace Tiger
 			
 			~MapViewBase();
 
+			MapViewBase& operator=(MapViewBase&& obj) noexcept
+				{
+				std::swap(obj.m_impl,m_impl);
+				return *this;
+				}
+
+			MapViewBase(MapViewBase&& obj) noexcept:m_impl(obj.m_impl)
+				{obj.m_impl=nullptr;}
+
 			MapViewBase& keyAlignment(float val);
 
 			MapViewBase& valueAlignment(float val);
@@ -64,17 +72,21 @@ namespace Tiger
 			
 			int id() const noexcept;
 
-		private:
+		protected:
 			class Impl;
-			std::unique_ptr<Impl> m_impl;
+			Impl* m_impl;
+
+			explicit MapViewBase(Impl& impl):m_impl(&impl){}
 		};
 
 	template<class DataDescriptor>
-	class MapView:protected MapViewBase
+	class MapView:private MapViewBase
 		{
 		public:
 			typedef typename DataDescriptor::key_type key_type;
 			typedef typename DataDescriptor::mapped_type mapped_type;
+
+			explicit MapView(Container& cnt,int id,DataDescriptor&& desc)=delete;
 
 			explicit MapView(Container& cnt,int id,const DataDescriptor& desc):
 				MapViewBase(cnt,id
@@ -107,13 +119,13 @@ namespace Tiger
 			std::enable_if_t<!std::is_const<mapped_type>::value,MapView&>
 			callback(Callback& cb) noexcept
 				{
-				auto func=[](void* src_obj,void* user_data
+				auto func=[](MapViewBase& src_obj,void* user_data
 					,void* ptr,const char* value_new)
 					{
-					auto self=reinterpret_cast<MapView*>(src_obj);
+					auto& self=reinterpret_cast<MapView&>(src_obj);
 					auto cb_obj=reinterpret_cast<Callback*>(user_data);
 					auto x=reinterpret_cast<mapped_type*>(ptr);
-					(*cb_obj)(*self,x,value_new);
+					(*cb_obj)(self,*x,value_new);
 					};
 				MapViewBase::callback(func,&cb);
 				return *this;

@@ -24,11 +24,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #define TIGER_BOX_HPP
 
 #include "container.hpp"
-#include <memory>
+#include <utility>
 
 namespace Tiger
 	{
-	class Box final:public Container
+	class Box:public Container
 		{
 		public:
 			static constexpr unsigned short FILL=1;
@@ -42,17 +42,27 @@ namespace Tiger
 			explicit Box(Container& parent,bool vertical);
 			~Box();
 
-			virtual	Box& add(void* handle);
-			virtual void show();
+			Box& operator=(Box&& obj) noexcept
+				{
+				std::swap(obj.m_impl,m_impl);
+				return *this;
+				}
+
+			Box(Box&& obj) noexcept:m_impl(obj.m_impl)
+				{obj.m_impl=nullptr;}
+
+			Box& add(void* handle);
+			void show();
 
 			Box& homogenous(bool status) noexcept;
 			Box& insertMode(const InsertMode& mode) noexcept;
 
 			Box& alignment(float x) noexcept;
 
-		private:
+		protected:
 			class Impl;
-			std::unique_ptr<Impl> m_impl;
+			explicit Box(Box::Impl& impl):m_impl(&impl){}
+			Impl* m_impl;
 		};
 	}
 

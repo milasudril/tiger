@@ -24,16 +24,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Tiger;
 
-class ScrolledWindow::Impl
+class ScrolledWindow::Impl:private ScrolledWindow
 	{
 	public:
 		Impl(Container& cnt);
 		~Impl();
 
 		void add(GtkWidget* handle) noexcept
-			{
-			gtk_container_add(GTK_CONTAINER(m_handle),handle);
-			}
+			{gtk_container_add(GTK_CONTAINER(m_handle),handle);}
 
 		void show() noexcept 
 			{gtk_widget_show_all(GTK_WIDGET(m_handle));}
@@ -45,10 +43,10 @@ class ScrolledWindow::Impl
 	};
 
 ScrolledWindow::ScrolledWindow(Container& cnt)
-	{m_impl.reset(new ScrolledWindow::Impl(cnt));}
+	{m_impl=new ScrolledWindow::Impl(cnt);}
 
 ScrolledWindow::~ScrolledWindow()
-	{}
+	{delete m_impl;}
 
 ScrolledWindow& ScrolledWindow::add(void* handle)
 	{
@@ -59,7 +57,7 @@ ScrolledWindow& ScrolledWindow::add(void* handle)
 void ScrolledWindow::show()
 	{m_impl->show();}
 
-ScrolledWindow::Impl::Impl(Container& cnt)
+ScrolledWindow::Impl::Impl(Container& cnt):ScrolledWindow(*this)
 	{
 	printf("ScrolledWindow %p ctor\n",this);
 	auto widget=gtk_scrolled_window_new(NULL,NULL);
@@ -70,6 +68,7 @@ ScrolledWindow::Impl::Impl(Container& cnt)
 
 ScrolledWindow::Impl::~Impl()
 	{
+	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	printf("ScrolledWindow %p dtor\n",this);
 	}

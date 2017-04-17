@@ -25,10 +25,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Tiger;
 
-class Window::Impl
+class Window::Impl:private Window
 	{
 	public:
-		Impl(const char* ti,int id,Window& owner);
+		Impl(const char* ti,int id);
 		~Impl();
 
 		const char* title() const noexcept
@@ -60,16 +60,15 @@ class Window::Impl
 		int m_id;
 		Callback m_cb;
 		void* m_cb_obj;
-		Window& r_owner;
 		GtkWindow* m_handle;
 		std::string m_title;
 	};
 
 Window::Window(const char* title,int id)
-	{m_impl.reset(new Window::Impl(title,id,*this));}
+	{m_impl=new Impl(title,id);}
 
 Window::~Window()
-	{}
+	{delete m_impl;}
 
 const char* Window::title() const noexcept
 	{return m_impl->title();}
@@ -102,7 +101,7 @@ Window& Window::callback(Callback cb,void* cb_obj)
 
 
 
-Window::Impl::Impl(const char* ti,int id,Window& owner):m_cb(nullptr),r_owner(owner)
+Window::Impl::Impl(const char* ti,int id):Window(*this),m_cb(nullptr)
 	{
 	printf("Window %p ctor\n",this);
 	auto widget=gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -114,6 +113,7 @@ Window::Impl::Impl(const char* ti,int id,Window& owner):m_cb(nullptr),r_owner(ow
 
 Window::Impl::~Impl()
 	{
+	m_impl=nullptr;
 	printf("Window %p dtor\n",this);
 	m_cb=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
@@ -123,6 +123,6 @@ gboolean Window::Impl::delete_callback(GtkWidget* widget,GdkEvent* event,gpointe
 	{
 	auto self=reinterpret_cast<Impl*>(user_data);
 	if(self->m_cb!=nullptr)
-		{self->m_cb(self->m_cb_obj,self->r_owner);}
+		{self->m_cb(self->m_cb_obj,*self);}
 	return TRUE;
 	}

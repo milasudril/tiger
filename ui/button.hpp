@@ -35,8 +35,14 @@ namespace Tiger
 			explicit Button(Container& container,int id,const char* label);
 			~Button();
 
-			Button& operator=(Button&& b) noexcept;
-			Button(Button&& b) noexcept;
+			Button& operator=(Button&& obj) noexcept
+				{
+				std::swap(obj.m_impl,m_impl);
+				return *this;
+				}
+
+			Button(Button&& obj) noexcept:m_impl(obj.m_impl)
+				{obj.m_impl=nullptr;}
 			
 			template<class Callback>
 			Button& callback(Callback& cb)
@@ -53,15 +59,14 @@ namespace Tiger
 
 			Button& label(const char* text);
 
-			Button& width(int n) noexcept;
-			
 			int id() const noexcept;
 
-		private:
+		protected:
+			class Impl;
+			explicit Button(Impl& impl):m_impl(&impl){}
+			Impl* m_impl;
 			typedef void (*Callback)(void* cb_obj,Button& self);
 			Button& callback(Callback cb,void* cb_obj);
-			class Impl;
-			std::unique_ptr<Impl> m_impl;
 		};
 	}
 

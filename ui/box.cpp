@@ -24,7 +24,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Tiger;
 
-class Box::Impl
+class Box::Impl:private Box
 	{
 	public:
 		Impl(Container& cnt,bool vertical);
@@ -54,10 +54,16 @@ class Box::Impl
 	};
 
 Box::Box(Container& cnt,bool vertical)
-	{m_impl.reset(new Box::Impl(cnt,vertical));}
+	{
+	printf("Box %p ctor\n",this);
+	m_impl=new Box::Impl(cnt,vertical);
+	}
 
 Box::~Box()
-	{}
+	{
+	delete m_impl;
+	printf("Box %p dtor\n",this);
+	}
 
 Box& Box::add(void* handle)
 	{
@@ -86,9 +92,9 @@ Box& Box::alignment(float x) noexcept
 	return *this;
 	}
 
-Box::Impl::Impl(Container& cnt,bool vertical):m_mode{0,0}
+Box::Impl::Impl(Container& cnt,bool vertical):Box(*this),m_mode{0,0}
 	{
-	printf("Box %p ctor\n",this);
+	printf("Box::Impl %p ctor\n",this);
 	auto widget=gtk_box_new(vertical?GTK_ORIENTATION_VERTICAL:GTK_ORIENTATION_HORIZONTAL,4);
 	cnt.add(widget);
 	g_object_ref_sink(widget);
@@ -97,8 +103,9 @@ Box::Impl::Impl(Container& cnt,bool vertical):m_mode{0,0}
 
 Box::Impl::~Impl()
 	{
+	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
-	printf("Box %p dtor\n",this);
+	printf("Box::Impl %p dtor\n",this);
 	}
 
 void Box::Impl::alignment(float x) noexcept

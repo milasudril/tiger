@@ -27,6 +27,7 @@ namespace Tiger
 	class Container
 		{
 		public:
+			virtual ~Container()=default;
 			virtual Container& add(void* handle)=0;
 			virtual void show()=0;
 		};

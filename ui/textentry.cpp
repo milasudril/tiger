@@ -23,10 +23,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Tiger;
 
-class TextEntry::Impl
+class TextEntry::Impl:private TextEntry
 	{
 	public:
-		Impl(Container& cnt,int id,TextEntry& owner);
+		Impl(Container& cnt,int id);
 		~Impl();
 
 		void callback(Callback cb,void* cb_obj)
@@ -60,19 +60,16 @@ class TextEntry::Impl
 		int m_id;
 		Callback m_cb;
 		void* m_cb_obj;
-		TextEntry& r_owner;
 		GtkEntry* m_handle;
 
 		static gboolean focus_callback(GtkWidget* widget,GdkEvent* event,gpointer data);
 	};
 
 TextEntry::TextEntry(Container& cnt,int id)
-	{
-	m_impl.reset(new Impl(cnt,id,*this));
-	}
+	{m_impl=new Impl(cnt,id);}
 
 TextEntry::~TextEntry()
-	{}
+	{delete m_impl;}
 
 TextEntry& TextEntry::callback(Callback cb,void* cb_obj)
 	{
@@ -112,8 +109,8 @@ int TextEntry::id() const noexcept
 
 
 
-TextEntry::Impl::Impl(Container& cnt,int id,TextEntry& owner):m_id(id)
-	,m_cb(nullptr),r_owner(owner)
+TextEntry::Impl::Impl(Container& cnt,int id):TextEntry(*this),m_id(id)
+	,m_cb(nullptr)
 	{
 	printf("Entry %p ctor\n",this);
 
@@ -126,6 +123,7 @@ TextEntry::Impl::Impl(Container& cnt,int id,TextEntry& owner):m_id(id)
 
 TextEntry::Impl::~Impl()
 	{
+	m_impl=nullptr;
 	m_cb=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	printf("Entry %p dtor\n",this);
@@ -135,6 +133,6 @@ gboolean TextEntry::Impl::focus_callback(GtkWidget* widget,GdkEvent* event,gpoin
 	{
 	auto state=reinterpret_cast<Impl*>(data);
 	if(state->m_cb!=nullptr)
-		{(state->m_cb)(state->m_cb_obj,state->r_owner);}
+		{(state->m_cb)(state->m_cb_obj,*state);}
 	return FALSE;
 	}

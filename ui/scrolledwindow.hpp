@@ -24,22 +24,33 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #define TIGER_SCROLLEDWINDOW_HPP
 
 #include "container.hpp"
-#include <memory>
+#include <utility>
 
 namespace Tiger
 	{
-	class ScrolledWindow final:public Container
+	class ScrolledWindow:public Container
 		{
 		public:
 			explicit ScrolledWindow(Container& parent);
 			~ScrolledWindow();
 
-			virtual	ScrolledWindow& add(void* handle);
-			virtual void show();
+			ScrolledWindow& operator=(ScrolledWindow& obj) noexcept
+				{
+				std::swap(obj.m_impl,m_impl);
+				return *this;
+				}
 
-		private:
+			ScrolledWindow(ScrolledWindow&& obj) noexcept:m_impl(obj.m_impl)
+				{obj.m_impl=nullptr;}
+
+			ScrolledWindow& add(void* handle);
+			void show();
+
+		protected:
 			class Impl;
-			std::unique_ptr<Impl> m_impl;
+			Impl* m_impl;
+
+			explicit ScrolledWindow(Impl& impl):m_impl(&impl){}
 		};
 	}
 

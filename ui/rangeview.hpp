@@ -23,7 +23,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #ifndef TIGER_RANGEVIEW_HPP
 #define TIGER_RANGEVIEW_HPP
 
-#include <memory>
+#include <utility>
 
 namespace Tiger
 	{
@@ -34,6 +34,15 @@ namespace Tiger
 		public:
 			explicit RangeView(Container& container,int id);
 			~RangeView();
+
+			RangeView& operator=(RangeView&& obj) noexcept
+				{
+				std::swap(obj.m_impl,m_impl);
+				return *this;
+				}
+
+			RangeView(RangeView&& obj) noexcept:m_impl(obj.m_impl)
+				{obj.m_impl=nullptr;}
 			
 			template<class RangeViewCallback>
 			RangeView& callback(RangeViewCallback& cb)
@@ -51,12 +60,14 @@ namespace Tiger
 			
 			int id() const noexcept;
 
-		private:
+		protected:
 			typedef void (*Callback)(void* cb_obj,RangeView& self);
 			RangeView& callback(Callback cb,void* cb_obj);
 
 			class Impl;
-			std::unique_ptr<Impl> m_impl;
+			Impl* m_impl;
+
+			explicit RangeView(Impl& impl):m_impl(&impl){}
 		};
 	}
 

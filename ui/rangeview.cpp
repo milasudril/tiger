@@ -25,10 +25,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Tiger;
 
-class RangeView::Impl
+class RangeView::Impl:private RangeView
 	{
 	public:
-		Impl(Container& cnt,int id,RangeView& owner);
+		Impl(Container& cnt,int id);
 		~Impl();
 
 		Range range() const noexcept
@@ -54,7 +54,6 @@ class RangeView::Impl
 		Range m_range;
 		Callback m_cb;
 		void* m_cb_obj;
-		RangeView& r_owner;
 		int m_move;
 		GdkCursor* m_cursors[4];
 		GtkWidget* m_widget;
@@ -68,10 +67,10 @@ class RangeView::Impl
 	};
 
 RangeView::RangeView(Container& cnt,int id)
-	{m_impl.reset(new Impl(cnt,id,*this));}
+	{m_impl=new Impl(cnt,id);}
 
 RangeView::~RangeView()
-	{}
+	{delete m_impl;}
 
 Range RangeView::range() const noexcept
 	{return m_impl->range();}
@@ -93,8 +92,8 @@ int RangeView::id() const noexcept
 
 
 
-RangeView::Impl::Impl(Container& cnt,int id,RangeView& owner):m_id(id),m_cb(nullptr)
-	,r_owner(owner),m_move(0)
+RangeView::Impl::Impl(Container& cnt,int id):RangeView(*this),m_id(id),m_cb(nullptr)
+	,m_move(0)
 	{
 	printf("RangeView %p ctor\n",this);
 	auto display=gdk_display_get_default();
@@ -122,6 +121,7 @@ RangeView::Impl::Impl(Container& cnt,int id,RangeView& owner):m_id(id),m_cb(null
 
 RangeView::Impl::~Impl()
 	{
+	m_impl=nullptr;
 	m_cb=nullptr;
 	printf("RangeView %p dtor\n",this);
 	auto style=gtk_widget_get_style_context(m_widget);
@@ -242,7 +242,7 @@ gboolean RangeView::Impl::move_callback(GtkWidget* widget,GdkEvent* event,gpoint
 		{
 		gdk_window_set_cursor(parent,state->m_cursors[state->m_move]);
 		if(state->m_cb!=nullptr)
-			{state->m_cb(state->m_cb_obj,state->r_owner);}
+			{state->m_cb(state->m_cb_obj,*state);}
 		}
 	return FALSE;
 	}

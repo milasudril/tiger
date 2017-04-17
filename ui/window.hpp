@@ -24,18 +24,27 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #define TIGER_WINDOW_HPP
 
 #include "container.hpp"
-#include <memory>
+#include <utility>
 
 namespace Tiger
 	{
-	class Window final:public Container
+	class Window:public Container
 		{
 		public:
 			explicit Window(const char* title,int id);
 			~Window();
 
-			virtual	Window& add(void* handle);
-			virtual void show();
+			Window& operator=(Window&& obj) noexcept
+				{
+				std::swap(obj.m_impl,m_impl);
+				return *this;
+				}
+
+			Window(Window&& obj) noexcept:m_impl(obj.m_impl)
+				{obj.m_impl=nullptr;}
+
+			Window& add(void* handle);
+			void show();
 			const char* title() const noexcept;
 			Window& title(const char* title_new);
 
@@ -52,12 +61,13 @@ namespace Tiger
 
 			int id() const noexcept;
 
-		private:
+		protected:
 			typedef void (*Callback)(void* cb_obj,Window& self);
 			Window& callback(Callback cb,void* cb_obj);
 
 			class Impl;
-			std::unique_ptr<Impl> m_impl;
+			Impl* m_impl;
+			explicit Window(Impl& impl):m_impl(&impl){}
 		};
 	}
 

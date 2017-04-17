@@ -23,7 +23,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #ifndef TIGER_TEXTENTRY_HPP
 #define TIGER_TEXTENTRY_HPP
 
-#include <memory>
+#include <utility>
 
 namespace Tiger
 	{
@@ -34,6 +34,15 @@ namespace Tiger
 		public:
 			explicit TextEntry(Container& container,int id);
 			~TextEntry();
+
+			TextEntry& operator=(TextEntry&& obj) noexcept
+				{
+				std::swap(obj.m_impl,m_impl);
+				return *this;
+				}
+
+			TextEntry(TextEntry&& obj) noexcept:m_impl(obj.m_impl)
+				{obj.m_impl=nullptr;}
 			
 			template<class EntryCallback>
 			TextEntry& callback(EntryCallback& cb)
@@ -58,12 +67,13 @@ namespace Tiger
 
 			int id() const noexcept;
 
-		private:
+		protected:
 			typedef void (*Callback)(void* cb_obj,TextEntry& self);
 			TextEntry& callback(Callback cb,void* cb_obj);
 
 			class Impl;
-			std::unique_ptr<Impl> m_impl;
+			Impl* m_impl;
+			explicit TextEntry(Impl& impl):m_impl(&impl){}
 		};
 	}
 

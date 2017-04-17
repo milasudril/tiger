@@ -23,7 +23,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #ifndef TIGER_LABEL_HPP
 #define TIGER_LABEL_HPP
 
-#include <memory>
+#include <utility>
 
 namespace Tiger
 	{
@@ -35,13 +35,24 @@ namespace Tiger
 			explicit Label(Container& container,const char* content);
 			~Label();
 
+			Label& operator=(Label&& obj) noexcept
+				{
+				std::swap(obj.m_impl,m_impl);
+				return *this;
+				}
+
+			Label(Label&& obj) noexcept:m_impl(obj.m_impl)
+				{obj.m_impl=nullptr;}
+
 			Label& content(const char* text);
 
 			const char* content()const noexcept;
 
-		private:
+		protected:
 			class Impl;
-			std::unique_ptr<Impl> m_impl;
+			Impl* m_impl;
+
+			explicit Label(Impl& impl):m_impl(&impl){}
 		};
 	}
 

@@ -23,7 +23,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Tiger;
 
-class Label::Impl
+class Label::Impl:private Label
 	{
 	public:
 		Impl(Container& cnt,const char* text);
@@ -40,12 +40,10 @@ class Label::Impl
 	};
 
 Label::Label(Container& cnt,const char* text)
-	{
-	m_impl.reset(new Impl(cnt,text));
-	}
+	{m_impl=new Impl(cnt,text);}
 
 Label::~Label()
-	{}
+	{delete m_impl;}
 
 const char* Label::content() const noexcept
 	{return m_impl->content();}
@@ -56,7 +54,7 @@ Label& Label::content(const char* x)
 	return *this;
 	}
 
-Label::Impl::Impl(Container& cnt,const char* text)
+Label::Impl::Impl(Container& cnt,const char* text):Label(*this)
 	{
 	printf("Label %p ctor\n",this);
 
@@ -69,6 +67,7 @@ Label::Impl::Impl(Container& cnt,const char* text)
 
 Label::Impl::~Impl()
 	{
+	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	printf("Label %p dtor\n",this);
 	}

@@ -23,7 +23,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Tiger;
 
-class Separator::Impl
+class Separator::Impl:private Separator
 	{
 	public:
 		Impl(Container& cnt,bool vertical);
@@ -34,14 +34,12 @@ class Separator::Impl
 	};
 
 Separator::Separator(Container& cnt,bool vertical) noexcept
-	{
-	m_impl.reset(new Impl(cnt,vertical));
-	}
+	{m_impl=new Impl(cnt,vertical);}
 
 Separator::~Separator()
-	{}
+	{delete m_impl;}
 
-Separator::Impl::Impl(Container& cnt,bool vertical)
+Separator::Impl::Impl(Container& cnt,bool vertical):Separator(*this)
 	{
 	printf("Separator %p ctor\n",this);
 
@@ -55,6 +53,7 @@ Separator::Impl::Impl(Container& cnt,bool vertical)
 
 Separator::Impl::~Impl()
 	{
+	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	printf("Separator %p dtor\n",this);
 	}

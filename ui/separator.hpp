@@ -23,7 +23,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #ifndef TIGER_SEPARATOR_HPP
 #define TIGER_SEPARATOR_HPP
 
-#include <memory>
+#include <utility>
 
 namespace Tiger
 	{
@@ -35,9 +35,19 @@ namespace Tiger
 			explicit Separator(Container& container,bool vertical) noexcept;
 			~Separator();
 
-		private:
+			Separator& operator=(Separator&& obj) noexcept
+				{
+				std::swap(obj.m_impl,m_impl);
+				return *this;
+				}
+
+			Separator(Separator&& obj) noexcept:m_impl(obj.m_impl)
+				{obj.m_impl=nullptr;}
+
+		protected:
 			class Impl;
-			std::unique_ptr<Impl> m_impl;
+			Impl* m_impl;
+			explicit Separator(Impl& impl):m_impl(&impl){}
 		};
 	}
 

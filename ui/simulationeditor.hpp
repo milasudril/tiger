@@ -32,12 +32,17 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 namespace Tiger
 	{
 	class Simulation;
+	class Window;
 	class SimulationEditor
 		{
+		private:
+			class ParamDataDescriptor;
 		public:
 			SimulationEditor(Container& cnt,int id);
 			SimulationEditor& simulation(Simulation& sim);
 			void operator()(ButtonList<SimulationEditor>& list,Button& btn);
+			void operator()(Window& src);
+			void operator()(MapView<ParamDataDescriptor>& src,float& obj,const char* valstr);
 
 		private:
 			class ParamDataDescriptor
@@ -66,15 +71,19 @@ namespace Tiger
 					static const char* value() noexcept
 						{return "Value";}
 				};
+			static constexpr ParamDataDescriptor s_desc{};
 			int m_id;
 			Simulation* r_sim;
 			Box m_top;
 				Box m_left;
 					Label m_init_label;
-					ButtonList<SimulationEditor> m_init_list;
+					Box m_init_panels;
+						ButtonList<SimulationEditor> m_init_list;
 				Box m_right;
 					Label m_param_label;
 					MapView<ParamDataDescriptor> m_params;
+
+			std::unique_ptr<Label> m_popup;
 		};
 	}
 

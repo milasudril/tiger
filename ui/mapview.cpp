@@ -23,11 +23,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Tiger;
 
-class MapViewBase::Impl
+class MapViewBase::Impl:private MapViewBase
 	{
 	public:
 		explicit Impl(Container& cnt,const DataDescriptorImpl& descriptor
-			,int id,void* owner);
+			,int id);
 		~Impl();
 
 		void clear();
@@ -40,8 +40,8 @@ class MapViewBase::Impl
 
 		void callback(ValueSetCallback cb,void* cb_obj)
 			{
-			m_value_update=cb;
-			m_cb_obj=cb_obj;
+			r_value_update=cb;
+			r_cb_obj=cb_obj;
 			}
 			
 		int id() const noexcept
@@ -51,10 +51,9 @@ class MapViewBase::Impl
 		int m_id;
 		StringCallback m_string_from_key;
 		StringCallback m_string_from_value;
-		const void* m_cb_user_data;
-		ValueSetCallback m_value_update;
-		void* m_cb_obj;
-		void* r_owner;
+		const void* r_cb_user_data;
+		ValueSetCallback r_value_update;
+		void* r_cb_obj;
 		
 		GtkTreeView* m_handle;
 		GtkListStore* m_list;
@@ -80,10 +79,10 @@ class MapViewBase::Impl
 	};
 
 MapViewBase::MapViewBase(Container& cnt,int id,const DataDescriptorImpl& descriptor)
-	{m_impl.reset(new Impl(cnt,descriptor,id,this));}
+	{m_impl=new Impl(cnt,descriptor,id);}
 
 MapViewBase::~MapViewBase()
-	{}
+	{delete m_impl;}
 
 MapViewBase& MapViewBase::clear()
 	{
@@ -120,13 +119,12 @@ int MapViewBase::id() const noexcept
 
 
 
-
 MapViewBase::Impl::Impl(Container& cnt,const DataDescriptorImpl& descriptor
-	,int id,void* owner):m_cb_obj(nullptr),r_owner(owner)
+	,int id):MapViewBase(*this),r_cb_obj(nullptr)
 	{
 	m_string_from_key=descriptor.string_from_key;
 	m_string_from_value=descriptor.string_from_value;
-	m_cb_user_data=descriptor.cb_user_data;
+	r_cb_user_data=descriptor.cb_user_data;
 	m_id=id;
 
 	auto content=gtk_list_store_new(2, G_TYPE_UINT64, G_TYPE_UINT64);
@@ -184,8 +182,9 @@ MapViewBase::Impl::Impl(Container& cnt,const DataDescriptorImpl& descriptor
 
 MapViewBase::Impl::~Impl()
 	{
-	m_cb_user_data=nullptr;
-	m_cb_obj=nullptr;
+	m_impl=nullptr;
+	r_cb_user_data=nullptr;
+	r_cb_obj=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	g_object_unref(m_list);
 	}
@@ -219,7 +218,7 @@ void MapViewBase::Impl::key_fetch(GtkTreeViewColumn* col
 	auto self=reinterpret_cast<Impl*>(user_data);
 	uintptr_t ptr=0;
 	gtk_tree_model_get(GTK_TREE_MODEL(self->m_list),iter,0,&ptr,-1);
-	auto str=self->m_string_from_key(self->m_cb_user_data,reinterpret_cast<const void*>(ptr));
+	auto str=self->m_string_from_key(self->r_cb_user_data,reinterpret_cast<const void*>(ptr));
 	g_object_set(renderer, "text", str.c_str(), NULL);
 	}
 
@@ -232,7 +231,7 @@ void MapViewBase::Impl::value_fetch(GtkTreeViewColumn* col
 	auto self=reinterpret_cast<Impl*>(user_data);
 	uintptr_t ptr=0;
 	gtk_tree_model_get(GTK_TREE_MODEL(self->m_list),iter,1,&ptr,-1);
-	auto str=self->m_string_from_value(self->m_cb_user_data,reinterpret_cast<const void*>(ptr));
+	auto str=self->m_string_from_value(self->r_cb_user_data,reinterpret_cast<const void*>(ptr));
 	g_object_set(renderer, "text", str.c_str(), NULL);
 	}
 
@@ -245,14 +244,13 @@ void MapViewBase::Impl::value_edited(GtkCellRendererText* cell,char* path_string
 	,char* new_text,gpointer user_data)
 	{
 	auto self=reinterpret_cast<Impl*>(user_data);
-	if(self->m_cb_obj!=nullptr)
+	if(self->r_cb_obj!=nullptr)
 		{
 		auto model=gtk_tree_view_get_model(self->m_handle);
 		GtkTreeIter i;
 		gtk_tree_model_get_iter_from_string(model,&i,path_string);
 		uintptr_t ptr=0;
 		gtk_tree_model_get(GTK_TREE_MODEL(self->m_list),&i,1,&ptr,-1);
-		self->m_value_update(self->r_owner,self->m_cb_obj
-			,reinterpret_cast<void*>(ptr),new_text);
+		self->r_value_update(*self,self->r_cb_obj,reinterpret_cast<void*>(ptr),new_text);
 		}
 	}

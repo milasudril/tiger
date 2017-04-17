@@ -19,11 +19,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "uicontext.hpp"
 #include "simulationeditor.hpp"
-#include "mapview.hpp"
 #include "window.hpp"
 #include "../engine/simulation.hpp"
-
-#include <string>
 
 int main(int argc, char *argv[])
 	{
