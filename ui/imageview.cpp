@@ -17,14 +17,16 @@ static double asinh2(double x)
 	return log2(x + sqrt(x*x + 1.0));
 	}
 
+static constexpr double pot_range=16;
+
 static double line(double x)
 	{
-	return 23.0*x - 23.0*(1.0 - x);
+	return pot_range*x - pot_range*(1.0 - x);
 	}
 
 static double line_inv(double x)
 	{
-	return (x + 23.0)/46.0;
+	return (x + pot_range)/(2*pot_range);
 	}
 
 static Tiger::Range map(Tiger::Range r)
@@ -40,14 +42,17 @@ static double unmap(double x)
 	}
 
 ImageView::ImageView(Container& cnt,int id):m_id(id)
-,m_box(cnt,1)
-	,m_entry_max(m_box,0)
-	,m_rv_box(m_box.insertMode(Tiger::Box::InsertMode{0,Tiger::Box::FILL|Tiger::Box::EXPAND}),0)
-		,m_sep_left(m_rv_box.insertMode(Tiger::Box::InsertMode{0,Tiger::Box::FILL|Tiger::Box::EXPAND}),1)
-		,m_rv(m_rv_box,0)
-		,m_sep_right(m_rv_box,1)
-	,m_entry_min(m_box.insertMode(Tiger::Box::InsertMode{0,0}),1)
+,m_box(cnt,0)
+	,m_img_display(m_box.insertMode(Box::InsertMode{0,Box::FILL|Box::EXPAND}),0)
+	,m_range_box(m_box.insertMode(Box::InsertMode{0,0}),1)
+		,m_entry_max(m_range_box,0)
+		,m_rv_box(m_range_box.insertMode(Box::InsertMode{0,Tiger::Box::FILL|Tiger::Box::EXPAND}),0)
+			,m_sep_left(m_rv_box.insertMode(Box::InsertMode{0,Box::FILL|Box::EXPAND}),1)
+			,m_rv(m_rv_box.insertMode(Box::InsertMode{0,0}),0)
+			,m_sep_right(m_rv_box.insertMode(Box::InsertMode{0,Box::FILL|Box::EXPAND}),1)
+		,m_entry_min(m_range_box.insertMode(Box::InsertMode{0,0}),1)
 	{
+	m_rv.range(Range(unmap(0.0),unmap(1.0)));
 	(*this)(m_rv);
 	m_entry_max.alignment(1.0f).small(1).width(8).callback(*this);
 	m_entry_min.alignment(1.0f).small(1).width(8).callback(*this);
@@ -62,6 +67,7 @@ void ImageView::operator()(RangeView& rv)
 	m_entry_min.content(buffer);
 	sprintf(buffer,"%.2e",r.max());
 	m_entry_max.content(buffer);
+	m_img_display.zrange(r);
 	}
 
 void ImageView::operator()(TextEntry& entry)
@@ -72,14 +78,18 @@ void ImageView::operator()(TextEntry& entry)
 			{
 			auto v_min=m_rv.range().min();
 			auto v=std::max(unmap(atof(entry.content())),v_min);
-			m_rv.range(Tiger::Range(v_min,v));
+			auto r=Range(v_min,v);
+			m_rv.range(r);			
+			m_img_display.zrange(map(r));
 			break;
 			}
 		case 1:
 			{
 			auto v_max=m_rv.range().max();
 			auto v=std::min(unmap(atof(entry.content())),v_max);
-			m_rv.range(Tiger::Range(v,v_max));
+			auto r=Range(v,v_max);
+			m_rv.range(r);
+			m_img_display.zrange(map(r));
 			break;
 			}
 		default:

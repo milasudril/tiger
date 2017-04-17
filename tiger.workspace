@@ -2,7 +2,7 @@
 <CodeLite_Workspace Name="tiger" Database="" Version="10.0.0">
   <Project Name="tiger" Path="tiger.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Debug" Selected="no">
       <Environment/>
       <Project Name="tiger" ConfigName="Debug"/>
     </WorkspaceConfiguration>

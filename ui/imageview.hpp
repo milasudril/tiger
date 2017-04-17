@@ -10,6 +10,11 @@
 #include "textentry.hpp"
 #include "rangeview.hpp"
 #include "separator.hpp"
+#include "imagedisplay.hpp"
+#ifndef NDEBUG
+#include "../engine/image.hpp"
+#include <cassert>
+#endif
 
 namespace Tiger
 	{
@@ -25,15 +30,26 @@ namespace Tiger
 
 			void operator()(RangeView& src);
 
+			ImageView& image(Image&& img,int channel)=delete;
+
+			ImageView& image(const Image& img,int channel)
+				{
+				assert(channel>=0 && channel<static_cast<int>(img.channelCount()));
+				m_img_display.image(img,channel);
+				return *this;
+				}
+
 		private:
 			int m_id;
 			Box m_box;
-				TextEntry m_entry_max;
-				Box m_rv_box;
-					Separator m_sep_left;
-					RangeView m_rv;
-					Separator m_sep_right;
-				TextEntry m_entry_min;
+				ImageDisplay m_img_display;
+				Box m_range_box;
+					TextEntry m_entry_max;
+					Box m_rv_box;
+						Separator m_sep_left;
+						RangeView m_rv;
+						Separator m_sep_right;
+					TextEntry m_entry_min;
 		};
 	}
 

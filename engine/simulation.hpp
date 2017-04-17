@@ -115,6 +115,9 @@ namespace Tiger
 			int channelCount() const noexcept
 				{return m_filter.channelCount();}
 
+			const Image& stateCurrent() const noexcept
+				{return m_current;}
+
 		private:
 			static Image imagesLoad(const std::vector<Channel>& files
 				,const Tiger::Filter& f);

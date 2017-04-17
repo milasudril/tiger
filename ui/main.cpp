@@ -21,11 +21,17 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "simulationeditor.hpp"
 #include "window.hpp"
 #include "../engine/simulation.hpp"
+#include "../engine/channel.hpp"
 
 int main(int argc, char *argv[])
 	{
 	Tiger::UiContext ctx;
 	Tiger::Simulation sim("testdata/grayscott.cpp","__targets");
+	sim.imagesLoad(std::vector<Tiger::Channel>
+		{
+		 Tiger::Channel("u:testdata/lenna-r.png")
+		,Tiger::Channel("v:testdata/lenna-g.png")
+		});
 	Tiger::Window mainwin("Tiger Test",0);
 	auto mainwin_cb=[&ctx](Tiger::Window& window)
 		{ctx.exit();};

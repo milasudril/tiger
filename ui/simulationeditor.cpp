@@ -29,10 +29,11 @@ constexpr SimulationEditor::ParamDataDescriptor SimulationEditor::s_desc;
 
 SimulationEditor::SimulationEditor(Container& cnt,int id):m_id(id),r_sim(nullptr)
 	,m_top(cnt,0)
-		,m_left(m_top,1)
+		,m_left(m_top.insertMode({2,Box::FILL|Box::EXPAND}),1)
 			,m_init_label(m_left,"Initial conditions")
 			,m_init_panels(m_left.insertMode({4,Box::FILL|Box::EXPAND}),0)
-				,m_init_list(m_init_panels.insertMode({0,0}),0,1)
+				,m_init_list(m_init_panels,0,1)
+				,m_img_view(m_init_panels.insertMode({2,Box::FILL|Box::EXPAND}),0)
 		,m_sep(m_top.insertMode({2,0}),1)
 		,m_right(m_top.insertMode({2,Box::FILL|Box::EXPAND}),1)
 			,m_param_label(m_right,"Parameters")
@@ -47,10 +48,8 @@ void SimulationEditor::operator()(ButtonList<SimulationEditor>& list,Button& btn
 	printf("%d\n",btn.id());
 	if(btn.id()<r_sim->channelCount())
 		{
-		m_init_panels.insertMode({0,0});
-		m_popup.reset(new ImageView(m_init_panels,0));
-		m_init_panels.show();
 		auto id=btn.id();
+		m_img_view.image(r_sim->stateCurrent(),id);
 		std::for_each(list.begin(),list.end(),[id](auto& x)
 			{x.state(id==x.id());});
 		}
@@ -68,7 +67,6 @@ void SimulationEditor::operator()(Window& src)
 	{
 	if(src.id()==0)
 		{
-		m_popup.reset();
 		}
 	}
 

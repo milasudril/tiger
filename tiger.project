@@ -74,6 +74,8 @@
       <File Name="ui/imageview.hpp"/>
       <File Name="ui/imageview.cpp"/>
       <File Name="ui/main.cpp"/>
+      <File Name="ui/imagedisplay.hpp"/>
+      <File Name="ui/imagedisplay.cpp"/>
     </VirtualDirectory>
     <File Name="LICENSE"/>
     <File Name="maikeconfig-rel.json"/>

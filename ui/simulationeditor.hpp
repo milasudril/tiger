@@ -82,12 +82,11 @@ namespace Tiger
 					Label m_init_label;
 					Box m_init_panels;
 						ButtonList<SimulationEditor> m_init_list;
+						ImageView m_img_view;
 				Separator m_sep;
 				Box m_right;
 					Label m_param_label;
 					MapView<ParamDataDescriptor> m_params;
-
-			std::unique_ptr<ImageView> m_popup;
 		};
 	}
 

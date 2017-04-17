@@ -29,6 +29,8 @@ Simulation::Simulation(const char* filter,const char* objdir):
 	m_filter(filter,objdir),m_frame_current(0)
 	{
 	m_params.resize(m_filter.parameterCount());
+	m_current=Image(128,128,m_filter.channelCount());
+	m_next=layoutClone(m_current);
 	}
 
 Simulation& Simulation::run(ProcessMonitor monitor,void* processcallback) noexcept
