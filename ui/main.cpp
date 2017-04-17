@@ -16,67 +16,22 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 //@	{"targets":[{"name":"../tiger-ui","type":"application"}]}
-#include "window.hpp"
-#include "rangeview.hpp"
-#include "range.hpp"
+
 #include "uicontext.hpp"
-#include "box.hpp"
-#include "textentry.hpp"
-#include "separator.hpp"
-#include <cstdio>
-#include <algorithm>
+#include "simulationeditor.hpp"
+#include "window.hpp"
+#include "../engine/simulation.hpp"
 
 int main(int argc, char *argv[])
 	{
 	Tiger::UiContext ctx;
-	Tiger::Window mainwin("Tiger",1);
+	Tiger::Simulation sim("testdata/grayscott.cpp","__targets");
+	Tiger::Window mainwin("Tiger Test",0);
 	auto mainwin_cb=[&ctx](Tiger::Window& window)
 		{ctx.exit();};
+	Tiger::SimulationEditor m_simedit(mainwin,0);
+	m_simedit.simulation(sim);
 	mainwin.callback(mainwin_cb);
-	Tiger::Box range_entries(mainwin,1);
-		Tiger::TextEntry e_max(range_entries,0);
-		range_entries.insertMode(Tiger::Box::InsertMode{0,Tiger::Box::FILL|Tiger::Box::EXPAND});
-		Tiger::Box range(range_entries,0);
-			range.insertMode(Tiger::Box::InsertMode{0,Tiger::Box::FILL|Tiger::Box::EXPAND});
-			Tiger::Separator dec_left(range,1);
-			range.insertMode(Tiger::Box::InsertMode{0,0});
-			Tiger::RangeView rv(range,0);
-			range.insertMode(Tiger::Box::InsertMode{0,Tiger::Box::FILL|Tiger::Box::EXPAND});
-			Tiger::Separator dec_right(range,1);
-		range_entries.insertMode(Tiger::Box::InsertMode{0,0});
-		Tiger::TextEntry e_min(range_entries,1);
-
-	auto rv_callback=[&e_min,&e_max](Tiger::RangeView& rv)
-		{
-
-		};
-	auto entry_callback=[&rv](Tiger::TextEntry& entry)
-		{
-		switch(entry.id())
-			{
-			case 1:
-				{
-				auto v_max=rv.range().max();
-				auto v=std::min(atof(entry.content()),v_max);
-				rv.range(Tiger::Range(v,v_max));
-				break;
-				}
-			case 0:
-				{
-				auto v_min=rv.range().min();
-				auto v=std::max(atof(entry.content()),v_min);
-				rv.range(Tiger::Range(v_min,v));
-				break;
-				}
-			default:
-				break;
-			}
-	
-		};
-	rv_callback(rv);
-	rv.callback(rv_callback);
-	e_min.callback(entry_callback).width(8).small(1).alignment(1.0f);
-	e_max.callback(entry_callback).width(8).small(1).alignment(1.0f);
 	mainwin.show();
 	ctx.run();
 	return 0;

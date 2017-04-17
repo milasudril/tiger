@@ -46,7 +46,6 @@
       <File Name="engine/srcstdio.hpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
-      <File Name="ui/main.cpp"/>
       <File Name="ui/rangeview.hpp"/>
       <File Name="ui/rangeview.cpp"/>
       <File Name="ui/range.hpp"/>
@@ -61,7 +60,6 @@
       <File Name="ui/separator.cpp"/>
       <File Name="ui/uicontext.hpp"/>
       <File Name="ui/uicontext.cpp"/>
-      <File Name="ui/test.cpp"/>
       <File Name="ui/mapview.hpp"/>
       <File Name="ui/mapview.cpp"/>
       <File Name="ui/button.hpp"/>
@@ -75,6 +73,7 @@
       <File Name="ui/buttonlist.hpp"/>
       <File Name="ui/imageview.hpp"/>
       <File Name="ui/imageview.cpp"/>
+      <File Name="ui/main.cpp"/>
     </VirtualDirectory>
     <File Name="LICENSE"/>
     <File Name="maikeconfig-rel.json"/>
