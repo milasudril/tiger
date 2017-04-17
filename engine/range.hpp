@@ -21,6 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #define TIGER_RANGE_HPP
 
 #include <cassert>
+#include <cmath>
 
 namespace Tiger
 	{
@@ -31,7 +32,6 @@ namespace Tiger
 
 			explicit Range(double mi,double ma)
 				{
-				assert(ma >=  mi);
 				m_min=mi;
 				m_max=ma;
 				}
@@ -44,14 +44,12 @@ namespace Tiger
 
 			Range& max(double x) noexcept
 				{
-				assert(x - m_min >= 0.0);
 				m_max=x;
 				return *this;
 				}
 
 			Range& min(double x) noexcept
 				{
-				assert(m_max - x >= 0.0);
 				m_min=x;
 				return *this;
 				}
@@ -61,6 +59,15 @@ namespace Tiger
 
 			double mid() const noexcept
 				{return 0.5*(m_max + m_min);}
+
+			bool valid() const noexcept
+				{return m_max >= m_min;}
+
+			void invalidate()
+				{
+				m_min=INFINITY;
+				m_max=-INFINITY;
+				}
 
 		private:
 			double m_min;

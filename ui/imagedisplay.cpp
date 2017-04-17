@@ -19,7 +19,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "imagedisplay.hpp"
 #include "container.hpp"
-#include "range.hpp"
 #include "../engine/image.hpp"
 #include <gtk/gtk.h>
 #include <algorithm>
@@ -56,6 +55,8 @@ class ImageDisplay::Impl:private ImageDisplay
 			gtk_widget_queue_draw(m_widget);
 			}
 		
+		Range zrangeOptimal() const noexcept
+			{return r_img==nullptr?Range{}:r_img->range(m_view_channel);}
 
 	private:
 		int m_id;
@@ -99,6 +100,11 @@ ImageDisplay& ImageDisplay::zrange(const Range& r) noexcept
 	{
 	m_impl->zrange(r);
 	return *this;
+	}
+
+Range ImageDisplay::zrangeOptimal() const noexcept
+	{
+	return m_impl->zrangeOptimal();
 	}
 
 

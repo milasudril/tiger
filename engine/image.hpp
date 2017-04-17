@@ -23,6 +23,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #ifndef TIGER_IMAGE_HPP
 #define TIGER_IMAGE_HPP
 
+#include "range.hpp"
 #include <cstdint>
 #include <memory>
 
@@ -52,7 +53,10 @@ namespace Tiger
 				{return static_cast<bool>(m_data);}
 
 			SampleType* pixels() noexcept
-				{return m_data.get();}
+				{
+				rangeInvalidate();
+				return m_data.get();
+				}
 
 			const SampleType* pixels() const noexcept
 				{return m_data.get();}
@@ -66,11 +70,22 @@ namespace Tiger
 			uint32_t channelCount() const noexcept
 				{return m_channel_count;}
 
+			const Range& range(uint32_t ch) const noexcept
+				{
+				assert(ch<m_channel_count);
+				if(!m_range[ch].valid())
+					{rangeCompute();}
+				return m_range[ch];
+				}
+
 		private:
 			std::unique_ptr<SampleType[]> m_data;
 			uint32_t m_width;
 			uint32_t m_height;
 			uint32_t m_channel_count;
+			mutable std::unique_ptr<Range[]> m_range;
+			void rangeCompute() const noexcept;
+			void rangeInvalidate() noexcept;
 		};
 
 	inline Image layoutClone(const Image& img)

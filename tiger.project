@@ -44,11 +44,11 @@
       <File Name="engine/sinkstdio.cpp"/>
       <File Name="engine/sinkstdio.hpp"/>
       <File Name="engine/srcstdio.hpp"/>
+      <File Name="engine/range.hpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/rangeview.hpp"/>
       <File Name="ui/rangeview.cpp"/>
-      <File Name="ui/range.hpp"/>
       <File Name="ui/container.hpp"/>
       <File Name="ui/window.hpp"/>
       <File Name="ui/window.cpp"/>

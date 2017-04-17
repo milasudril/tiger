@@ -60,6 +60,8 @@ namespace Tiger
 
 			ImageDisplay& image(const Image& img,int channel) noexcept;
 
+			Range zrangeOptimal() const noexcept;
+
 			ImageDisplay& zrange(const Range& r) noexcept;
 			
 			int id() const noexcept;

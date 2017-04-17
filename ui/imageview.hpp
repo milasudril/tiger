@@ -11,6 +11,7 @@
 #include "rangeview.hpp"
 #include "separator.hpp"
 #include "imagedisplay.hpp"
+#include "button.hpp"
 #ifndef NDEBUG
 #include "../engine/image.hpp"
 #include <cassert>
@@ -30,6 +31,8 @@ namespace Tiger
 
 			void operator()(RangeView& src);
 
+			void operator()(Button& src);
+
 			ImageView& image(Image&& img,int channel)=delete;
 
 			ImageView& image(const Image& img,int channel)
@@ -44,6 +47,7 @@ namespace Tiger
 			Box m_box;
 				ImageDisplay m_img_display;
 				Box m_range_box;
+					Button m_btn_auto;
 					TextEntry m_entry_max;
 					Box m_rv_box;
 						Separator m_sep_left;

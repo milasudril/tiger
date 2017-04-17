@@ -18,8 +18,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 //@	{"targets":[{"name":"rangeview.o","type":"object","pkgconfig_libs":["gtk+-3.0"]}]}
 
 #include "rangeview.hpp"
-#include "range.hpp"
 #include "container.hpp"
+#include "../engine/range.hpp"
 #include <gtk/gtk.h>
 #include <algorithm>
 

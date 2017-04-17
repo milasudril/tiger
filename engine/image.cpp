@@ -353,6 +353,10 @@ Image::Image(DataSource& source)
 	m_data.reset(new SampleType[reader.width()*reader.height()
 		*reader.channelCount()]);
 
+//	Assume that new will not throw here. The previous one is much larger...
+	m_range.reset(new Range[reader.channelCount()]);
+	rangeInvalidate();
+
 	reader.pixelsRead(m_data.get());
 	convert(*this,reader);
 	}
@@ -360,10 +364,11 @@ Image::Image(DataSource& source)
 Image::Image(uint32_t width,uint32_t height,uint32_t n_channels):
 	m_data(new SampleType[width*height*n_channels])
 	,m_width(width),m_height(height),m_channel_count(n_channels)
+	,m_range(new Range[n_channels])
 	{
+	rangeInvalidate();
 	memset(m_data.get(),0,width*height*n_channels);
 	}
-
 
 namespace
 	{
@@ -527,4 +532,38 @@ void Image::store(DataSink& sink) const
 		.width(m_width)
 		.headerWrite();
 	writer.pixelsWrite(m_data.get());
+	}
+
+void Image::rangeInvalidate() noexcept
+	{
+	auto ptr=m_range.get();
+	auto N=channelCount();
+	while(N!=0)
+		{
+		ptr->invalidate();
+		--N;
+		++ptr;
+		}
+	}
+
+void Image::rangeCompute() const noexcept
+	{
+	auto ptr=pixels();
+	auto N=width()*height();
+	auto nch=channelCount();
+	auto ranges=m_range.get();
+	while(N!=0)
+		{
+		for(uint32_t k=0;k<nch;++k)
+			{
+			auto val_new=*(ptr + k);
+			if(val_new>ranges[k].max())
+				{ranges[k].max(val_new);}
+			if(val_new<ranges[k].min())
+				{ranges[k].min(val_new);}
+			}
+
+		ptr+=nch;
+		--N;
+		}
 	}
