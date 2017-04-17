@@ -36,19 +36,27 @@ class Button::Impl:private Button
 			}
 
 		const char* label() const noexcept
-			{return gtk_button_get_label(m_handle);}
+			{return gtk_button_get_label(GTK_BUTTON(m_handle));}
 
 		void label(const char* text) noexcept
-			{return gtk_button_set_label(m_handle,text);}
+			{return gtk_button_set_label(GTK_BUTTON(m_handle),text);}
 
 		int id() const noexcept
 			{return m_id;}
+
+		void state(bool s) noexcept
+			{
+			auto cb=r_cb;
+			r_cb=nullptr;
+			gtk_toggle_button_set_active(m_handle,s);
+			r_cb=cb;
+			}
 
 	private:
 		int m_id;
 		Callback r_cb;
 		void* r_cb_obj;
-		GtkButton* m_handle;
+		GtkToggleButton* m_handle;
 
 		static void clicked_callback(GtkWidget* widget,gpointer data);
 	};
@@ -77,15 +85,21 @@ Button& Button::label(const char* text)
 int Button::id() const noexcept
 	{return m_impl->id();}
 
+Button& Button::state(bool s) noexcept
+	{
+	m_impl->state(s);
+	return *this;
+	}
+
 
 Button::Impl::Impl(Container& cnt,int id,const char* lab):Button(*this),m_id(id)
 	,r_cb(nullptr)
 	{
 	printf("Button %p (%d) ctor\n",this,m_id);
 
-	auto widget=gtk_button_new();
+	auto widget=gtk_toggle_button_new();
 	g_signal_connect(widget,"clicked",G_CALLBACK(clicked_callback),this);
-	m_handle=GTK_BUTTON(widget);
+	m_handle=GTK_TOGGLE_BUTTON(widget);
 	g_object_ref_sink(widget);
 	cnt.add(widget);
 	label(lab);

@@ -64,6 +64,8 @@ ScrolledWindow::Impl::Impl(Container& cnt):ScrolledWindow(*this)
 	cnt.add(widget);
 	g_object_ref_sink(widget);
 	m_handle=GTK_SCROLLED_WINDOW(widget);
+//	TODO: Separate member function
+	gtk_scrolled_window_set_policy(m_handle,GTK_POLICY_NEVER,GTK_POLICY_AUTOMATIC);
 	}
 
 ScrolledWindow::Impl::~Impl()

@@ -61,6 +61,8 @@ namespace Tiger
 
 			int id() const noexcept;
 
+			Button& state(bool s) noexcept;
+
 		protected:
 			class Impl;
 			explicit Button(Impl& impl):m_impl(&impl){}

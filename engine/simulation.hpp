@@ -112,6 +112,9 @@ namespace Tiger
 			unsigned long long frameStart() const noexcept
 				{return m_frame_current;}
 
+			int channelCount() const noexcept
+				{return m_filter.channelCount();}
+
 		private:
 			static Image imagesLoad(const std::vector<Channel>& files
 				,const Tiger::Filter& f);

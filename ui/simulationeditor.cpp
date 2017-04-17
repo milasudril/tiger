@@ -21,6 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "window.hpp"
 #include "imageview.hpp"
 #include "../engine/simulation.hpp"
+#include <algorithm>
 
 using namespace Tiger;
 
@@ -31,7 +32,7 @@ SimulationEditor::SimulationEditor(Container& cnt,int id):m_id(id),r_sim(nullptr
 		,m_left(m_top,1)
 			,m_init_label(m_left,"Initial conditions")
 			,m_init_panels(m_left.insertMode({4,Box::FILL|Box::EXPAND}),0)
-				,m_init_list(m_init_panels.insertMode({0,Box::FILL|Box::EXPAND}),0,1)
+				,m_init_list(m_init_panels.insertMode({0,0}),0,1)
 		,m_sep(m_top.insertMode({2,0}),1)
 		,m_right(m_top.insertMode({2,Box::FILL|Box::EXPAND}),1)
 			,m_param_label(m_right,"Parameters")
@@ -43,14 +44,18 @@ SimulationEditor::SimulationEditor(Container& cnt,int id):m_id(id),r_sim(nullptr
 
 void SimulationEditor::operator()(ButtonList<SimulationEditor>& list,Button& btn)
 	{
-	std::string title(btn.label());
-	title+=" preview";
-	m_init_panels.insertMode({0,0});
-	m_popup.reset(new ImageView(m_init_panels,0));
-	m_init_panels.show();
-/*	m_popup->callback(*this);
-	m_popup->show();*/
-	printf("Clicked %d:%d\n",list.id(),btn.id());
+	printf("%d\n",btn.id());
+	if(btn.id()<r_sim->channelCount())
+		{
+		m_init_panels.insertMode({0,0});
+		m_popup.reset(new ImageView(m_init_panels,0));
+		m_init_panels.show();
+		auto id=btn.id();
+		std::for_each(list.begin(),list.end(),[id](auto& x)
+			{x.state(id==x.id());});
+		}
+	else
+		{btn.state(0);}
 	}
 
 void SimulationEditor::operator()(MapView<ParamDataDescriptor>& params,float& param
@@ -75,11 +80,9 @@ SimulationEditor& SimulationEditor::simulation(Simulation& sim)
 		,float& value)
 		{m_params.recordAppend(name,value);});
 
-	sim.channelsList([this](const Simulation& sim,const char* ch)
-		{
-		m_init_list.append(ch);
-		});
-
 	r_sim=&sim;
+	sim.channelsList([this](const Simulation& sim,const char* ch)
+		{m_init_list.append(ch);});
+	m_init_list.append("Load all");
 	return *this;
 	}

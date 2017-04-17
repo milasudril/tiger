@@ -66,6 +66,12 @@ namespace Tiger
 			int id() const noexcept
 				{return m_id;}
 
+			auto begin() noexcept
+				{return m_buttons.begin();}
+
+			auto end() noexcept
+				{return m_buttons.end();}
+
 		private:
 			Callback* r_callback;
 			int m_id;

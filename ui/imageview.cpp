@@ -48,6 +48,7 @@ ImageView::ImageView(Container& cnt,int id):m_id(id)
 		,m_sep_right(m_rv_box,1)
 	,m_entry_min(m_box.insertMode(Tiger::Box::InsertMode{0,0}),1)
 	{
+	(*this)(m_rv);
 	m_entry_max.alignment(1.0f).small(1).width(8).callback(*this);
 	m_entry_min.alignment(1.0f).small(1).width(8).callback(*this);
 	m_rv.callback(*this);
