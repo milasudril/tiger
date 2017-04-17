@@ -103,7 +103,7 @@ RangeView::Impl::Impl(Container& cnt,int id):RangeView(*this),m_id(id),m_cb(null
 	m_cursors[3]=gdk_cursor_new_from_name(display,"ns-resize");
 
 	auto widget=gtk_drawing_area_new();
-	gtk_widget_set_size_request(widget,32,32);
+	gtk_widget_set_size_request(widget,24,64);
 	g_signal_connect(widget,"draw",G_CALLBACK(draw_callback),this);
 	gtk_widget_add_events(widget
 		,GDK_POINTER_MOTION_MASK|GDK_BUTTON_PRESS_MASK|GDK_BUTTON_RELEASE_MASK

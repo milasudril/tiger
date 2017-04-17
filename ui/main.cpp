@@ -34,25 +34,21 @@ int main(int argc, char *argv[])
 		{ctx.exit();};
 	mainwin.callback(mainwin_cb);
 	Tiger::Box range_entries(mainwin,1);
-	Tiger::TextEntry e_max(range_entries,0);
-	range_entries.insertMode(Tiger::Box::InsertMode{0,Tiger::Box::FILL|Tiger::Box::EXPAND});
-	Tiger::Box range(range_entries,0);
-	range.insertMode(Tiger::Box::InsertMode{0,Tiger::Box::FILL|Tiger::Box::EXPAND});
-	Tiger::Separator dec_left(range,1);
-	range.insertMode(Tiger::Box::InsertMode{0,0});
-	Tiger::RangeView rv(range,0);
-	range.insertMode(Tiger::Box::InsertMode{0,Tiger::Box::FILL|Tiger::Box::EXPAND});
-	Tiger::Separator dec_right(range,1);
-	range_entries.insertMode(Tiger::Box::InsertMode{0,0});
-	Tiger::TextEntry e_min(range_entries,1);
+		Tiger::TextEntry e_max(range_entries,0);
+		range_entries.insertMode(Tiger::Box::InsertMode{0,Tiger::Box::FILL|Tiger::Box::EXPAND});
+		Tiger::Box range(range_entries,0);
+			range.insertMode(Tiger::Box::InsertMode{0,Tiger::Box::FILL|Tiger::Box::EXPAND});
+			Tiger::Separator dec_left(range,1);
+			range.insertMode(Tiger::Box::InsertMode{0,0});
+			Tiger::RangeView rv(range,0);
+			range.insertMode(Tiger::Box::InsertMode{0,Tiger::Box::FILL|Tiger::Box::EXPAND});
+			Tiger::Separator dec_right(range,1);
+		range_entries.insertMode(Tiger::Box::InsertMode{0,0});
+		Tiger::TextEntry e_min(range_entries,1);
+
 	auto rv_callback=[&e_min,&e_max](Tiger::RangeView& rv)
 		{
-		auto r=rv.range();
-		char buffer[12];
-		sprintf(buffer,"%.2e",r.min());
-		e_min.content(buffer);
-		sprintf(buffer,"%.2e",r.max());
-		e_max.content(buffer);
+
 		};
 	auto entry_callback=[&rv](Tiger::TextEntry& entry)
 		{

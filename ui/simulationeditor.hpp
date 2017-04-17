@@ -27,6 +27,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "mapview.hpp"
 #include "label.hpp"
 #include "buttonlist.hpp"
+#include "imageview.hpp"
 #include <cassert>
 
 namespace Tiger
@@ -37,8 +38,9 @@ namespace Tiger
 		{
 		private:
 			class ParamDataDescriptor;
+
 		public:
-			SimulationEditor(Container& cnt,int id);
+			explicit SimulationEditor(Container& cnt,int id);
 			SimulationEditor& simulation(Simulation& sim);
 			void operator()(ButtonList<SimulationEditor>& list,Button& btn);
 			void operator()(Window& src);
@@ -71,6 +73,7 @@ namespace Tiger
 					static const char* value() noexcept
 						{return "Value";}
 				};
+
 			static constexpr ParamDataDescriptor s_desc{};
 			int m_id;
 			Simulation* r_sim;
@@ -79,11 +82,12 @@ namespace Tiger
 					Label m_init_label;
 					Box m_init_panels;
 						ButtonList<SimulationEditor> m_init_list;
+				Separator m_sep;
 				Box m_right;
 					Label m_param_label;
 					MapView<ParamDataDescriptor> m_params;
 
-			std::unique_ptr<Label> m_popup;
+			std::unique_ptr<ImageView> m_popup;
 		};
 	}
 
