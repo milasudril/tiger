@@ -30,7 +30,7 @@ class Box::Impl:private Box
 		Impl(Container& cnt,bool vertical);
 		~Impl();
 
-		void add(GtkWidget* handle) noexcept
+		void _add(GtkWidget* handle) noexcept
 			{
 			gtk_box_pack_start(m_handle,handle,m_mode.flags&EXPAND,m_mode.flags&FILL
 				,m_mode.padding);
@@ -42,8 +42,12 @@ class Box::Impl:private Box
 		void _sensitive(bool val)
 			{gtk_widget_set_sensitive(GTK_WIDGET(m_handle),val);}
 
+		void* _toplevel() const
+			{return gtk_widget_get_toplevel(GTK_WIDGET(m_handle));}
+
 		void homogenous(bool status) noexcept
 			{gtk_box_set_homogeneous(m_handle,status);}
+
 
 		void insertMode(const InsertMode& mode) noexcept
 			{m_mode=mode;}
@@ -70,7 +74,7 @@ Box::~Box()
 
 Box& Box::add(void* handle)
 	{
-	m_impl->add(GTK_WIDGET(handle));
+	m_impl->_add(GTK_WIDGET(handle));
 	return *this;
 	}
 
@@ -85,6 +89,9 @@ Box& Box::sensitive(bool val)
 	m_impl->_sensitive(val);
 	return *this;
 	}
+
+void* Box::toplevel() const
+	{return m_impl->_toplevel();}
 
 Box& Box::homogenous(bool status) noexcept
 	{

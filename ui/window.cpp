@@ -40,7 +40,7 @@ class Window::Impl:private Window
 			m_title=title_new;
 			}
 
-		void add(GtkWidget* handle)
+		void _add(GtkWidget* handle)
 			{gtk_container_add(GTK_CONTAINER(m_handle),handle);}
 
 		void _show()
@@ -48,6 +48,9 @@ class Window::Impl:private Window
 
 		void _sensitive(bool val)
 			{gtk_widget_set_sensitive(GTK_WIDGET(m_handle),val);}
+
+		void* _toplevel() const
+			{return m_handle;}
 
 		void callback(Callback cb,void* cb_obj)
 			{
@@ -84,7 +87,7 @@ Window& Window::title(const char* title_new)
 
 Window& Window::add(void* handle)
 	{
-	m_impl->add(GTK_WIDGET(handle));
+	m_impl->_add(GTK_WIDGET(handle));
 	return *this;
 	}
 
@@ -99,6 +102,9 @@ Window& Window::sensitive(bool val)
 	m_impl->_sensitive(val);
 	return *this;
 	}
+
+void* Window::toplevel() const
+	{return m_impl->_toplevel();}
 
 int Window::id() const noexcept
 	{return m_impl->id();}

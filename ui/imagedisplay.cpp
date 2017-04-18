@@ -42,8 +42,8 @@ class ImageDisplay::Impl:private ImageDisplay
 
 		void callback(Callback cb,void* cb_obj)
 			{
-			m_cb=cb;
-			m_cb_obj=cb_obj;
+			r_cb=cb;
+			r_cb_obj=cb_obj;
 			}
 			
 		int id() const noexcept
@@ -63,8 +63,8 @@ class ImageDisplay::Impl:private ImageDisplay
 		const Image* r_img;
 		int m_view_channel;
 		Range m_z_range;
-		Callback m_cb;
-		void* m_cb_obj;
+		Callback r_cb;
+		void* r_cb_obj;
 		GdkCursor* m_cursors[4];
 		GtkWidget* m_widget;
 
@@ -111,7 +111,7 @@ Range ImageDisplay::zrangeOptimal() const noexcept
 
 ImageDisplay::Impl::Impl(Container& cnt,int id):ImageDisplay(*this),m_id(id)
 	,r_img(nullptr)
-	,m_cb(nullptr)
+	,r_cb(nullptr)
 	{
 	printf("ImageDisplay %p ctor\n",this);
 	auto display=gdk_display_get_default();
@@ -122,7 +122,7 @@ ImageDisplay::Impl::Impl(Container& cnt,int id):ImageDisplay(*this),m_id(id)
 	gtk_widget_set_size_request(widget,128,128);
 	g_signal_connect(widget,"draw",G_CALLBACK(draw_callback),this);
 	gtk_widget_add_events(widget
-		,GDK_POINTER_MOTION_MASK|GDK_BUTTON_RELEASE_MASK|GDK_LEAVE_NOTIFY_MASK);
+		,GDK_POINTER_MOTION_MASK|GDK_BUTTON_RELEASE_MASK|GDK_BUTTON_PRESS_MASK|GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(widget,"button-release-event",G_CALLBACK(release_callback),this);
 	g_signal_connect(widget,"motion-notify-event",G_CALLBACK(move_callback),this);
 	g_signal_connect(widget,"leave-notify-event",G_CALLBACK(leave_callback),this);
@@ -136,7 +136,7 @@ ImageDisplay::Impl::Impl(Container& cnt,int id):ImageDisplay(*this),m_id(id)
 ImageDisplay::Impl::~Impl()
 	{
 	m_impl=nullptr;
-	m_cb=nullptr;
+	r_cb=nullptr;
 	printf("ImageDisplay %p dtor\n",this);
 	auto style=gtk_widget_get_style_context(m_widget);
 	gtk_style_context_remove_class(style,GTK_STYLE_CLASS_ENTRY);
@@ -237,18 +237,23 @@ gboolean ImageDisplay::Impl::draw_callback(GtkWidget *widget, cairo_t *cr, gpoin
 gboolean ImageDisplay::Impl::release_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data)
 	{
 	auto state=reinterpret_cast<Impl*>(user_data);
+	if(state->r_cb!=nullptr)
+		{state->r_cb(state->r_cb_obj,*state);}
 	return FALSE;
 	}
 
 gboolean ImageDisplay::Impl::move_callback(GtkWidget* widget,GdkEvent* event,gpointer user_data)
 	{
 	auto state=reinterpret_cast<Impl*>(user_data);
-	auto w=gtk_widget_get_allocated_width(widget);
-	auto h=gtk_widget_get_allocated_height(widget);
-	auto y=h-event->motion.y;
-	auto x=event->motion.x;
-	auto parent=gtk_widget_get_parent_window(widget);
-	gdk_window_set_cursor(parent,state->m_cursors[move_detect(x,y,w,h)]);
+	if(state->r_cb!=nullptr)
+		{
+		auto w=gtk_widget_get_allocated_width(widget);
+		auto h=gtk_widget_get_allocated_height(widget);
+		auto y=h-event->motion.y;
+		auto x=event->motion.x;
+		auto parent=gtk_widget_get_parent_window(widget);
+		gdk_window_set_cursor(parent,state->m_cursors[move_detect(x,y,w,h)]);
+		}
 	return FALSE;
 	}
 

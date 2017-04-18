@@ -43,8 +43,8 @@ namespace Tiger
 			explicit SimulationEditor(Container& cnt,int id);
 			SimulationEditor& simulation(Simulation& sim);
 			void operator()(ButtonList<SimulationEditor>& list,Button& btn);
-			void operator()(Window& src);
 			void operator()(MapView<ParamDataDescriptor>& src,float& obj,const char* valstr);
+			void operator()(ImageDisplay& src);
 
 		private:
 			class ParamDataDescriptor
@@ -87,6 +87,10 @@ namespace Tiger
 				Box m_right;
 					Label m_param_label;
 					MapView<ParamDataDescriptor> m_params;
+			std::vector<Image> m_img_staged;
+			std::vector<std::string> m_img_names;
+			std::vector<Range> m_img_ranges;
+			int m_ch_current;
 		};
 	}
 

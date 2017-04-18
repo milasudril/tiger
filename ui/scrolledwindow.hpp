@@ -46,6 +46,7 @@ namespace Tiger
 			ScrolledWindow& add(void* handle);
 			ScrolledWindow& show();
 			ScrolledWindow& sensitive(bool val);
+			void* toplevel() const;
 
 		protected:
 			class Impl;

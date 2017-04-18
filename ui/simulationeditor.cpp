@@ -20,6 +20,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "simulationeditor.hpp"
 #include "window.hpp"
 #include "imageview.hpp"
+#include "filenameselect.hpp"
 #include "../engine/simulation.hpp"
 #include <algorithm>
 
@@ -41,6 +42,8 @@ SimulationEditor::SimulationEditor(Container& cnt,int id):m_id(id),r_sim(nullptr
 	{
 	m_init_list.callback(*this);
 	m_params.callback(*this);
+	m_img_view.displayCallback(*this);
+	m_ch_current=-1;
 	}
 
 void SimulationEditor::operator()(ButtonList<SimulationEditor>& list,Button& btn)
@@ -52,9 +55,13 @@ void SimulationEditor::operator()(ButtonList<SimulationEditor>& list,Button& btn
 		m_img_view.image(r_sim->stateCurrent(),id);
 		std::for_each(list.begin(),list.end(),[id](auto& x)
 			{x.state(id==x.id());});
+		m_ch_current=id;
 		}
 	else
-		{btn.state(0);}
+		{
+		m_ch_current=-1;
+		btn.state(0);
+		}
 	}
 
 void SimulationEditor::operator()(MapView<ParamDataDescriptor>& params,float& param
@@ -63,14 +70,18 @@ void SimulationEditor::operator()(MapView<ParamDataDescriptor>& params,float& pa
 	param=strtof(valstr,nullptr);
 	}
 
-void SimulationEditor::operator()(Window& src)
+void SimulationEditor::operator()(ImageDisplay& src)
 	{
-	if(src.id()==0)
+	auto ch_current=m_ch_current;
+	if(ch_current!=-1)
 		{
+		if(filenameSelect(m_top,m_img_names[ch_current],FileselectMode::OPEN))
+			{
+			printf("Result: %s\n",m_img_names[ch_current].c_str());
+		//	m_img_staged[m_ch_current]=
+			}
 		}
 	}
-
-
 
 SimulationEditor& SimulationEditor::simulation(Simulation& sim)
 	{
@@ -84,5 +95,9 @@ SimulationEditor& SimulationEditor::simulation(Simulation& sim)
 	sim.channelsList([this](const Simulation& sim,const char* ch)
 		{m_init_list.append(ch);});
 	m_init_list.append("Load all");
+	m_img_staged.resize(sim.channelCount());
+	m_img_names.resize(sim.channelCount());
+	m_img_ranges.resize(sim.channelCount());
+	m_ch_current=-1;
 	return *this;
 	}

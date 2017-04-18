@@ -54,6 +54,7 @@ namespace Tiger
 			Box& add(void* handle);
 			Box& show();
 			Box& sensitive(bool val);
+			void* toplevel() const;
 
 			Box& homogenous(bool status) noexcept;
 			Box& insertMode(const InsertMode& mode) noexcept;

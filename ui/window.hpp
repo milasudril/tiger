@@ -46,6 +46,8 @@ namespace Tiger
 			Window& add(void* handle);
 			Window& show();
 			Window& sensitive(bool val);
+			void* toplevel() const;
+
 			const char* title() const noexcept;
 			Window& title(const char* title_new);
 

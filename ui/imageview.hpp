@@ -43,6 +43,13 @@ namespace Tiger
 				return *this;
 				}
 
+			template<class Callback>
+			ImageView& displayCallback(Callback& cb)
+				{
+				m_img_display.callback(cb);
+				return *this;
+				}
+
 		private:
 			int m_id;
 			Box m_box;
