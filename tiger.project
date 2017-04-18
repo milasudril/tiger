@@ -45,6 +45,8 @@
       <File Name="engine/sinkstdio.hpp"/>
       <File Name="engine/srcstdio.hpp"/>
       <File Name="engine/range.hpp"/>
+      <File Name="engine/mimeidentifier.hpp"/>
+      <File Name="engine/mimeidentifier.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/rangeview.hpp"/>

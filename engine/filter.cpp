@@ -28,7 +28,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "error.hpp"
 #include "blob.hpp"
 #include "sinkstdio.hpp"
-#include <magic.h>
+#include "mimeidentifier.hpp"
 #include <uuid.h>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -57,24 +57,6 @@ static std::array<char,37> uuid_generate() noexcept
 
 namespace
 	{
-	class MagicHandle
-		{
-		public:
-			MagicHandle(const MagicHandle&)=delete;
-			MagicHandle& operator=(const MagicHandle&)=delete;
-
-			MagicHandle():m_handle(magic_open(MAGIC_ERROR|MAGIC_MIME))
-				{magic_load(m_handle,nullptr);}
-			~MagicHandle()
-				{magic_close(m_handle);}
-
-			const char* identify(const char* filename) noexcept
-				{return magic_file(m_handle,filename);}
-
-		private:
-			magic_t m_handle;
-		};
-
 	class DirectoryGuard
 		{
 		public:
@@ -135,7 +117,7 @@ static void compile(const char* src,const char* dest)
 
 static std::string objectGenerate(const char* src,const char* objdir)
 	{
-	MagicHandle m;
+	MimeIdentifier m;
 	auto mime=m.identify(src);
 	if(mime==nullptr)
 		{throw Error(src," has unknown MIME type");}
