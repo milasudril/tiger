@@ -35,11 +35,18 @@ namespace Tiger
 
 			ImageView& image(Image&& img,int channel)=delete;
 
-			ImageView& image(const Image& img,int channel)
+			ImageView& image(const Image* img,int channel)
 				{
-				assert(channel>=0 && channel<static_cast<int>(img.channelCount()));
-				m_img_display.image(img,channel);
-				m_box.sensitive(1);
+				if(img!=nullptr)
+					{
+					assert(channel>=0 && channel<static_cast<int>(img->channelCount()));
+					m_img_display.image(img,channel);
+					m_box.sensitive(1);
+					}				else
+					{
+					m_img_display.image(img,channel);
+					m_box.sensitive(0);
+					}
 				return *this;
 				}
 
@@ -49,6 +56,10 @@ namespace Tiger
 				m_img_display.callback(cb);
 				return *this;
 				}
+
+			ImageView& range(const Range& rng) noexcept;
+
+			Range range() const noexcept;
 
 		private:
 			int m_id;

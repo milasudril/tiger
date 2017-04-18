@@ -56,9 +56,15 @@ namespace Tiger
 
 			Simulation& imagesLoad(const std::vector<Channel>& files_init);
 
-			Simulation& imagesStore(const std::vector<Channel>& files)
+			const Simulation& imagesStore(const std::vector<Channel>& files) const
 				{
 				imagesStore(m_filter,m_state,files);
+				return *this;
+				}
+
+			const Simulation& imagesStore(std::vector<Image>& images) const
+				{
+				imagesStore(m_filter,m_state,images);
 				return *this;
 				}
 
@@ -123,6 +129,9 @@ namespace Tiger
 				,const Tiger::Filter& f);
 			static void imagesStore(const Filter& f,const FilterState& d
 				,const std::vector<Channel>& files);
+
+			static void imagesStore(const Filter& f,const FilterState& d
+				,std::vector<Image>& images);
 
 			typedef bool(*ProcessMonitor)(void* processcallback,const Simulation& sim
 				,unsigned long long iter_count);

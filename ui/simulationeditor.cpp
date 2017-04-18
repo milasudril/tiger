@@ -21,7 +21,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "window.hpp"
 #include "imageview.hpp"
 #include "filenameselect.hpp"
+#include "../engine/srcstdio.hpp"
 #include "../engine/simulation.hpp"
+#include "../engine/mimeidentifier.hpp"
 #include <algorithm>
 
 using namespace Tiger;
@@ -48,11 +50,12 @@ SimulationEditor::SimulationEditor(Container& cnt,int id):m_id(id),r_sim(nullptr
 
 void SimulationEditor::operator()(ButtonList<SimulationEditor>& list,Button& btn)
 	{
-	printf("%d\n",btn.id());
 	if(btn.id()<r_sim->channelCount())
 		{
 		auto id=btn.id();
-		m_img_view.image(r_sim->stateCurrent(),id);
+		if(m_ch_current!=-1)
+			{m_img_ranges[m_ch_current]=m_img_view.range();}
+		m_img_view.image(&m_img_staged[id],0).range(m_img_ranges[id]);
 		std::for_each(list.begin(),list.end(),[id](auto& x)
 			{x.state(id==x.id());});
 		m_ch_current=id;
@@ -61,6 +64,7 @@ void SimulationEditor::operator()(ButtonList<SimulationEditor>& list,Button& btn
 		{
 		m_ch_current=-1;
 		btn.state(0);
+		m_img_view.image(nullptr,0);
 		}
 	}
 
@@ -75,10 +79,19 @@ void SimulationEditor::operator()(ImageDisplay& src)
 	auto ch_current=m_ch_current;
 	if(ch_current!=-1)
 		{
-		if(filenameSelect(m_top,m_img_names[ch_current],FileselectMode::OPEN))
+		MimeIdentifier ident;
+		if(filenameSelect(m_top,m_img_names[ch_current],FileselectMode::OPEN
+			,[&ident](const char* filename)
+				{return begins_with(ident.identify(filename),"image/png");}
+			,"PNG image files"))
 			{
-			printf("Result: %s\n",m_img_names[ch_current].c_str());
-		//	m_img_staged[m_ch_current]=
+		//TODO: try/catch errors
+			SrcStdio src(m_img_names[ch_current].c_str());
+			m_img_staged[ch_current]=Image(src);
+			m_img_view.image(&m_img_staged[ch_current],0);
+			auto r=m_img_staged[ch_current].range(0);
+			m_img_view.range(r);
+			m_img_ranges[ch_current]=r;
 			}
 		}
 	}
@@ -95,9 +108,12 @@ SimulationEditor& SimulationEditor::simulation(Simulation& sim)
 	sim.channelsList([this](const Simulation& sim,const char* ch)
 		{m_init_list.append(ch);});
 	m_init_list.append("Load all");
-	m_img_staged.resize(sim.channelCount());
-	m_img_names.resize(sim.channelCount());
-	m_img_ranges.resize(sim.channelCount());
+	sim.imagesStore(m_img_staged);
+	m_img_names.resize(m_img_staged.size());
+	m_img_ranges.clear();
+	std::for_each(m_img_staged.begin(),m_img_staged.end()
+		,[this](const Image& img)
+			{m_img_ranges.push_back(img.range(0));});
 	m_ch_current=-1;
 	return *this;
 	}

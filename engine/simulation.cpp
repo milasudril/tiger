@@ -145,13 +145,29 @@ void Simulation::imagesStore(const Tiger::Filter& f,const Tiger::FilterState& d
 	{
 	auto ptr=files.begin();
 	auto ptr_end=files.end();
-	Tiger::Image img_out(d.width(),d.height(),1);
+	Image img_out(d.width(),d.height(),1);
 	while(ptr!=ptr_end)
 		{
 		auto ch=f.channelIndex(ptr->name());
 		imageAoS2SoA(d,f.channelCount(),ch,img_out);
-		img_out.store(Tiger::SinkStdio{ptr->filename()});
+		img_out.store(SinkStdio{ptr->filename()});
 		++ptr;
+		}
+	}
+
+void Simulation::imagesStore(const Filter& f,const FilterState& d
+	,std::vector<Image>& images)
+	{
+	images.resize(f.channelCount());
+	auto ptr=images.begin();
+	auto ptr_end=images.end();
+	auto k=0;
+	while(ptr!=ptr_end)
+		{
+		*ptr=Image(d.width(),d.height(),1);
+		imageAoS2SoA(d,f.channelCount(),k,*ptr);
+		++ptr;
+		++k;
 		}
 	}
 

@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 		 Tiger::Channel("u:testdata/lenna-r.png")
 		,Tiger::Channel("v:testdata/lenna-g.png")
 		});
-	Tiger::Window mainwin("Tiger Test",0);
+	Tiger::Window mainwin("Tiger",0);
 	auto mainwin_cb=[&ctx](Tiger::Window& window)
 		{ctx.exit();};
 	Tiger::SimulationEditor m_simedit(mainwin,0);

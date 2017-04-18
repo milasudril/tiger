@@ -24,7 +24,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 using namespace Tiger;
 
 bool Tiger::filenameSelect(Container& cnt,std::string& filename_in,FileselectMode mode
-	,filtercb cb,void* cb_obj)
+	,filtercb cb,void* cb_obj,const char* filter_name)
 	{
 	auto action=mode==FileselectMode::OPEN?
 		 GTK_FILE_CHOOSER_ACTION_OPEN : GTK_FILE_CHOOSER_ACTION_SAVE;
@@ -38,7 +38,7 @@ bool Tiger::filenameSelect(Container& cnt,std::string& filename_in,FileselectMod
 	gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dlg),mode==FileselectMode::SAVE);
 	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dlg),filename_in.c_str());
 	auto filter=gtk_file_filter_new();
-	gtk_file_filter_set_name(filter,"PNG image files");
+	gtk_file_filter_set_name(filter,filter_name);
 	std::pair<filtercb,void*> cb_obj_gtk{cb,cb_obj};
 	auto cb_gtk=[](const GtkFileFilterInfo* filter_info,gpointer data)
 		{
@@ -48,7 +48,8 @@ bool Tiger::filenameSelect(Container& cnt,std::string& filename_in,FileselectMod
 		return 0;
 		};
 
-	gtk_file_filter_add_custom(filter,GTK_FILE_FILTER_FILENAME,cb_gtk,&cb_gtk,nullptr);
+	gtk_file_filter_add_custom(filter,GTK_FILE_FILTER_FILENAME,cb_gtk,&cb_obj_gtk,nullptr);
+	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dlg),filter);
 
 	if(gtk_dialog_run(GTK_DIALOG(dlg))==GTK_RESPONSE_ACCEPT)
 		{

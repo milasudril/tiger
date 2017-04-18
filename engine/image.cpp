@@ -368,7 +368,7 @@ Image::Image(uint32_t width,uint32_t height,uint32_t n_channels):
 	,m_range(new Range[n_channels])
 	{
 	rangeInvalidate();
-	memset(m_data.get(),0,width*height*n_channels);
+	memset(m_data.get(),0,width*height*n_channels*sizeof(SampleType));
 	}
 
 namespace

@@ -39,9 +39,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Tiger;
 
-inline bool begins_with(const char* str,const char* str2)
-	{return strncmp(str,str2,strlen(str2))==0;}
-
 TIGER_BLOB(char,filterstate,"engine/filterstate.hpp");
 TIGER_BLOB(char,filterstateclient,"engine/filterstateclient.hpp");
 TIGER_BLOB(char,pluginmain,"engine/pluginmain.hpp");

@@ -56,9 +56,7 @@ namespace Tiger
 				return callback(cb_wrapper,&cb); 
 				}
 
-			ImageDisplay& image(Image&& img)=delete;
-
-			ImageDisplay& image(const Image& img,int channel) noexcept;
+			ImageDisplay& image(const Image* img,int channel) noexcept;
 
 			Range zrangeOptimal() const noexcept;
 

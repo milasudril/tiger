@@ -33,9 +33,9 @@ class ImageDisplay::Impl:private ImageDisplay
 
 		void image(Image&& img)=delete;
 
-		void image(const Image& img,int channel) noexcept
+		void image(const Image* img,int channel) noexcept
 			{
-			r_img=&img;
+			r_img=img;
 			m_view_channel=channel;
 			gtk_widget_queue_draw(m_widget);
 			}
@@ -81,7 +81,7 @@ ImageDisplay::ImageDisplay(Container& cnt,int id)
 ImageDisplay::~ImageDisplay()
 	{delete m_impl;}
 
-ImageDisplay& ImageDisplay::image(const Image& img,int channel) noexcept
+ImageDisplay& ImageDisplay::image(const Image* img,int channel) noexcept
 	{
 	m_impl->image(img,channel);
 	return *this;

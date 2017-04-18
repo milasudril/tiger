@@ -34,25 +34,25 @@ namespace Tiger
 
 	typedef bool (*filtercb)(void* cb_obj,const char* filename_check);
 	bool filenameSelect(Container& cnt,std::string& filename_in,FileselectMode mode
-		,filtercb cb,void* cb_obj);
+		,filtercb cb,void* cb_obj,const char* filter_name);
 
 	inline bool filenameSelect(Container& cnt,std::string& filename_in,FileselectMode mode)
 		{
 		auto cb=[](void* cb_obj,const char* filename_check)
 			{return true;};
-		return filenameSelect(cnt,filename_in,mode,cb,nullptr);
+		return filenameSelect(cnt,filename_in,mode,cb,nullptr,"");
 		}
 
 	template<class FilterCallback>
 	inline bool filenameSelect(Container& cnt,std::string& filename_in,FileselectMode mode
-		,FilterCallback&& filter)
+		,FilterCallback&& filter,const char* filter_name)
 		{
 		auto cb=[](void* cb_obj,const char* filename_check)
 			{
 			auto filter=reinterpret_cast<FilterCallback*>(cb_obj);
 			return (*filter)(filename_check);
 			};
-		return filenameSelect(cnt,filename_in,mode,cb,&filter);
+		return filenameSelect(cnt,filename_in,mode,cb,&filter,filter_name);
 		}
 
 

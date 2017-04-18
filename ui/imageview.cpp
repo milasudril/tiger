@@ -67,6 +67,18 @@ ImageView::ImageView(Container& cnt,int id):m_id(id)
 	m_box.sensitive(0);
 	}
 
+ImageView& ImageView::range(const Range& rng) noexcept
+	{
+	m_rv.range(unmap(rng));
+	(*this)(m_rv);
+	return *this;
+	}
+
+Range ImageView::range() const noexcept
+	{
+	return map(m_rv.range());
+	}
+
 void ImageView::operator()(Button& src)
 	{
 	auto range_opt=m_img_display.zrangeOptimal();
