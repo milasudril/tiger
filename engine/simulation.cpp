@@ -22,6 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "srcstdio.hpp"
 #include "sinkstdio.hpp"
 #include <cassert>
+#include <algorithm>
 
 using namespace Tiger;
 
@@ -79,28 +80,42 @@ static void imageSoA2AoS(const Tiger::Image& src,unsigned int ch,Tiger::Image& d
 		}
 	}
 
-Image Simulation::imagesLoad(const std::vector<Tiger::Channel>& files,const Tiger::Filter& f)
+namespace
 	{
-	auto ptr=files.begin();
-	auto ptr_end=files.end();
-	Tiger::Image ret;
-	while(ptr!=ptr_end)
-		{
-		Tiger::Image src{Tiger::SrcStdio(ptr->filename())};
-		if(src.channelCount()!=1)
-			{throw Tiger::Error(ptr->filename(),": Only grayscale images are supported.");}
-		if(!ret.valid())
-			{ret=Tiger::Image(src.width(),src.height(),f.channelCount());}
-		if( ret.width()!=src.width() || ret.height()!=src.height() )
-			{
-			throw Tiger::Error(ptr->filename()
-				,": Image has a different size comared to other loaded images.");
-			}
+	template<class ... Iterator>
+	void increment_dummy(Iterator& ... i)
+		{}
 
-		auto ch=f.channelIndex(ptr->name());
-		imageSoA2AoS(src,ch,ret);
-		++ptr;
+	template<class Function,class ... Iterator>
+	void for_each_combined(size_t N,Function&& fun,Iterator... iter)
+		{
+		while(N!=0)
+			{
+			fun(*iter...);
+			increment_dummy(++iter...);
+			--N;
+			}
 		}
+	}
+
+Image Simulation::imagesLoad(const std::vector<Tiger::Channel>& files,const Filter& f)
+	{
+	std::vector<Image> images(files.size());
+	for_each_combined(files.size(),[](const Channel& ch,Image& img)
+		{
+		img=Image{Tiger::SrcStdio(ch.filename())};
+		if(img.channelCount()!=1)
+			{throw Tiger::Error(ch.filename(),": Only grayscale images are supported.");}
+		},files.begin(),images.begin());
+
+	fitToLargest(images.data(),images.data() + files.size());
+	Image ret(images[0].width(),images[0].height(),f.channelCount());	
+	for_each_combined(files.size(),[&f,&ret](const Channel& ch,const Image& img)
+		{
+		auto ch_index=f.channelIndex(ch.name());
+		imageSoA2AoS(img,ch_index,ret);
+		},files.begin(),images.begin());
+
 	return std::move(ret);
 	}
 

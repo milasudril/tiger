@@ -96,6 +96,10 @@ namespace Tiger
 		return img_a.width()==img_b.width() && img_a.height()==img_b.height()
 			&& img_a.channelCount()==img_b.channelCount();
 		}
+
+	void fitToLargest(Image* img_begin,Image* img_end);
+
+	Image resize(const Image& src,uint32_t width,uint32_t height);
 	}
 
 #endif

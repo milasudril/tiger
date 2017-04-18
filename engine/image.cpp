@@ -31,6 +31,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <png.h>
 #include <cmath>
+#include <algorithm>
 
 using namespace Tiger;
 
@@ -566,4 +567,48 @@ void Image::rangeCompute() const noexcept
 		ptr+=nch;
 		--N;
 		}
+	}
+
+Image Tiger::resize(const Image& src,uint32_t width,uint32_t height)
+	{
+	auto n_ch=src.channelCount();
+	Image ret(width,height,n_ch);
+	auto pixels_in=src.pixels();
+	auto width_in=src.width();
+	auto r_x=static_cast<float>(width_in)/static_cast<float>(width);	
+	auto r_y=static_cast<float>(src.height())/static_cast<float>(height);
+	auto pixels_out=ret.pixels();
+	auto transform=[r_x,r_y](uint32_t k,uint32_t l)
+		{
+		return std::pair<uint32_t,uint32_t>
+			{
+			 static_cast<uint32_t>(r_y*static_cast<float>(k))
+			,static_cast<uint32_t>(r_x*static_cast<float>(l))
+			};
+		};
+
+	for(uint32_t k=0;k<height;++k)
+		{
+		for(uint32_t l=0;l<width;++l)
+			{
+			auto i_src=transform(k,l);
+			auto pixel_in=pixels_in + n_ch*(width_in*i_src.first + i_src.second);
+			for(uint32_t m=0;m<n_ch;++m)
+				{pixels_out[m]=pixel_in[m];}
+			pixels_out+=n_ch;
+			}
+		}
+
+	return std::move(ret);
+	}
+
+void Tiger::fitToLargest(Image* img_begin,Image* img_end)
+	{
+	auto i=std::max_element(img_begin,img_end,[](const Image& a,const Image& b)
+		{return a.width()*a.height() < b.width()*b.height();});
+
+	auto width=i->width();
+	auto height=i->height();
+	std::transform(img_begin,img_end,img_begin,[width,height](const Image& src)
+		{return resize(src,width,height);});
 	}
