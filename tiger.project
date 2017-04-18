@@ -80,6 +80,7 @@
       <File Name="ui/imagedisplay.cpp"/>
       <File Name="ui/filenameselect.hpp"/>
       <File Name="ui/filenameselect.cpp"/>
+      <File Name="ui/ui-test.cpp"/>
     </VirtualDirectory>
     <File Name="LICENSE"/>
     <File Name="maikeconfig-rel.json"/>
