@@ -4,65 +4,30 @@
   <wxString Value="/home/torbjorr/Dokument/tiger/tiger.workspace" Name="m_workspaceName"/>
   <TabInfoArray Name="TabInfoArray">
     <TabInfo>
-      <wxString Value="/home/torbjorr/Dokument/tiger/ui/simulationeditor.cpp" Name="FileName"/>
-      <int Value="69" Name="FirstVisibleLine"/>
-      <int Value="79" Name="CurrentLine"/>
+      <wxString Value="/home/torbjorr/Dokument/tiger/ui/sourceview.cpp" Name="FileName"/>
+      <int Value="12" Name="FirstVisibleLine"/>
+      <int Value="17" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
       <IntVector Name="CollapsedFolds"/>
     </TabInfo>
     <TabInfo>
-      <wxString Value="/home/torbjorr/Dokument/tiger/engine/simulation.hpp" Name="FileName"/>
-      <int Value="135" Name="FirstVisibleLine"/>
-      <int Value="133" Name="CurrentLine"/>
+      <wxString Value="/home/torbjorr/Dokument/tiger/ui/ui-test.cpp" Name="FileName"/>
+      <int Value="30" Name="FirstVisibleLine"/>
+      <int Value="0" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
       <IntVector Name="CollapsedFolds"/>
     </TabInfo>
     <TabInfo>
-      <wxString Value="/home/torbjorr/Dokument/tiger/ui/main.cpp" Name="FileName"/>
-      <int Value="31" Name="FirstVisibleLine"/>
-      <int Value="29" Name="CurrentLine"/>
+      <wxString Value="/home/torbjorr/Dokument/tiger/ui/sourceview.hpp" Name="FileName"/>
+      <int Value="37" Name="FirstVisibleLine"/>
+      <int Value="43" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
       <IntVector Name="CollapsedFolds"/>
     </TabInfo>
     <TabInfo>
-      <wxString Value="/home/torbjorr/Dokument/tiger/engine/image.cpp" Name="FileName"/>
-      <int Value="371" Name="FirstVisibleLine"/>
-      <int Value="369" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-      <IntVector Name="CollapsedFolds"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="/home/torbjorr/Dokument/tiger/engine/image.hpp" Name="FileName"/>
-      <int Value="36" Name="FirstVisibleLine"/>
-      <int Value="37" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-      <IntVector Name="CollapsedFolds"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="/home/torbjorr/Dokument/tiger/ui/imageview.hpp" Name="FileName"/>
-      <int Value="51" Name="FirstVisibleLine"/>
-      <int Value="59" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-      <IntVector Name="CollapsedFolds"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="/home/torbjorr/Dokument/tiger/ui/imageview.cpp" Name="FileName"/>
-      <int Value="75" Name="FirstVisibleLine"/>
-      <int Value="76" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-      <IntVector Name="CollapsedFolds"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="/home/torbjorr/Dokument/tiger/ui/imagedisplay.hpp" Name="FileName"/>
-      <int Value="58" Name="FirstVisibleLine"/>
-      <int Value="56" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-      <IntVector Name="CollapsedFolds"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="/home/torbjorr/Dokument/tiger/ui/imagedisplay.cpp" Name="FileName"/>
-      <int Value="85" Name="FirstVisibleLine"/>
-      <int Value="83" Name="CurrentLine"/>
+      <wxString Value="/home/torbjorr/Dokument/tiger/ui/separator.hpp" Name="FileName"/>
+      <int Value="28" Name="FirstVisibleLine"/>
+      <int Value="31" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
       <IntVector Name="CollapsedFolds"/>
     </TabInfo>

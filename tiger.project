@@ -81,6 +81,8 @@
       <File Name="ui/filenameselect.hpp"/>
       <File Name="ui/filenameselect.cpp"/>
       <File Name="ui/ui-test.cpp"/>
+      <File Name="ui/sourceview.cpp"/>
+      <File Name="ui/sourceview.hpp"/>
     </VirtualDirectory>
     <File Name="LICENSE"/>
     <File Name="maikeconfig-rel.json"/>
