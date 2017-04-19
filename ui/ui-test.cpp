@@ -27,6 +27,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Tiger;
 
+TIGER_BLOB(char,example,"engine/example.cpp");
+
 class FilterEditor
 	{
 	public:
@@ -36,10 +38,19 @@ class FilterEditor
 			{
 			m_toolbar.append("New").append("Open").append("Save")
 				.append("Compile").append("Use").callback(*this);
+			m_src_view.highlight("foo.cpp").content(example_begin);
 			}
 
 		void operator()(ButtonList<FilterEditor>& src,Button& btn)
 			{
+			switch(btn.id())
+				{
+				case 0:
+					m_src_view.content(example_begin);
+					break;
+				default:
+					break;
+				}
 			btn.state(0);
 			}
 
@@ -48,8 +59,6 @@ class FilterEditor
 			ButtonList<FilterEditor> m_toolbar;
 			SourceView m_src_view;
 	};
-
-TIGER_BLOB(char,example,"engine/example.cpp");
 
 int main(int argc, char *argv[])
 	{
