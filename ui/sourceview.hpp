@@ -28,6 +28,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 namespace Tiger
 	{
 	class Container;
+	class DataSource;
 	class SourceView
 		{
 		public:
@@ -51,6 +52,8 @@ namespace Tiger
 			const char* content() const;
 
 			SourceView& content(const char* text);
+
+			SourceView& content(DataSource&& src);
 
 		protected:
 			class Impl;

@@ -42,6 +42,8 @@ class SourceView::Impl:private SourceView
 			gtk_text_buffer_set_text(buffer,text,-1);
 			}
 
+		void content(DataSource& src);
+
 	private:
 		GtkSourceView* m_handle;
 		GtkCssProvider* m_style;
@@ -72,6 +74,11 @@ const char* SourceView::content() const
 SourceView& SourceView::content(const char* text)
 	{
 	m_impl->content(text);
+	return *this;
+	}
+
+SourceView& SourceView::content(DataSource&& src)
+	{
 	return *this;
 	}
 

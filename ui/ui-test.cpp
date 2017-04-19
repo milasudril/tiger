@@ -20,7 +20,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "uicontext.hpp"
 #include "window.hpp"
 #include "tabview.hpp"
+
 #include "sourceview.hpp"
+#include "filenameselect.hpp"
+#include "../engine/srcstdio.hpp"
+
 #include "simulationeditor.hpp"
 #include "box.hpp"
 #include "../engine/blob.hpp"
@@ -34,11 +38,14 @@ class FilterEditor
 	public:
 		FilterEditor(Container& cnt):m_box(cnt,1)
 			,m_toolbar(m_box,0,0)
-			,m_src_view(m_box.insertMode({0,Box::FILL|Box::EXPAND}))
+			,m_vsplit(m_box.insertMode({0,Box::FILL|Box::EXPAND}),0)
+				,m_src_view(m_vsplit.insertMode({0,Box::FILL|Box::EXPAND}))
+				,m_output(m_vsplit.insertMode({0,Box::FILL|Box::EXPAND}))
 			{
 			m_toolbar.append("New").append("Open").append("Save")
-				.append("Compile").append("Use").callback(*this);
-			m_src_view.highlight("foo.cpp").content(example_begin);
+				.append("Compile").append("Load").callback(*this);
+			m_src_view.highlight("foo.cpp").content(example_begin).lineNumbers(1);
+			m_output.content("Click \"Compile\" or \"Load\" to compile the filter");
 			}
 
 		void operator()(ButtonList<FilterEditor>& src,Button& btn)
@@ -47,6 +54,12 @@ class FilterEditor
 				{
 				case 0:
 					m_src_view.content(example_begin);
+					break;
+				case 1:
+					if(filenameSelect(m_box,m_file_current,FileselectMode::OPEN))
+						{
+						m_src_view.content(SrcStdio{m_file_current.c_str()});
+						}
 					break;
 				default:
 					break;
@@ -57,7 +70,10 @@ class FilterEditor
 	private:
 		Box m_box;
 			ButtonList<FilterEditor> m_toolbar;
-			SourceView m_src_view;
+			Box m_vsplit;
+				SourceView m_src_view;
+				SourceView m_output;
+		std::string m_file_current;
 	};
 
 int main(int argc, char *argv[])
@@ -69,9 +85,7 @@ int main(int argc, char *argv[])
 	Tiger::TabView tabs(mainwin);
 	FilterEditor fileedit(tabs.tabTitle("Filter editor"));
 	Tiger::SimulationEditor simedit(tabs.tabTitle("Simulation setup"),0);
-/*	srcv.lineNumbers(1);
-	srcv.highlight("foo.cpp");
-	srcv.content(example_begin);*/
+
 	mainwin.callback(mainwin_cb);
 	mainwin.show();
 	ctx.run();
