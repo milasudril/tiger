@@ -119,7 +119,7 @@ ImageDisplay::Impl::Impl(Container& cnt,int id):ImageDisplay(*this),m_id(id)
 	m_cursors[1]=gdk_cursor_new_from_name(display,"pointer");
 
 	auto widget=gtk_drawing_area_new();
-	gtk_widget_set_size_request(widget,128,128);
+	gtk_widget_set_size_request(widget,256,256);
 	g_signal_connect(widget,"draw",G_CALLBACK(draw_callback),this);
 	gtk_widget_add_events(widget
 		,GDK_POINTER_MOTION_MASK|GDK_BUTTON_RELEASE_MASK|GDK_BUTTON_PRESS_MASK|GDK_LEAVE_NOTIFY_MASK);

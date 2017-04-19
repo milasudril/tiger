@@ -15,90 +15,66 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
-//@	{"targets":[{"name":"../tiger-ui-test","type":"application","pkgconfig_libs":["gtksourceview-3.0"]}]}
+//@	{"targets":[{"name":"../tiger-ui-test","type":"application"}]}
 
 #include "uicontext.hpp"
 #include "window.hpp"
-#include <gtksourceview/gtksource.h>
+#include "tabview.hpp"
 
+#include "sourceview.hpp"
+#include "filenameselect.hpp"
+#include "../engine/srcstdio.hpp"
+
+#include "simulationeditor.hpp"
+#include "box.hpp"
 #include "../engine/blob.hpp"
-
 
 using namespace Tiger;
 
-class SourceView
+TIGER_BLOB(char,example,"engine/example.cpp");
+
+class FilterEditor
 	{
 	public:
-		explicit SourceView(Container& cnt);
-		~SourceView();
-		void lineNumbers(bool status) noexcept
-			{gtk_source_view_set_show_line_numbers(m_handle,status);}
-
-		void highlight(const char* str);
-
-		const char* content() const
+		FilterEditor(Container& cnt):m_box(cnt,1)
+			,m_toolbar(m_box,0,0)
+			,m_vsplit(m_box.insertMode({0,Box::FILL|Box::EXPAND}),0)
+				,m_src_view(m_vsplit.insertMode({0,Box::FILL|Box::EXPAND}))
+				,m_output(m_vsplit.insertMode({0,Box::FILL|Box::EXPAND}))
 			{
-			auto buffer=gtk_text_view_get_buffer(GTK_TEXT_VIEW(m_handle));
-			GtkTextIter start;
-			GtkTextIter end;
-			gtk_text_buffer_get_start_iter(buffer,&start);
-			gtk_text_buffer_get_end_iter(buffer,&end);
-			if(m_content!=nullptr)
-				{g_free(m_content);}
-			m_content=gtk_text_buffer_get_text(buffer,&start,&end,FALSE);
-			return m_content;
+			m_toolbar.append("New").append("Open").append("Save")
+				.append("Compile").append("Load").callback(*this);
+			m_src_view.highlight("foo.cpp").content(example_begin).lineNumbers(1);
+			m_output.content("Click \"Compile\" or \"Load\" to compile the filter");
 			}
 
-		void content(const char* text) noexcept
+		void operator()(ButtonList<FilterEditor>& src,Button& btn)
 			{
-			auto buffer=gtk_text_view_get_buffer(GTK_TEXT_VIEW(m_handle));
-			gtk_text_buffer_set_text(buffer,text,-1);
+			switch(btn.id())
+				{
+				case 0:
+					m_src_view.content(example_begin);
+					break;
+				case 1:
+					if(filenameSelect(m_box,m_file_current,FileselectMode::OPEN))
+						{
+						m_src_view.content(SrcStdio{m_file_current.c_str()});
+						}
+					break;
+				default:
+					break;
+				}
+			btn.state(0);
 			}
+
 	private:
-		GtkSourceView* m_handle;
-		GtkCssProvider* m_style;
-		mutable char* m_content;
+		Box m_box;
+			ButtonList<FilterEditor> m_toolbar;
+			Box m_vsplit;
+				SourceView m_src_view;
+				SourceView m_output;
+		std::string m_file_current;
 	};
-
-SourceView::SourceView(Container& cnt)
-	{
-	auto widget=gtk_source_view_new();
-	m_handle=GTK_SOURCE_VIEW(widget);
-	auto scroll=gtk_scrolled_window_new(NULL,NULL);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scroll),GTK_SHADOW_IN);
-	gtk_source_view_set_tab_width(m_handle,4);
-
-	m_style=gtk_css_provider_new();
-	gtk_css_provider_load_from_data(m_style,"*{font-size:9pt;font-family:\"Inconsolata\",monospace}",-1,NULL);
-	auto context=gtk_widget_get_style_context(widget);
-	gtk_style_context_add_provider(context,GTK_STYLE_PROVIDER(m_style),
-		GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-
-	g_object_ref_sink(m_handle);
-	gtk_container_add(GTK_CONTAINER(scroll),widget);
-	cnt.add(scroll);
-	m_content=nullptr;
-	}
-
-SourceView::~SourceView()
-	{
-	if(m_content!=nullptr)
-		{g_free(m_content);}
-	auto context=gtk_widget_get_style_context(GTK_WIDGET(m_handle));
-	gtk_style_context_remove_provider(context,GTK_STYLE_PROVIDER(m_style));
-	g_object_unref(m_style);
-	gtk_widget_destroy(GTK_WIDGET(m_handle));
-	}
-
-void SourceView::highlight(const char* str)
-	{
-	auto manager=gtk_source_language_manager_get_default();
-	auto lang=gtk_source_language_manager_guess_language(manager,str,NULL);
-	auto buffer=gtk_text_view_get_buffer(GTK_TEXT_VIEW(m_handle));
-	gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(buffer),lang);
-	}
-
-TIGER_BLOB(char,example,"engine/example.cpp");
 
 int main(int argc, char *argv[])
 	{
@@ -106,10 +82,10 @@ int main(int argc, char *argv[])
 	Tiger::Window mainwin("Tiger test",0);
 	auto mainwin_cb=[&ctx](Tiger::Window& window)
 		{ctx.exit();};
-	SourceView srcv(mainwin);
-	srcv.lineNumbers(1);
-	srcv.highlight("foo.cpp");
-	srcv.content(example_begin);
+	Tiger::TabView tabs(mainwin);
+	FilterEditor fileedit(tabs.tabTitle("Filter editor"));
+	Tiger::SimulationEditor simedit(tabs.tabTitle("Simulation setup"),0);
+
 	mainwin.callback(mainwin_cb);
 	mainwin.show();
 	ctx.run();
