@@ -34,8 +34,11 @@ namespace Tiger
 			ButtonList(Container& cnt,int id,bool vertical):r_callback(nullptr)
 				,m_id(id)
 				,m_scroll(cnt)
-				,m_box(m_scroll,vertical)
-				{}
+					,m_box_main(m_scroll,vertical)
+						,m_box(m_box_main,vertical)
+				{
+				m_box.homogenous(1).insertMode({0,Box::EXPAND|Box::FILL});
+				}
 
 			ButtonList& clear() noexcept
 				{
@@ -79,7 +82,9 @@ namespace Tiger
 			Callback* r_callback;
 			int m_id;
 			ScrolledWindow m_scroll;
-				Box m_box;
+				Box m_box_main;
+					Box m_box;
+					
 			std::vector<Button> m_buttons;
 		};
 	}

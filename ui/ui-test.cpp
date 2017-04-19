@@ -22,9 +22,32 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "tabview.hpp"
 #include "sourceview.hpp"
 #include "simulationeditor.hpp"
+#include "box.hpp"
 #include "../engine/blob.hpp"
 
 using namespace Tiger;
+
+class FilterEditor
+	{
+	public:
+		FilterEditor(Container& cnt):m_box(cnt,1)
+			,m_toolbar(m_box,0,0)
+			,m_src_view(m_box.insertMode({0,Box::FILL|Box::EXPAND}))
+			{
+			m_toolbar.append("New").append("Open").append("Save")
+				.append("Compile").append("Use").callback(*this);
+			}
+
+		void operator()(ButtonList<FilterEditor>& src,Button& btn)
+			{
+			btn.state(0);
+			}
+
+	private:
+		Box m_box;
+			ButtonList<FilterEditor> m_toolbar;
+			SourceView m_src_view;
+	};
 
 TIGER_BLOB(char,example,"engine/example.cpp");
 
@@ -35,11 +58,11 @@ int main(int argc, char *argv[])
 	auto mainwin_cb=[&ctx](Tiger::Window& window)
 		{ctx.exit();};
 	Tiger::TabView tabs(mainwin);
-	Tiger::SourceView srcv(tabs.tabTitle("Filter editor"));
+	FilterEditor fileedit(tabs.tabTitle("Filter editor"));
 	Tiger::SimulationEditor simedit(tabs.tabTitle("Simulation setup"),0);
-	srcv.lineNumbers(1);
+/*	srcv.lineNumbers(1);
 	srcv.highlight("foo.cpp");
-	srcv.content(example_begin);
+	srcv.content(example_begin);*/
 	mainwin.callback(mainwin_cb);
 	mainwin.show();
 	ctx.run();
