@@ -50,14 +50,15 @@ SimulationEditor::SimulationEditor(Container& cnt,int id):m_id(id),r_sim(nullptr
 
 void SimulationEditor::operator()(ButtonList<SimulationEditor>& list,Button& btn)
 	{
+	if(m_ch_current!=-1)
+		{
+		m_img_ranges[m_ch_current]=m_img_view.range();
+		list[m_ch_current].state(0);
+		}
 	if(btn.id()<r_sim->channelCount())
 		{
 		auto id=btn.id();
-		if(m_ch_current!=-1)
-			{m_img_ranges[m_ch_current]=m_img_view.range();}
 		m_img_view.image(&m_img_staged[id],0).range(m_img_ranges[id]);
-		std::for_each(list.begin(),list.end(),[id](auto& x)
-			{x.state(id==x.id());});
 		m_ch_current=id;
 		}
 	else

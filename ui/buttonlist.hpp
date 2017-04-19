@@ -72,6 +72,9 @@ namespace Tiger
 			auto end() noexcept
 				{return m_buttons.end();}
 
+			Button& operator[](int k) noexcept
+				{return m_buttons[k];}
+
 		private:
 			Callback* r_callback;
 			int m_id;
