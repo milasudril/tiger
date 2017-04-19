@@ -83,6 +83,8 @@
       <File Name="ui/ui-test.cpp"/>
       <File Name="ui/sourceview.cpp"/>
       <File Name="ui/sourceview.hpp"/>
+      <File Name="ui/tabview.hpp"/>
+      <File Name="ui/tabview.cpp"/>
     </VirtualDirectory>
     <File Name="LICENSE"/>
     <File Name="maikeconfig-rel.json"/>

@@ -19,7 +19,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "uicontext.hpp"
 #include "window.hpp"
+#include "tabview.hpp"
 #include "sourceview.hpp"
+#include "simulationeditor.hpp"
 #include "../engine/blob.hpp"
 
 using namespace Tiger;
@@ -32,7 +34,9 @@ int main(int argc, char *argv[])
 	Tiger::Window mainwin("Tiger test",0);
 	auto mainwin_cb=[&ctx](Tiger::Window& window)
 		{ctx.exit();};
-	Tiger::SourceView srcv(mainwin);
+	Tiger::TabView tabs(mainwin);
+	Tiger::SourceView srcv(tabs.tabTitle("Filter editor"));
+	Tiger::SimulationEditor simedit(tabs.tabTitle("Simulation setup"),0);
 	srcv.lineNumbers(1);
 	srcv.highlight("foo.cpp");
 	srcv.content(example_begin);
