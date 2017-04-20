@@ -89,6 +89,8 @@
       <File Name="ui/paned.cpp"/>
       <File Name="ui/messageshow.hpp"/>
       <File Name="ui/messageshow.cpp"/>
+      <File Name="ui/filtereditor.hpp"/>
+      <File Name="ui/filtereditor.cpp"/>
     </VirtualDirectory>
     <File Name="LICENSE"/>
     <File Name="maikeconfig-rel.json"/>
