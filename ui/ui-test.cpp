@@ -24,11 +24,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "sourceview.hpp"
 #include "filenameselect.hpp"
 #include "../engine/srcstdio.hpp"
+#include "../engine/sinkstdio.hpp"
 #include "simulationeditor.hpp"
 #include "box.hpp"
 #include "paned.hpp"
-
+#include "messageshow.hpp"
 #include "../engine/blob.hpp"
+
+#include <cstring>
 
 using namespace Tiger;
 
@@ -50,20 +53,64 @@ class FilterEditor
 				.readonly(1);
 			}
 
+		void create()
+			{
+		//TODO: Check if content is dirty, and ask for save
+			m_src_view.content(example_begin);
+			}
+
+		void open()
+			{
+		//TODO: Check if content is dirty, and ask for save
+
+		//TODO: Add proper filter
+			if(filenameSelect(m_box,m_file_current,FileselectMode::OPEN))
+				{m_src_view.content(SrcStdio{m_file_current.c_str()});}
+			}
+
+		void saveAs()
+			{
+			if(filenameSelect(m_box,m_file_current,FileselectMode::SAVE))
+				{save();}
+			}
+
+		void save()
+			{
+			if(m_file_current.size()==0)
+				{saveAs();}
+			else
+				{
+				auto data=m_src_view.content();
+				SinkStdio sink(m_file_current.c_str());
+				sink.write(data,strlen(data));
+				}
+			}
+	
+
 		void operator()(ButtonList<FilterEditor>& src,Button& btn)
 			{
-			switch(btn.id())
+			try
 				{
-				case 0:
-					m_src_view.content(example_begin);
-					break;
-				case 1:
-					if(filenameSelect(m_box,m_file_current,FileselectMode::OPEN))
-						{m_src_view.content(SrcStdio{m_file_current.c_str()});}
-					break;
-				default:
-					break;
+				switch(btn.id())
+					{
+					case 0:
+						create();
+						break;
+					case 1:
+						open();
+						break;
+					case 2:
+						save();	
+						break;
+					case 3:
+						saveAs();
+						break;
+					default:
+						break;
+					}
 				}
+			catch(const Tiger::Error& msg)
+				{messageShow(m_box,msg.message(),"Error",MESSAGE_TYPE_ERROR|MESSAGE_BUTTONS_OK);}
 			btn.state(0);
 			}
 

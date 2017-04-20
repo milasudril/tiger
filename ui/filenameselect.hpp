@@ -33,10 +33,10 @@ namespace Tiger
 	enum class FileselectMode:int{OPEN,SAVE};
 
 	typedef bool (*filtercb)(void* cb_obj,const char* filename_check);
-	bool filenameSelect(Container& cnt,std::string& filename_in,FileselectMode mode
+	bool filenameSelect(const Container& cnt,std::string& filename_in,FileselectMode mode
 		,filtercb cb,void* cb_obj,const char* filter_name);
 
-	inline bool filenameSelect(Container& cnt,std::string& filename_in,FileselectMode mode)
+	inline bool filenameSelect(const Container& cnt,std::string& filename_in,FileselectMode mode)
 		{
 		auto cb=[](void* cb_obj,const char* filename_check)
 			{return true;};
@@ -44,7 +44,7 @@ namespace Tiger
 		}
 
 	template<class FilterCallback>
-	inline bool filenameSelect(Container& cnt,std::string& filename_in,FileselectMode mode
+	inline bool filenameSelect(const Container& cnt,std::string& filename_in,FileselectMode mode
 		,FilterCallback&& filter,const char* filter_name)
 		{
 		auto cb=[](void* cb_obj,const char* filename_check)

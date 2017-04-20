@@ -23,7 +23,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Tiger;
 
-bool Tiger::filenameSelect(Container& cnt,std::string& filename_in,FileselectMode mode
+bool Tiger::filenameSelect(const Container& cnt,std::string& filename_in,FileselectMode mode
 	,filtercb cb,void* cb_obj,const char* filter_name)
 	{
 	auto action=mode==FileselectMode::OPEN?

@@ -87,6 +87,8 @@
       <File Name="ui/tabview.cpp"/>
       <File Name="ui/paned.hpp"/>
       <File Name="ui/paned.cpp"/>
+      <File Name="ui/messageshow.hpp"/>
+      <File Name="ui/messageshow.cpp"/>
     </VirtualDirectory>
     <File Name="LICENSE"/>
     <File Name="maikeconfig-rel.json"/>
