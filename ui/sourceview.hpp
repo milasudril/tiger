@@ -24,6 +24,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #define TIGER_SOURCEVIEW_HPP
 
 #include <utility>
+#include <cstddef>
 
 namespace Tiger
 	{
@@ -32,7 +33,7 @@ namespace Tiger
 	class SourceView
 		{
 		public:
-			explicit SourceView(Container& cnt);
+			explicit SourceView(Container& cnt,int id);
 			~SourceView();
 
 			SourceView& operator=(SourceView&& obj) noexcept
@@ -51,16 +52,34 @@ namespace Tiger
 
 			const char* content() const;
 
+			size_t contentLength() const;
+
 			SourceView& content(const char* text);
 
 			SourceView& content(DataSource&& src);
 
 			SourceView& readonly(bool status);
 
+			template<class SourceViewCallback>
+			SourceView& callback(SourceViewCallback& cb)
+				{
+				auto cb_wrapper=[](void* rvc,SourceView& self)
+					{
+					auto x=reinterpret_cast<SourceViewCallback*>(rvc);
+					(*x)(self);
+					};
+				return callback(cb_wrapper,&cb); 
+				}
+
+			int id() const noexcept;
+
 		protected:
 			class Impl;
 			Impl* m_impl;
 			explicit SourceView(Impl& impl):m_impl(&impl){}
+
+			typedef void (*Callback)(void* cb_obj,SourceView& self);
+			SourceView& callback(Callback cb,void* cb_obj);
 		};
 	}
 

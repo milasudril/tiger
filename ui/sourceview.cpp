@@ -21,13 +21,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "container.hpp"
 #include "../engine/datasource.hpp"
 #include <gtksourceview/gtksource.h>
+#include <cstring>
 
 using namespace Tiger;
 
 class SourceView::Impl:private SourceView
 	{
 	public:
-		explicit Impl(Container& cnt);
+		explicit Impl(Container& cnt,int id);
 		~Impl();
 
 		void lineNumbers(bool status) noexcept
@@ -45,21 +46,38 @@ class SourceView::Impl:private SourceView
 
 		void content(DataSource& src);
 
+		size_t contentLength() const
+			{return strlen(content());}
+
 		void readonly(bool status)
 			{
 			gtk_text_view_set_editable(GTK_TEXT_VIEW(m_handle),!status);
 			}
 
+		int id() const noexcept
+			{return m_id;}
+
+		void callback(Callback cb,void* cb_obj)
+			{
+			r_cb=cb;
+			r_cb_obj=cb_obj;
+			}
+
 
 	private:
+		Callback r_cb;
+		void* r_cb_obj;
+		int m_id;
 		GtkSourceView* m_handle;
 		GtkScrolledWindow* m_scroll;
 		GtkCssProvider* m_style;
 		mutable char* m_content;
+
+		static void changed_callback(GtkTextBuffer* buffer,gpointer user_data);
 	};
 
-SourceView::SourceView(Container& cnt)
-	{m_impl=new Impl(cnt);}
+SourceView::SourceView(Container& cnt,int id)
+	{m_impl=new Impl(cnt,id);}
 
 SourceView::~SourceView()
 	{delete m_impl;}
@@ -97,10 +115,24 @@ SourceView& SourceView::readonly(bool status)
 	return *this;
 	}
 
+size_t SourceView::contentLength() const
+	{return m_impl->contentLength();}
 
-
-SourceView::Impl::Impl(Container& cnt):SourceView(*this)
+SourceView& SourceView::callback(Callback cb,void* cb_obj)
 	{
+	m_impl->callback(cb,cb_obj);
+	return *this;
+	}
+
+int SourceView::id() const noexcept
+	{return m_impl->id();}
+
+
+
+SourceView::Impl::Impl(Container& cnt,int id):SourceView(*this)
+	{
+	m_id=id;
+	r_cb=nullptr;
 	auto widget=gtk_source_view_new();
 	m_handle=GTK_SOURCE_VIEW(widget);
 	auto scroll=gtk_scrolled_window_new(NULL,NULL);
@@ -113,7 +145,8 @@ SourceView::Impl::Impl(Container& cnt):SourceView(*this)
 	auto context=gtk_widget_get_style_context(widget);
 	gtk_style_context_add_provider(context,GTK_STYLE_PROVIDER(m_style),
 		GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-
+	auto buffer=gtk_text_view_get_buffer(GTK_TEXT_VIEW(m_handle));
+	g_signal_connect(buffer,"changed",G_CALLBACK(changed_callback),this);
 	g_object_ref_sink(m_handle);
 	gtk_container_add(GTK_CONTAINER(scroll),widget);
 	g_object_ref_sink(m_scroll);
@@ -123,6 +156,7 @@ SourceView::Impl::Impl(Container& cnt):SourceView(*this)
 
 SourceView::Impl::~Impl()
 	{
+	r_cb=nullptr;
 	m_impl=nullptr;
 	if(m_content!=nullptr)
 		{g_free(m_content);}
@@ -135,13 +169,13 @@ SourceView::Impl::~Impl()
 
 const char* SourceView::Impl::content() const
 	{
+	if(m_content!=nullptr)
+		{return m_content;}
 	auto buffer=gtk_text_view_get_buffer(GTK_TEXT_VIEW(m_handle));
 	GtkTextIter start;
 	GtkTextIter end;
 	gtk_text_buffer_get_start_iter(buffer,&start);
 	gtk_text_buffer_get_end_iter(buffer,&end);
-	if(m_content!=nullptr)
-		{g_free(m_content);}
 	m_content=gtk_text_buffer_get_text(buffer,&start,&end,FALSE);
 	return m_content;
 	}
@@ -167,4 +201,13 @@ void SourceView::Impl::content(DataSource& src)
 		gtk_text_buffer_insert_at_cursor(buffer,text,static_cast<int>(n));
 		}
 	while(n==N);
+	}
+
+void SourceView::Impl::changed_callback(GtkTextBuffer* buffer,gpointer user_data)
+	{
+	auto self=reinterpret_cast<Impl*>(user_data);
+	g_free(self->m_content);
+	self->m_content=nullptr;
+	if(self->r_cb!=nullptr)
+		{self->r_cb(self->r_cb_obj,*self);}
 	}
