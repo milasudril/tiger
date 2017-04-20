@@ -46,7 +46,7 @@ class SourceView::Impl:private SourceView
 
 		void content(DataSource& src);
 
-		size_t contentLength() const
+		size_t contentSize() const
 			{return strlen(content());}
 
 		void readonly(bool status)
@@ -115,8 +115,8 @@ SourceView& SourceView::readonly(bool status)
 	return *this;
 	}
 
-size_t SourceView::contentLength() const
-	{return m_impl->contentLength();}
+size_t SourceView::contentSize() const
+	{return m_impl->contentSize();}
 
 SourceView& SourceView::callback(Callback cb,void* cb_obj)
 	{

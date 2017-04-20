@@ -83,7 +83,7 @@ class FilterEditor
 				{
 				auto data=m_src_view.content();
 				SinkStdio sink(m_file_current.c_str());
-				sink.write(data,strlen(data));
+				sink.write(data,m_src_view.contentSize());
 				}
 			}
 	

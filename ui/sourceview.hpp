@@ -52,7 +52,7 @@ namespace Tiger
 
 			const char* content() const;
 
-			size_t contentLength() const;
+			size_t contentSize() const;
 
 			SourceView& content(const char* text);
 
