@@ -42,7 +42,7 @@ class FilterEditor
 				,m_src_view(m_vsplit.insertMode({0,Box::FILL|Box::EXPAND}))
 				,m_output(m_vsplit.insertMode({0,Box::FILL|Box::EXPAND}))
 			{
-			m_toolbar.append("New").append("Open").append("Save")
+			m_toolbar.append("New").append("Open").append("Save").append("Save As")
 				.append("Compile").append("Load").callback(*this);
 			m_src_view.highlight("foo.cpp").content(example_begin).lineNumbers(1);
 			m_output.content("Click \"Compile\" or \"Load\" to compile the filter");
@@ -57,9 +57,7 @@ class FilterEditor
 					break;
 				case 1:
 					if(filenameSelect(m_box,m_file_current,FileselectMode::OPEN))
-						{
-						m_src_view.content(SrcStdio{m_file_current.c_str()});
-						}
+						{m_src_view.content(SrcStdio{m_file_current.c_str()});}
 					break;
 				default:
 					break;

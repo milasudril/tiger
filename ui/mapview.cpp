@@ -59,6 +59,7 @@ class MapViewBase::Impl:private MapViewBase
 		GtkListStore* m_list;
 		GtkCellRendererText* m_key_renderer;
 		GtkCellRendererText* m_val_renderer;
+		GtkScrolledWindow* m_scroll;
 
 		static void key_fetch(GtkTreeViewColumn* col
 			,GtkCellRenderer* renderer
@@ -175,9 +176,11 @@ MapViewBase::Impl::Impl(Container& cnt,const DataDescriptorImpl& descriptor
 
 	auto scroll=gtk_scrolled_window_new(NULL,NULL);
 	gtk_widget_set_size_request(scroll,192,256);
+	m_scroll=GTK_SCROLLED_WINDOW(scroll);
+	gtk_scrolled_window_set_shadow_type(m_scroll,GTK_SHADOW_IN);
 	g_object_ref_sink(tree);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scroll),GTK_SHADOW_IN);
 	gtk_container_add(GTK_CONTAINER(scroll),tree);
+	g_object_ref_sink(scroll);
 	cnt.add(scroll);
 	}
 
@@ -187,6 +190,7 @@ MapViewBase::Impl::~Impl()
 	r_cb_user_data=nullptr;
 	r_cb_obj=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
+	gtk_widget_destroy(GTK_WIDGET(m_scroll));
 	g_object_unref(m_list);
 	}
 

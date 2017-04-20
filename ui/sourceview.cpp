@@ -19,6 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include "sourceview.hpp"
 #include "container.hpp"
+#include "../engine/datasource.hpp"
 #include <gtksourceview/gtksource.h>
 
 using namespace Tiger;
@@ -46,6 +47,7 @@ class SourceView::Impl:private SourceView
 
 	private:
 		GtkSourceView* m_handle;
+		GtkScrolledWindow* m_scroll;
 		GtkCssProvider* m_style;
 		mutable char* m_content;
 	};
@@ -79,6 +81,7 @@ SourceView& SourceView::content(const char* text)
 
 SourceView& SourceView::content(DataSource&& src)
 	{
+	m_impl->content(src);
 	return *this;
 	}
 
@@ -87,6 +90,7 @@ SourceView::Impl::Impl(Container& cnt):SourceView(*this)
 	auto widget=gtk_source_view_new();
 	m_handle=GTK_SOURCE_VIEW(widget);
 	auto scroll=gtk_scrolled_window_new(NULL,NULL);
+	m_scroll=GTK_SCROLLED_WINDOW(scroll);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(scroll),GTK_SHADOW_IN);
 	gtk_source_view_set_tab_width(m_handle,4);
 
@@ -98,6 +102,7 @@ SourceView::Impl::Impl(Container& cnt):SourceView(*this)
 
 	g_object_ref_sink(m_handle);
 	gtk_container_add(GTK_CONTAINER(scroll),widget);
+	g_object_ref_sink(m_scroll);
 	cnt.add(scroll);
 	m_content=nullptr;
 	}
@@ -111,6 +116,7 @@ SourceView::Impl::~Impl()
 	gtk_style_context_remove_provider(context,GTK_STYLE_PROVIDER(m_style));
 	g_object_unref(m_style);
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
+	gtk_widget_destroy(GTK_WIDGET(m_scroll));
 	}
 
 const char* SourceView::Impl::content() const
@@ -132,4 +138,19 @@ void SourceView::Impl::highlight(const char* filename_pattern)
 	auto lang=gtk_source_language_manager_guess_language(manager,filename_pattern,NULL);
 	auto buffer=gtk_text_view_get_buffer(GTK_TEXT_VIEW(m_handle));
 	gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(buffer),lang);
+	}
+
+void SourceView::Impl::content(DataSource& src)
+	{
+	constexpr size_t N=4096;
+	char text[N];
+	size_t n=0;
+	auto buffer=gtk_text_view_get_buffer(GTK_TEXT_VIEW(m_handle));
+	content("");
+	do
+		{
+		n=src.read(text,N);
+		gtk_text_buffer_insert_at_cursor(buffer,text,static_cast<int>(n));
+		}
+	while(n==N);
 	}
