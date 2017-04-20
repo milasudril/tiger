@@ -23,6 +23,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "../engine/srcstdio.hpp"
 #include "../engine/sinkstdio.hpp"
 #include "../engine/blob.hpp"
+#include "../engine/mimeidentifier.hpp"
 
 using namespace Tiger;
 
@@ -56,9 +57,18 @@ void FilterEditor::open()
 	{
 	if(askSave())
 		{
-	//TODO: Add proper filter
-		if(filenameSelect(m_box,m_file_current,FileselectMode::OPEN))
-			{m_src_view.content(SrcStdio{m_file_current.c_str()});}
+		MimeIdentifier mime;
+		if(filenameSelect(m_box,m_file_current,FileselectMode::OPEN
+			,[&mime](const char* filename)
+				{
+				auto m=mime.identify(filename);
+				return begins_with(m,"text/x-c; charset=utf-8") 
+					|| begins_with(m,"text/plain; charset=utf-8");
+				},"Filter source files"))
+			{
+			m_src_view.content(SrcStdio{m_file_current.c_str()});
+			m_dirty=0;
+			}
 		}
 	}
 
