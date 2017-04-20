@@ -45,6 +45,12 @@ class SourceView::Impl:private SourceView
 
 		void content(DataSource& src);
 
+		void readonly(bool status)
+			{
+			gtk_text_view_set_editable(GTK_TEXT_VIEW(m_handle),!status);
+			}
+
+
 	private:
 		GtkSourceView* m_handle;
 		GtkScrolledWindow* m_scroll;
@@ -84,6 +90,14 @@ SourceView& SourceView::content(DataSource&& src)
 	m_impl->content(src);
 	return *this;
 	}
+
+SourceView& SourceView::readonly(bool status)
+	{
+	m_impl->readonly(status);
+	return *this;
+	}
+
+
 
 SourceView::Impl::Impl(Container& cnt):SourceView(*this)
 	{

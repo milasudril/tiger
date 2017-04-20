@@ -85,6 +85,8 @@
       <File Name="ui/sourceview.hpp"/>
       <File Name="ui/tabview.hpp"/>
       <File Name="ui/tabview.cpp"/>
+      <File Name="ui/paned.hpp"/>
+      <File Name="ui/paned.cpp"/>
     </VirtualDirectory>
     <File Name="LICENSE"/>
     <File Name="maikeconfig-rel.json"/>
@@ -94,6 +96,7 @@
     <VirtualDirectory Name="cli">
       <File Name="cli/main.cpp"/>
     </VirtualDirectory>
+    <File Name="valgrindme.sh"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

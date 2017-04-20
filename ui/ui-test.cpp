@@ -24,9 +24,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "sourceview.hpp"
 #include "filenameselect.hpp"
 #include "../engine/srcstdio.hpp"
-
 #include "simulationeditor.hpp"
 #include "box.hpp"
+#include "paned.hpp"
+
 #include "../engine/blob.hpp"
 
 using namespace Tiger;
@@ -39,13 +40,14 @@ class FilterEditor
 		FilterEditor(Container& cnt):m_box(cnt,1)
 			,m_toolbar(m_box,0,0)
 			,m_vsplit(m_box.insertMode({0,Box::FILL|Box::EXPAND}),0)
-				,m_src_view(m_vsplit.insertMode({0,Box::FILL|Box::EXPAND}))
-				,m_output(m_vsplit.insertMode({0,Box::FILL|Box::EXPAND}))
+				,m_src_view(m_vsplit.insertMode({Paned::RESIZE|Paned::SHRINK_ALLOWED}))
+				,m_output(m_vsplit)
 			{
 			m_toolbar.append("New").append("Open").append("Save").append("Save As")
 				.append("Compile").append("Load").callback(*this);
 			m_src_view.highlight("foo.cpp").content(example_begin).lineNumbers(1);
-			m_output.content("Click \"Compile\" or \"Load\" to compile the filter");
+			m_output.content("Click \"Compile\" or \"Load\" to compile the filter")
+				.readonly(1);
 			}
 
 		void operator()(ButtonList<FilterEditor>& src,Button& btn)
@@ -68,7 +70,7 @@ class FilterEditor
 	private:
 		Box m_box;
 			ButtonList<FilterEditor> m_toolbar;
-			Box m_vsplit;
+			Paned m_vsplit;
 				SourceView m_src_view;
 				SourceView m_output;
 		std::string m_file_current;

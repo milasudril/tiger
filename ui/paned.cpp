@@ -16,15 +16,15 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 //@	{
-//@  "targets":[{"name":"box.o","type":"object","pkgconfig_libs":["gtk+-3.0"]}]
+//@  "targets":[{"name":"paned.o","type":"object","pkgconfig_libs":["gtk+-3.0"]}]
 //@	}
 
-#include "box.hpp"
+#include "paned.hpp"
 #include <gtk/gtk.h>
 
 using namespace Tiger;
 
-class Box::Impl:private Box
+class Paned::Impl:private Paned
 	{
 	public:
 		Impl(Container& cnt,bool vertical);
@@ -32,8 +32,17 @@ class Box::Impl:private Box
 
 		void _add(GtkWidget* handle) noexcept
 			{
-			gtk_box_pack_start(m_handle,handle,m_mode.flags&EXPAND,m_mode.flags&FILL
-				,m_mode.padding);
+			switch(m_position)
+				{
+				case Index::FIRST:
+					gtk_paned_pack1(m_handle,handle,m_mode.flags&RESIZE,m_mode.flags&SHRINK_ALLOWED);
+					m_position=Index::SECOND;
+					break;
+
+				case Index::SECOND:
+					gtk_paned_pack2(m_handle,handle,m_mode.flags&RESIZE,m_mode.flags&SHRINK_ALLOWED);
+					break;
+				}
 			}
 
 		void _show() noexcept 
@@ -45,96 +54,72 @@ class Box::Impl:private Box
 		void* _toplevel() const
 			{return gtk_widget_get_toplevel(GTK_WIDGET(m_handle));}
 
-		void homogenous(bool status) noexcept
-			{gtk_box_set_homogeneous(m_handle,status);}
-
-
 		void insertMode(const InsertMode& mode) noexcept
 			{m_mode=mode;}
 
-		void alignment(float x) noexcept;
-
 	private:
 		static void destroy_callback (GtkWidget* object,gpointer user_data);
-		GtkBox* m_handle;
+		GtkPaned* m_handle;
 		InsertMode m_mode;
+
+		enum class Index:unsigned short{FIRST,SECOND};
+		Index m_position;
 	};
 
-Box::Box(Container& cnt,bool vertical)
+Paned::Paned(Container& cnt,bool vertical)
 	{
-	printf("Box %p ctor\n",this);
-	m_impl=new Box::Impl(cnt,vertical);
+	printf("Paned %p ctor\n",this);
+	m_impl=new Paned::Impl(cnt,vertical);
 	}
 
-Box::~Box()
+Paned::~Paned()
 	{
 	delete m_impl;
-	printf("Box %p dtor\n",this);
+	printf("Paned %p dtor\n",this);
 	}
 
-Box& Box::add(void* handle)
+Paned& Paned::add(void* handle)
 	{
 	m_impl->_add(GTK_WIDGET(handle));
 	return *this;
 	}
 
-Box& Box::show()
+Paned& Paned::show()
 	{
 	m_impl->_show();
 	return *this;
 	}
 
-Box& Box::sensitive(bool val)
+Paned& Paned::sensitive(bool val)
 	{
 	m_impl->_sensitive(val);
 	return *this;
 	}
 
-void* Box::toplevel() const
+void* Paned::toplevel() const
 	{return m_impl->_toplevel();}
 
-Box& Box::homogenous(bool status) noexcept
-	{
-	m_impl->homogenous(status);
-	return *this;
-	}
-
-Box& Box::insertMode(const InsertMode& mode) noexcept
+Paned& Paned::insertMode(const InsertMode& mode) noexcept
 	{
 	m_impl->insertMode(mode);
 	return *this;
 	}
 
-Box& Box::alignment(float x) noexcept
-	{
-	m_impl->alignment(x);
-	return *this;
-	}
 
 
-Box::Impl::Impl(Container& cnt,bool vertical):Box(*this),m_mode{0,0}
+Paned::Impl::Impl(Container& cnt,bool vertical):Paned(*this)
+	,m_mode{0},m_position{Index::FIRST}
 	{
-	printf("Box::Impl %p ctor\n",this);
-	auto widget=gtk_box_new(vertical?GTK_ORIENTATION_VERTICAL:GTK_ORIENTATION_HORIZONTAL,4);
+	printf("Paned::Impl %p ctor\n",this);
+	auto widget=gtk_paned_new(vertical?GTK_ORIENTATION_VERTICAL:GTK_ORIENTATION_HORIZONTAL);
 	cnt.add(widget);
 	g_object_ref_sink(widget);
-	m_handle=GTK_BOX(widget);
+	m_handle=GTK_PANED(widget);
 	}
 
-Box::Impl::~Impl()
+Paned::Impl::~Impl()
 	{
 	m_impl=nullptr;
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
-	printf("Box::Impl %p dtor\n",this);
-	}
-
-void Box::Impl::alignment(float x) noexcept
-	{
-	if(x<1.0f/3.0f)
-		{gtk_box_set_baseline_position(m_handle,GTK_BASELINE_POSITION_TOP);}
-	else
-	if(x>2.0f/3.0f)
-		{gtk_box_set_baseline_position(m_handle,GTK_BASELINE_POSITION_BOTTOM);}
-	else
-		{{gtk_box_set_baseline_position(m_handle,GTK_BASELINE_POSITION_CENTER);}}
+	printf("Paned::Impl %p dtor\n",this);
 	}

@@ -16,52 +16,50 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 //@	{
-//@	 "targets":[{"name":"sourceview.hpp","type":"include"}]
-//@	,"dependencies_extra":[{"ref":"sourceview.o","rel":"implementation"}]
+//@  "targets":[{"name":"paned.hpp","type":"include"}]
+//@	,"dependencies_extra":[{"ref":"paned.o","rel":"implementation"}]
 //@	}
 
-#ifndef TIGER_SOURCEVIEW_HPP
-#define TIGER_SOURCEVIEW_HPP
+#ifndef TIGER_PANED_HPP
+#define TIGER_PANED_HPP
 
+#include "container.hpp"
 #include <utility>
 
 namespace Tiger
 	{
-	class Container;
-	class DataSource;
-	class SourceView
+	class Paned:public Container
 		{
 		public:
-			explicit SourceView(Container& cnt);
-			~SourceView();
+			static constexpr unsigned short RESIZE=1;
+			static constexpr unsigned short SHRINK_ALLOWED=2;
 
-			SourceView& operator=(SourceView&& obj) noexcept
+			struct InsertMode
+				{unsigned short flags;};
+
+			explicit Paned(Container& parent,bool vertical);
+			~Paned();
+
+			Paned& operator=(Paned&& obj) noexcept
 				{
 				std::swap(obj.m_impl,m_impl);
 				return *this;
 				}
 
-			SourceView(SourceView&& obj) noexcept:m_impl(obj.m_impl)
+			Paned(Paned&& obj) noexcept:m_impl(obj.m_impl)
 				{obj.m_impl=nullptr;}
 
-
-			SourceView& lineNumbers(bool status);
-
-			SourceView& highlight(const char* filename_pattern);
-
-			const char* content() const;
-
-			SourceView& content(const char* text);
-
-			SourceView& content(DataSource&& src);
-
-			SourceView& readonly(bool status);
+			Paned& add(void* handle);
+			Paned& show();
+			Paned& sensitive(bool val);
+			void* toplevel() const;
+			Paned& insertMode(const InsertMode& mode) noexcept;
 
 		protected:
 			class Impl;
+			explicit Paned(Paned::Impl& impl):m_impl(&impl){}
 			Impl* m_impl;
-			explicit SourceView(Impl& impl):m_impl(&impl){}
 		};
 	}
 
-#endif
+#endif // TIGER_Paned_HPP
