@@ -27,12 +27,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 namespace Tiger
 	{
-	template<class Callback>
-	class ButtonList
+	class ButtonListImpl
 		{
 		public:
-			ButtonList(Container& cnt,int id,bool vertical):r_callback(nullptr)
-				,m_id(id)
+			explicit ButtonListImpl(Container& cnt,int id,bool vertical):m_id(id)
 				,m_scroll(cnt)
 					,m_box_main(m_scroll,vertical)
 						,m_box(m_box_main,vertical)
@@ -40,17 +38,61 @@ namespace Tiger
 				m_box.homogenous(1).insertMode({0,Box::EXPAND|Box::FILL});
 				}
 
-			ButtonList& clear() noexcept
+			ButtonListImpl& clear() noexcept
 				{
 				m_buttons.clear();	
+				return *this;
+				}
+			
+			int id() const noexcept
+				{return m_id;}
+
+			auto begin() noexcept
+				{return m_buttons.begin();}
+
+			auto end() noexcept
+				{return m_buttons.end();}
+
+			Button& operator[](int k) noexcept
+				{return m_buttons[k];}
+
+			ButtonListImpl& append(const char* text)
+				{
+				m_buttons.push_back(Button(m_box,static_cast<int>(m_buttons.size())
+					,text));
+				return *this;
+				}
+
+			Button& back() noexcept
+				{return m_buttons.back();}
+
+		private:
+			int m_id;
+			ScrolledWindow m_scroll;
+				Box m_box_main;
+					Box m_box;
+					
+			std::vector<Button> m_buttons;
+		};
+
+	template<class Callback>
+	class ButtonList
+		{
+		public:
+			explicit ButtonList(Container& cnt,int id,bool vertical):r_callback(nullptr)
+				,m_impl(cnt,id,vertical)
+				{}
+
+			ButtonList& clear() noexcept
+				{
+				m_impl.clear();	
 				return *this;
 				}
 
 			ButtonList& append(const char* text)
 				{
-				m_buttons.push_back(Button(m_box,static_cast<int>(m_buttons.size())
-					,text));
-				m_buttons.back().callback(*this);
+				m_impl.append(text);
+				m_impl.back().callback(*this);
 				return *this;
 				}
 
@@ -67,25 +109,20 @@ namespace Tiger
 				}
 			
 			int id() const noexcept
-				{return m_id;}
+				{return m_impl.m_id();}
 
 			auto begin() noexcept
-				{return m_buttons.begin();}
+				{return m_impl.begin();}
 
 			auto end() noexcept
-				{return m_buttons.end();}
+				{return m_impl.end();}
 
 			Button& operator[](int k) noexcept
-				{return m_buttons[k];}
+				{return m_impl[k];}
 
 		private:
 			Callback* r_callback;
-			int m_id;
-			ScrolledWindow m_scroll;
-				Box m_box_main;
-					Box m_box;
-					
-			std::vector<Button> m_buttons;
+			ButtonListImpl m_impl;
 		};
 	}
 
