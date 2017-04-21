@@ -32,24 +32,27 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 namespace Tiger
 	{
-	class FilterEditor
+	class FilterEditorBase
 		{
 		public:
-			FilterEditor(Container& cnt);
+			explicit FilterEditorBase(Container& cnt);
 
 			void create();
 			void open();
 			bool saveAs();
 			bool save();
-			void operator()(ButtonList<FilterEditor>& src,Button& btn);
+			void operator()(ButtonList<FilterEditorBase>& src,Button& btn);
 			void operator()(SourceView& srcv);
 			bool askSave();
 			bool dirty() const noexcept
 				{return m_dirty;}
 
+			const char* filename() const noexcept
+				{return m_file_current.c_str();}
+
 		private:
 			Box m_box;
-				ButtonList<FilterEditor> m_toolbar;
+				ButtonList<FilterEditorBase> m_toolbar;
 				Paned m_vsplit;
 					SourceView m_src_view;
 					SourceView m_output;
@@ -57,6 +60,37 @@ namespace Tiger
 			bool m_dirty;
 
 			void save(std::string filename);
+
+			virtual void stateChangeNotify()
+				{}
+		};
+
+	template<class Callback>
+	class FilterEditor final:public FilterEditorBase
+		{
+		public:
+			explicit FilterEditor(Container& cnt,int id):FilterEditorBase(cnt),m_id(id)
+				{}
+
+			FilterEditor& callback(Callback& cb)
+				{
+				r_cb=&cb;
+				stateChangeNotify();
+				return *this;
+				}
+
+			int id() const noexcept
+				{return m_id;}
+
+			void stateChangeNotify()
+				{
+				if(r_cb!=nullptr)
+					{(*r_cb)(*this);}	
+				}
+
+		private:
+			int m_id;
+			Callback* r_cb;
 		};
 	}
 #endif

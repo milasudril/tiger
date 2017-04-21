@@ -29,7 +29,7 @@ using namespace Tiger;
 
 TIGER_BLOB(char,example,"engine/example.cpp");
 
-FilterEditor::FilterEditor(Container& cnt):m_box(cnt,1)
+FilterEditorBase::FilterEditorBase(Container& cnt):m_box(cnt,1)
 	,m_toolbar(m_box,0,0)
 	,m_vsplit(m_box.insertMode({0,Box::FILL|Box::EXPAND}),0)
 		,m_src_view(m_vsplit.insertMode({Paned::RESIZE|Paned::SHRINK_ALLOWED}),0)
@@ -44,16 +44,17 @@ FilterEditor::FilterEditor(Container& cnt):m_box(cnt,1)
 	m_src_view.callback(*this);
 	}
 
-void FilterEditor::create()
+void FilterEditorBase::create()
 	{
 	if(askSave())
 		{
 		m_src_view.content(example_begin);
 		m_dirty=0;
+		stateChangeNotify();
 		}
 	}
 
-void FilterEditor::open()
+void FilterEditorBase::open()
 	{
 	if(askSave())
 		{
@@ -68,38 +69,41 @@ void FilterEditor::open()
 			{
 			m_src_view.content(SrcStdio{m_file_current.c_str()});
 			m_dirty=0;
+			stateChangeNotify();
 			}
 		}
 	}
 
-bool FilterEditor::saveAs()
+bool FilterEditorBase::saveAs()
 	{
 	std::string filename_new;
 	if(filenameSelect(m_box,filename_new,FileselectMode::SAVE))
 		{
 		save(filename_new);
 		m_file_current=filename_new;
+		stateChangeNotify();
 		return 1;
 		}
 	return 0;
 	}
 
-bool FilterEditor::save()
+bool FilterEditorBase::save()
 	{
 	if(m_file_current.size()==0)
 		{return saveAs();}
 	save(m_file_current);
+	stateChangeNotify();
 	return 1;
 	}
 
-void FilterEditor::save(std::string filename)
+void FilterEditorBase::save(std::string filename)
 	{
 	SinkStdio dest(filename.c_str());
 	dest.write(m_src_view.content(),m_src_view.contentSize());
 	m_dirty=0;
 	}
 
-void FilterEditor::operator()(ButtonList<FilterEditor>& src,Button& btn)
+void FilterEditorBase::operator()(ButtonList<FilterEditorBase>& src,Button& btn)
 	{
 	try
 		{
@@ -126,12 +130,13 @@ void FilterEditor::operator()(ButtonList<FilterEditor>& src,Button& btn)
 	btn.state(0);
 	}
 
-void FilterEditor::operator()(SourceView& srcv)
+void FilterEditorBase::operator()(SourceView& srcv)
 	{
 	m_dirty=1;
+	stateChangeNotify();
 	}
 
-bool FilterEditor::askSave()
+bool FilterEditorBase::askSave()
 	{
 	if(m_dirty)
 		{
@@ -154,4 +159,3 @@ bool FilterEditor::askSave()
 		}
 	return 1;
 	}
-

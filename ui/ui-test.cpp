@@ -30,7 +30,15 @@ int main(int argc, char *argv[])
 	auto mainwin_cb=[&ctx](Tiger::Window& window)
 		{ctx.exit();};
 	Tiger::TabView tabs(mainwin);
-	Tiger::FilterEditor fileedit(tabs.tabTitle("Filter editor"));
+	auto editor_cb=[&mainwin](Tiger::FilterEditorBase& editor)
+		{
+		std::string title_string(editor.filename());
+		if(editor.dirty())
+			{title_string+=" * ";}
+		mainwin.title(title_string.c_str());
+		};
+	Tiger::FilterEditor<decltype(editor_cb)> fileedit(tabs.tabTitle("Filter editor"),0);
+	fileedit.callback(editor_cb);
 	Tiger::SimulationEditor simedit(tabs.tabTitle("Simulation setup"),0);
 
 	mainwin.callback(mainwin_cb);
