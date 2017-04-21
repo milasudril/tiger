@@ -41,6 +41,7 @@ namespace Tiger
 			void open();
 			bool saveAs();
 			bool save();
+			void compile();
 			void operator()(ButtonList<FilterEditorBase>& src,Button& btn);
 			void operator()(SourceView& srcv);
 			bool askSave();

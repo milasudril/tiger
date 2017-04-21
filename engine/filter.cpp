@@ -20,7 +20,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 //@		[{
 //@		 "name":"filter.o","type":"object"
 //@		,"pkgconfig_libs":["uuid"]
-//@		,"dependencies":[{"ref":"magic","rel":"external"}]
 //@		}]
 //@	}
 

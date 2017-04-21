@@ -84,6 +84,8 @@ namespace Tiger
 
 			size_t write(const void* buffer,size_t n_bytes);
 
+			SourceView& wordwrap(bool status);
+
 		protected:
 			class Impl;
 			Impl* m_impl;

@@ -15,7 +15,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
-//@	{"targets":[{"name":"buttonlist.hpp","type":"include"}]}
+//@	{
+//@	 "targets":[{"name":"buttonlist.hpp","type":"include"}]
+//@	,"dependencies_extra":[{"ref":"buttonlist.o","rel":"implementation"}]
+//@	}
 
 #ifndef TIGER_BUTTONLIST_HPP
 #define TIGER_BUTTONLIST_HPP
@@ -24,6 +27,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "box.hpp"
 #include "button.hpp"
 #include <vector>
+#include <algorithm>
 
 namespace Tiger
 	{
@@ -63,6 +67,8 @@ namespace Tiger
 				return *this;
 				}
 
+			ButtonListImpl& append(const char* const* labels);
+
 			Button& back() noexcept
 				{return m_buttons.back();}
 
@@ -92,21 +98,21 @@ namespace Tiger
 			ButtonList& append(const char* text)
 				{
 				m_impl.append(text);
-				m_impl.back().callback(*this);
 				return *this;
 				}
 
 			ButtonList& callback(Callback& cb) noexcept
 				{
 				r_callback=&cb;
+				std::for_each(m_impl.begin(),m_impl.end()
+					,[this](Button& btn)
+						{btn.callback(*this);});
+
 				return *this;
 				}
 
 			void operator()(Button& btn)
-				{
-				if(r_callback!=nullptr)
-					{(*r_callback)(*this,btn);}
-				}
+				{(*r_callback)(*this,btn);}
 			
 			int id() const noexcept
 				{return m_impl.m_id();}
@@ -119,6 +125,12 @@ namespace Tiger
 
 			Button& operator[](int k) noexcept
 				{return m_impl[k];}
+
+			ButtonList& append(const char* const* labels)
+				{
+				m_impl.append(labels);
+				return *this;
+				}
 
 		private:
 			Callback* r_callback;

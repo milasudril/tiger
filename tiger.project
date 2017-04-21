@@ -47,6 +47,8 @@
       <File Name="engine/range.hpp"/>
       <File Name="engine/mimeidentifier.hpp"/>
       <File Name="engine/mimeidentifier.cpp"/>
+      <File Name="engine/filtercompile.hpp"/>
+      <File Name="engine/filtercompile.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ui">
       <File Name="ui/rangeview.hpp"/>
@@ -91,6 +93,7 @@
       <File Name="ui/messageshow.cpp"/>
       <File Name="ui/filtereditor.hpp"/>
       <File Name="ui/filtereditor.cpp"/>
+      <File Name="ui/buttonlist.cpp"/>
     </VirtualDirectory>
     <File Name="LICENSE"/>
     <File Name="maikeconfig-rel.json"/>

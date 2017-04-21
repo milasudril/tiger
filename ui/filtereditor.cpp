@@ -24,10 +24,16 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "../engine/sinkstdio.hpp"
 #include "../engine/blob.hpp"
 #include "../engine/mimeidentifier.hpp"
+#include "../engine/filtercompile.hpp"
 
 using namespace Tiger;
 
 TIGER_BLOB(char,example,"engine/example.cpp");
+
+static constexpr const char* button_labels[]=
+	{"New","Open","Save","Save As","Compile","Load",nullptr};
+
+enum BUTTON_IDS{NEW,OPEN,SAVE,SAVE_AS,COMPILE,LOAD};
 
 FilterEditorBase::FilterEditorBase(Container& cnt):m_box(cnt,1)
 	,m_toolbar(m_box,0,0)
@@ -35,10 +41,10 @@ FilterEditorBase::FilterEditorBase(Container& cnt):m_box(cnt,1)
 		,m_src_view(m_vsplit.insertMode({Paned::RESIZE|Paned::SHRINK_ALLOWED}),0)
 		,m_output(m_vsplit,1),m_dirty(0)
 	{
-	m_toolbar.append("New").append("Open").append("Save").append("Save As")
-		.append("Compile").append("Load").callback(*this);
+	m_toolbar.append(button_labels).callback(*this);
+
 	m_src_view.highlight("foo.cpp").lineNumbers(1);
-	m_output.content("Click \"Compile\" or \"Load\" to compile the filter")
+	m_output.wordwrap(1).content("Click \"Compile\" or \"Load\" to compile the filter")
 		.readonly(1);
 	create();
 	m_src_view.callback(*this);
@@ -103,23 +109,36 @@ void FilterEditorBase::save(std::string filename)
 	m_dirty=0;
 	}
 
+void FilterEditorBase::compile()
+	{
+	if(save())
+		{
+		m_output.content("");
+		filterCompile(m_file_current.c_str(),(m_file_current+".so").c_str(),m_output);
+		m_output.content("Filter compiled successfully. Click `Load` to load the filter.");
+		}
+	}
+
 void FilterEditorBase::operator()(ButtonList<FilterEditorBase>& src,Button& btn)
 	{
 	try
 		{
 		switch(btn.id())
 			{
-			case 0:
+			case NEW:
 				create();
 				break;
-			case 1:
+			case OPEN:
 				open();
 				break;
-			case 2:
+			case SAVE:
 				save();	
 				break;
-			case 3:
+			case SAVE_AS:
 				saveAs();
+				break;
+			case COMPILE:
+				compile();
 				break;
 			default:
 				break;

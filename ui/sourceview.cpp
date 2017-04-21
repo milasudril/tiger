@@ -65,6 +65,11 @@ class SourceView::Impl final:private SourceView
 	
 		size_t _write(const void* buffer,size_t n_bytes);
 
+		void wordwrap(bool status)
+			{
+			gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(m_handle)
+				,status?GTK_WRAP_WORD:GTK_WRAP_NONE);
+			}
 
 	private:
 		Callback r_cb;
@@ -131,6 +136,12 @@ int SourceView::id() const noexcept
 
 size_t SourceView::write(const void* buffer,size_t n_bytes)
 	{return m_impl->_write(buffer,n_bytes);}
+
+SourceView& SourceView::wordwrap(bool status)
+	{
+	m_impl->wordwrap(status);
+	return *this;
+	}
 
 
 
