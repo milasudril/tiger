@@ -23,6 +23,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #ifndef TIGER_SOURCEVIEW_HPP
 #define TIGER_SOURCEVIEW_HPP
 
+#include "../engine/datasink.hpp"
+
 #include <utility>
 #include <cstddef>
 
@@ -30,7 +32,8 @@ namespace Tiger
 	{
 	class Container;
 	class DataSource;
-	class SourceView
+
+	class SourceView:public DataSink
 		{
 		public:
 			explicit SourceView(Container& cnt,int id);
@@ -72,6 +75,14 @@ namespace Tiger
 				}
 
 			int id() const noexcept;
+
+			const char* name() const noexcept
+				{return "[source view]";}
+
+			void flush() noexcept
+				{}
+
+			size_t write(const void* buffer,size_t n_bytes);
 
 		protected:
 			class Impl;

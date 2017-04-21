@@ -25,7 +25,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Tiger;
 
-class SourceView::Impl:private SourceView
+class SourceView::Impl final:private SourceView
 	{
 	public:
 		explicit Impl(Container& cnt,int id);
@@ -62,6 +62,8 @@ class SourceView::Impl:private SourceView
 			r_cb=cb;
 			r_cb_obj=cb_obj;
 			}
+	
+		size_t _write(const void* buffer,size_t n_bytes);
 
 
 	private:
@@ -126,6 +128,9 @@ SourceView& SourceView::callback(Callback cb,void* cb_obj)
 
 int SourceView::id() const noexcept
 	{return m_impl->id();}
+
+size_t SourceView::write(const void* buffer,size_t n_bytes)
+	{return m_impl->_write(buffer,n_bytes);}
 
 
 
@@ -210,4 +215,15 @@ void SourceView::Impl::changed_callback(GtkTextBuffer* buffer,gpointer user_data
 	self->m_content=nullptr;
 	if(self->r_cb!=nullptr)
 		{self->r_cb(self->r_cb_obj,*self);}
+	}
+
+size_t SourceView::Impl::_write(const void* buffer,size_t n_bytes)
+	{
+	auto buf=gtk_text_view_get_buffer(GTK_TEXT_VIEW(m_handle));
+	auto char_buff=reinterpret_cast<const char*>(buffer);
+	const char* end;
+//TODO: This is probably not the best thing to do
+	g_utf8_validate(char_buff,n_bytes,&end);
+	gtk_text_buffer_insert_at_cursor(buf,char_buff,static_cast<int>(end - char_buff));
+	return n_bytes;
 	}
