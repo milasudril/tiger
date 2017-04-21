@@ -23,12 +23,18 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #ifndef TIGER_FILTERCOMPILE_HPP
 #define TIGER_FILTERCOMPILE_HPP
 
+#include <utility>
+
 namespace Tiger
 	{
 	class DataSink;
 
 	void filterCompile(const char* filename,const char* target_file
 		,DataSink& sink_stderr);
+
+	inline void filterCompile(const char* filename,const char* target_file
+		,DataSink&& sink_stderr)
+		{filterCompile(filename,target_file,sink_stderr);}
 	}
 
 #endif

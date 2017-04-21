@@ -19,97 +19,20 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 //@	"targets":
 //@		[{
 //@		 "name":"filter.o","type":"object"
-//@		,"pkgconfig_libs":["uuid"]
 //@		}]
 //@	}
 
 #include "filter.hpp"
 #include "error.hpp"
-#include "blob.hpp"
 #include "sinkstdio.hpp"
 #include "mimeidentifier.hpp"
-#include <uuid.h>
-#include <unistd.h>
-#include <sys/stat.h>
+#include "filtercompile.hpp"
 #include <cstring>
 #include <stack>
 #include <array>
 
 
 using namespace Tiger;
-
-TIGER_BLOB(char,filterstate,"engine/filterstate.hpp");
-TIGER_BLOB(char,filterstateclient,"engine/filterstateclient.hpp");
-TIGER_BLOB(char,pluginmain,"engine/pluginmain.hpp");
-
-static std::array<char,37> uuid_generate() noexcept
-	{
-	std::array<char,37> ret;
-	uuid_t id;
-	::uuid_generate(id);
-	uuid_unparse_upper(id,ret.begin());
-	return ret;
-	}
-
-namespace
-	{
-	class DirectoryGuard
-		{
-		public:
-			DirectoryGuard& operator=(const DirectoryGuard&)=delete;
-			DirectoryGuard(const DirectoryGuard&)=delete;
-
-			DirectoryGuard(const std::string& dir):m_dir(dir)
-				{mkdir(m_dir.c_str(),S_IRWXU);}
-
-			~DirectoryGuard()
-				{	
-				while(!m_items.empty())
-					{
-					auto x=m_items.top();
-					m_items.pop();
-					remove(x.c_str());
-					}
-				rmdir(m_dir.c_str());
-				}
-
-			DirectoryGuard& itemAdd(const char* name)
-				{
-				m_items.push(m_dir + '/' + name);
-				return *this;
-				}
-
-		private:
-			std::stack<std::string> m_items;
-			std::string m_dir;
-		};
-	}
-
-static void compile(const char* src,const char* dest)
-	{
-	auto tmp=std::string("/dev/shm/");
-	tmp+=uuid_generate().data();
-	DirectoryGuard g(tmp);
-	printRange(filterstate_begin,filterstate_end,SinkStdio((tmp+"/filterstate.hpp").c_str()));
-	g.itemAdd("filterstate.hpp");
-	printRange(filterstateclient_begin,filterstateclient_end,SinkStdio((tmp+"/filterstateclient.hpp").c_str()));
-	g.itemAdd("filterstateclient.hpp");
-	printRange(pluginmain_begin,pluginmain_end,SinkStdio((tmp+"/pluginmain.hpp").c_str()));
-	
-//TODO: Use libmaike (somewhat overkill here) or fork/exec pair
-	std::string cmdbuff("g++ -std=c++14 -O3 --fast-math -march=native "
-		"-fno-stack-protector -Wconversion -Wall -iquote'");
-	cmdbuff+=tmp;
-	cmdbuff+="' -include pluginmain.hpp -include filterstateclient.hpp "
-		"-fpic -shared -o '";
-	cmdbuff+=dest;
-	cmdbuff+="' '";
-	cmdbuff+=src;
-	cmdbuff+="'";
-
-	if(system(cmdbuff.c_str())!=0)
-		{throw Error("It was not possible to compile filter ",src);}
-	}
 
 static std::string objectGenerate(const char* src,const char* objdir)
 	{
@@ -123,7 +46,7 @@ static std::string objectGenerate(const char* src,const char* objdir)
 		ret+='/';
 		ret+=src;
 		ret+=".so";
-		compile(src,ret.c_str());
+		filterCompile(src,ret.c_str(),SinkStdio(nullptr));
 		return ret;
 		}
 	if(begins_with(mime,"application/x-sharedlib"))

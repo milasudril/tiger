@@ -185,7 +185,6 @@ void Tiger::filterCompile(const char* filename,const char* target_file,DataSink&
 	do
 		{
 		n=read_helper(pipe_stderr[PIPE_READ_END],buffer,N);
-		write(STDERR_FILENO,buffer,n);
 		sink_stderr.write(buffer,n);
 		}
 	while(n==N);
