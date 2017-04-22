@@ -75,7 +75,7 @@ void SimulationEditor::operator()(MapView<ParamDataDescriptor>& params,float& pa
 	param=strtof(valstr,nullptr);
 	}
 
-void SimulationEditor::operator()(ImageDisplay& src)
+void SimulationEditor::clicked(ImageDisplay& src)
 	{
 	auto ch_current=m_ch_current;
 	if(ch_current!=-1)

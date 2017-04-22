@@ -51,7 +51,7 @@ namespace Tiger
 				auto cb_wrapper=[](void* rvc,ImageDisplay& self)
 					{
 					auto x=reinterpret_cast<ImageDisplayCallback*>(rvc);
-					(*x)(self);
+					x->clicked(self);
 					};
 				return callback(cb_wrapper,&cb); 
 				}

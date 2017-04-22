@@ -44,7 +44,7 @@ namespace Tiger
 			SimulationEditor& simulation(Simulation& sim);
 			void clicked(ButtonList<SimulationEditor>& list,Button& btn);
 			void operator()(MapView<ParamDataDescriptor>& src,float& obj,const char* valstr);
-			void operator()(ImageDisplay& src);
+			void clicked(ImageDisplay& src);
 
 		private:
 			class ParamDataDescriptor
