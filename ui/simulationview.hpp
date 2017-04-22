@@ -13,13 +13,13 @@ namespace Tiger
 	{
 	class Simulation;
 
-	class SimulationView
+	class SimulationViewBase
 		{
 		public:
-			typedef SimulationView Self;
-			SimulationView(Container& cnt);
+			typedef SimulationViewBase Self;
+			SimulationViewBase(Container& cnt);
 			void clicked(ButtonList<Self>& list,Button& btn);
-			SimulationView& simulation(Simulation& sim);
+			SimulationViewBase& simulation(Simulation& sim);
 
 		private:
 			Box m_top;
@@ -32,6 +32,43 @@ namespace Tiger
 			virtual void run(){}
 			virtual void pause(){}
 			virtual void reset(){}
+		};
+
+	template<class Callback>
+	class SimulationView:public SimulationViewBase
+		{
+		public:
+			SimulationView(Container& cnt,int id):SimulationViewBase(cnt),m_id(id)
+				,r_cb(nullptr)
+				{}
+
+			void run()
+				{
+				if(r_cb!=nullptr)
+					{r_cb->run(*this);}
+				}
+
+			void pause()
+				{
+				if(r_cb!=nullptr)
+					{r_cb->pause(*this);}
+				}
+
+			void reset()
+				{
+				if(r_cb!=nullptr)
+					{r_cb->reset(*this);}
+				}
+
+			SimulationView& callback(Callback& cb) noexcept
+				{
+				r_cb=&cb;
+				return *this;
+				}
+
+		private:
+			int m_id;
+			Callback* r_cb;
 		};
 	}
 

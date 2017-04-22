@@ -53,8 +53,8 @@ static void gray_scott(const Tiger::FilterStateClient& data,unsigned long long f
 			auto v_u=data.value_current<C("u")>(x,y);
 			auto v_v=data.value_current<C("v")>(x,y);
 
-			data.value_next<C("u")>(x,y)=v_u + ( d*l_u - v_u*v_v*v_v + F*(1-v_u) )/12.0f;
-			data.value_next<C("v")>(x,y)=v_v + ( l_v + v_u*v_v*v_v - (F+k)*v_v )/12.0f;
+			data.value_next<C("u")>(x,y)=v_u + ( d*l_u - v_u*v_v*v_v + F*(1-v_u) )/48.0f;
+			data.value_next<C("v")>(x,y)=v_v + ( l_v + v_u*v_v*v_v - (F+k)*v_v )/48.0f;
 			}
 		}
 	}

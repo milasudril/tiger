@@ -24,10 +24,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Tiger;
 
-class UiContext::Impl
+class UiContext::Impl:public UiContext
 	{
 	public:
-		Impl():m_stop(0)
+		Impl():UiContext(*this),m_stop(0)
 			{gtk_init(NULL,NULL);}
 
 		~Impl();
@@ -37,7 +37,14 @@ class UiContext::Impl
 
 		void run();
 
+		void ui_update(UiUpdate update,void* cb)
+			{
+			gdk_threads_add_idle(update,cb);
+			}
+
 	private:
+	//	static gboolean update_callback(gpointer data)
+
 		volatile bool m_stop;
 	};
 
@@ -53,9 +60,12 @@ void UiContext::exit()
 void UiContext::run()
 	{m_impl->run();}
 
+void UiContext::ui_update(UiUpdate update,void* cb)
+	{m_impl->ui_update(update,cb);}
+
+
 UiContext::Impl::~Impl()
-	{
-	}
+	{m_impl=nullptr;}
 
 void UiContext::Impl::run()
 	{

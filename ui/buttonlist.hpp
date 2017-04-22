@@ -72,6 +72,9 @@ namespace Tiger
 			Button& back() noexcept
 				{return m_buttons.back();}
 
+			size_t size() const noexcept
+				{return m_buttons.size();}
+
 		private:
 			int m_id;
 			ScrolledWindow m_scroll;
@@ -131,6 +134,9 @@ namespace Tiger
 				m_impl.append(labels);
 				return *this;
 				}
+
+			size_t size() const noexcept
+				{return m_impl.size();}
 
 		private:
 			Callback* r_callback;

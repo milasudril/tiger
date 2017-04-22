@@ -5,7 +5,7 @@
 
 using namespace Tiger;
 
-SimulationView::SimulationView(Container& cnt):
+SimulationViewBase::SimulationViewBase(Container& cnt):
 	 m_top(cnt,1)
 		,m_toolbar(m_top,0,0)
 		,m_lower(m_top.insertMode({2,Box::FILL|Box::EXPAND}),0)
@@ -16,7 +16,7 @@ SimulationView::SimulationView(Container& cnt):
 	m_toolbar.append("Run").append("Pause").append("Reset").callback(*this);
 	}
 
-void SimulationView::clicked(ButtonList<Self>& list,Button& btn)
+void SimulationViewBase::clicked(ButtonList<Self>& list,Button& btn)
 	{
 	if(list.id()==1)
 		{
@@ -40,22 +40,31 @@ void SimulationView::clicked(ButtonList<Self>& list,Button& btn)
 				break;
 			case 1:
 				pause();
+				btn.state(0);
+				m_toolbar[0].state(0);
 				break;
 			case 2:
 				reset();
+				btn.state(0);
+				m_toolbar[0].state(0);
 				break;
 			}
-		btn.state(0);
 		}
 	}
 
-SimulationView& SimulationView::simulation(Simulation& sim)
+SimulationViewBase& SimulationViewBase::simulation(Simulation& sim)
 	{
-	m_img_selector.clear();
-	sim.channelsList([this](const Simulation& sim,const char* ch)
-		{m_img_selector.append(ch);});
-	m_img_selector.callback(*this);
-	m_img_view.image(&sim.stateCurrent(),0);
-	m_ch_current=-1;
+	if(sim.channelCount()!=static_cast<int>(m_img_selector.size()))
+		{
+		m_img_selector.clear();
+		sim.channelsList([this](const Simulation& sim,const char* ch)
+			{m_img_selector.append(ch);});
+		m_img_selector.callback(*this);
+		m_img_view.image(&sim.stateCurrent(),0);
+		m_ch_current=-1;
+		}
+	else
+		{m_img_view.image(&sim.stateCurrent(),m_ch_current==-1?0:m_ch_current);}
 	return *this;
 	}
+

@@ -25,6 +25,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "simulationview.hpp"
 #include "../engine/simulation.hpp"
 
+#include <thread>
+
 namespace Tiger
 	{
 	class Ui
@@ -36,19 +38,23 @@ namespace Tiger
 				 m_tabs(mainwin)
 				,m_filter_edit(m_tabs.tabTitle("Filter editor"),0)
 				,m_sim_edit(m_tabs.tabTitle("Simulation setup"),0)
-				,m_sim_view(m_tabs.tabTitle("Simulation"))
+				,m_sim_view(m_tabs.tabTitle("Simulation"),0)
 				,r_ctx(ctx)
 				,r_mainwin(mainwin)
 				{
 				mainwin.callback(*this);
 				m_filter_edit.callback(*this);
 				m_sim_edit.callback(*this);
+				m_sim_view.callback(*this);
 				}
 
 			void closing(Window& ui_owner)
 				{
 				if(m_filter_edit.askSave())
-					{r_ctx.exit();}
+					{
+					pause(m_sim_view);
+					r_ctx.exit();
+					}
 				}
 
 			void stateChanged(FilterEditor<Self>& editor)
@@ -61,6 +67,7 @@ namespace Tiger
 
 			void submit(FilterEditor<Self>& editor)
 				{
+				pause(m_sim_view);
 				m_sim.reset(new Simulation(editor.filenameBinary(),""));
 				m_sim_view.simulation(*m_sim.get());
 				m_sim_edit.simulation(*m_sim.get());
@@ -72,7 +79,8 @@ namespace Tiger
 				{
 				if(m_sim)
 					{
-					m_sim->imagesLoad(m_sim_edit.imagesStaged());
+					pause(m_sim_view);
+					m_sim->imagesLoad(simedit.imagesStaged());
 					m_sim_view.simulation(*m_sim.get());
 					m_tabs.activate(2);
 					m_tabs.show();
@@ -84,15 +92,51 @@ namespace Tiger
 					}
 				}
 
+			void run(SimulationView<Self>& simview)
+				{
+				if(m_continue==0)
+					{
+					m_continue=1;
+					m_render_thread=std::thread([this](){m_sim->run(*this);});
+					}
+				}
+
+			void pause(SimulationView<Self>& simview)
+				{
+				if(m_continue)
+					{
+					m_continue=0;
+					m_render_thread.join();
+					}
+				}
+
+			void reset(SimulationView<Self>& simview)
+				{
+				pause(simview);
+				submit(m_sim_edit);
+				}
+
+			bool operator()(const Simulation& sim,unsigned long long iter_count)
+				{
+				if(iter_count%16==0)
+					{r_ctx.uiUpdate(*this);}
+				return m_continue;
+				}
+
+			void uiUpdate()
+				{m_sim_view.simulation(*m_sim.get());}
+
 		private:
 			std::unique_ptr<Simulation> m_sim;
 			TabView m_tabs;
 				FilterEditor<Self> m_filter_edit;
 				SimulationEditor<Self> m_sim_edit;
-				SimulationView m_sim_view;
+				SimulationView<Self> m_sim_view;
 			
 			UiContext& r_ctx;
 			Window& r_mainwin;
+			bool m_continue;
+			std::thread m_render_thread;
 		};
 	}
 
