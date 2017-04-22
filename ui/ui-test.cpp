@@ -23,6 +23,33 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "filtereditor.hpp"
 #include "simulationeditor.hpp"
 
+namespace Tiger
+	{
+	template<class Callback>
+	class SimulationSetup;
+
+	class Ui
+		{
+		public:
+			void operator()(Window& ui_owner)
+				{}
+
+			void stateChanged(FilterEditor<Ui>& editor)
+				{}
+
+			void submit(FilterEditor<Ui>& editor)
+				{}
+
+			void submit(SimulationSetup<Ui>& simedit)
+				{}
+
+		private:
+			UiContext& r_ctx;
+			Window& r_mainwin;
+			TabView& r_tabs;
+		};
+	}
+
 int main(int argc, char *argv[])
 	{
 	Tiger::UiContext ctx;
