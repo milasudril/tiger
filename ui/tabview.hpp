@@ -49,6 +49,8 @@ namespace Tiger
 			TabView& tabTitle(const char* t);
 			void* toplevel() const;
 
+			TabView& activate(int index) noexcept;
+
 		protected:
 			class Impl;
 			explicit TabView(TabView::Impl& impl):m_impl(&impl){}

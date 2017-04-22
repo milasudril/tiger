@@ -51,6 +51,7 @@ namespace Tiger
 
 			void submit(FilterEditor<Self>& editor)
 				{
+				r_tabs.activate(1);
 				printf("%s\n",editor.filenameBinary());
 				}
 

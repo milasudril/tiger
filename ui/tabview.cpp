@@ -34,6 +34,8 @@ class TabView::Impl:private TabView
 		void _add(GtkWidget* handle) noexcept
 			{
 			auto label=gtk_label_new(m_tab_title.c_str());
+			gtk_widget_show(handle);
+			gtk_widget_show(label);
 			gtk_notebook_append_page(m_handle,handle,label);
 			}
 
@@ -48,6 +50,9 @@ class TabView::Impl:private TabView
 
 		void tabTitle(const char* t)
 			{m_tab_title=std::string(t);}
+
+		void activate(int index)
+			{gtk_notebook_set_current_page(m_handle,index);}
 
 	private:
 		static void destroy_callback (GtkWidget* object,gpointer user_data);
@@ -94,6 +99,13 @@ TabView& TabView::tabTitle(const char* t)
 	return *this;
 	}
 
+TabView& TabView::activate(int index) noexcept
+	{
+	m_impl->activate(index);
+	return *this;
+	}
+
+
 
 TabView::Impl::Impl(Container& cnt):TabView(*this)
 	{
@@ -110,3 +122,4 @@ TabView::Impl::~Impl()
 	gtk_widget_destroy(GTK_WIDGET(m_handle));
 	printf("TabView::Impl %p dtor\n",this);
 	}
+
