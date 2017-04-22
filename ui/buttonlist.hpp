@@ -115,7 +115,7 @@ namespace Tiger
 				{r_callback->clicked(*this,btn);}
 			
 			int id() const noexcept
-				{return m_impl.m_id();}
+				{return m_impl.id();}
 
 			auto begin() noexcept
 				{return m_impl.begin();}
