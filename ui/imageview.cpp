@@ -59,7 +59,7 @@ ImageView::ImageView(Container& cnt,int id):m_id(id)
 		,m_entry_min(m_range_box.insertMode(Box::InsertMode{0,0}),1)
 	{
 	m_rv.range(Range(0.0,1.0));
-	(*this)(m_rv);
+	changed(m_rv);
 	m_entry_max.alignment(1.0f).small(1).width(8).callback(*this);
 	m_entry_min.alignment(1.0f).small(1).width(8).callback(*this);
 	m_btn_auto.callback(*this);
@@ -70,7 +70,7 @@ ImageView::ImageView(Container& cnt,int id):m_id(id)
 ImageView& ImageView::range(const Range& rng) noexcept
 	{
 	m_rv.range(unmap(rng));
-	(*this)(m_rv);
+	changed(m_rv);
 	return *this;
 	}
 
@@ -83,11 +83,11 @@ void ImageView::clicked(Button& src)
 	{
 	auto range_opt=m_img_display.zrangeOptimal();
 	m_rv.range(unmap(range_opt));
-	(*this)(m_rv);
+	changed(m_rv);
 	src.state(0);
 	}
 
-void ImageView::operator()(RangeView& rv)
+void ImageView::changed(RangeView& rv)
 	{
 	auto r=map(rv.range());
 	char buffer[12];

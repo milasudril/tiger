@@ -50,7 +50,7 @@ namespace Tiger
 				auto cb_wrapper=[](void* rvc,RangeView& self)
 					{
 					auto x=reinterpret_cast<RangeViewCallback*>(rvc);
-					(*x)(self);
+					x->changed(self);
 					};
 				return callback(cb_wrapper,&cb); 
 				}

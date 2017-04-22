@@ -29,7 +29,7 @@ namespace Tiger
 
 			void operator()(TextEntry& src);
 
-			void operator()(RangeView& src);
+			void changed(RangeView& src);
 
 			void clicked(Button& src);
 
