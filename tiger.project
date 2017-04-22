@@ -77,12 +77,10 @@
       <File Name="ui/buttonlist.hpp"/>
       <File Name="ui/imageview.hpp"/>
       <File Name="ui/imageview.cpp"/>
-      <File Name="ui/main.cpp"/>
       <File Name="ui/imagedisplay.hpp"/>
       <File Name="ui/imagedisplay.cpp"/>
       <File Name="ui/filenameselect.hpp"/>
       <File Name="ui/filenameselect.cpp"/>
-      <File Name="ui/ui-test.cpp"/>
       <File Name="ui/sourceview.cpp"/>
       <File Name="ui/sourceview.hpp"/>
       <File Name="ui/tabview.hpp"/>
@@ -94,6 +92,7 @@
       <File Name="ui/filtereditor.hpp"/>
       <File Name="ui/filtereditor.cpp"/>
       <File Name="ui/buttonlist.cpp"/>
+      <File Name="ui/main.cpp"/>
     </VirtualDirectory>
     <File Name="LICENSE"/>
     <File Name="maikeconfig-rel.json"/>

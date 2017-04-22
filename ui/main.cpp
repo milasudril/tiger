@@ -18,44 +18,76 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 //@	{"targets":[{"name":"../tiger-ui","type":"application"}]}
 
 #include "uicontext.hpp"
-#include "simulationeditor.hpp"
 #include "window.hpp"
+#include "tabview.hpp"
+#include "filtereditor.hpp"
+#include "simulationeditor.hpp"
 #include "../engine/simulation.hpp"
-#include "../engine/channel.hpp"
-
 
 namespace Tiger
 	{
-	class UiController
+	class Ui
 		{
 		public:
-			typedef UiController Self;
+			typedef Ui Self;
 
-			explicit UiController(UiContext& ctx) noexcept:r_ctx(ctx)
-				{}
+			explicit Ui(UiContext& ctx,Window& mainwin):
+				 m_tabs(mainwin)
+				,m_filter_edit(m_tabs.tabTitle("Filter editor"),0)
+				,m_sim_edit(m_tabs.tabTitle("Simulation setup"),0)
+				,r_ctx(ctx)
+				,r_mainwin(mainwin)
+				{
+				mainwin.callback(*this);
+				m_filter_edit.callback(*this);
+				}
 
 			void closing(Window& ui_owner)
-				{r_ctx.exit();}
+				{
+				if(m_filter_edit.dirty())
+					{
+					if(m_filter_edit.save())
+						{r_ctx.exit();}
+					}
+				else
+					{r_ctx.exit();}
+				}
+
+			void stateChanged(FilterEditor<Self>& editor)
+				{
+				std::string title_string(editor.filenameSrc());
+				if(editor.dirty())
+					{title_string+=" * ";}
+				r_mainwin.title(title_string.c_str());
+				}
+
+			void submit(FilterEditor<Self>& editor)
+				{
+				m_sim.reset(new Simulation(editor.filenameBinary(),""));
+				m_sim_edit.simulation(*m_sim.get());
+				m_tabs.activate(1);
+				m_tabs.show();
+				}
+
+			void submit(SimulationEditor& simedit)
+				{}
 
 		private:
+			std::unique_ptr<Simulation> m_sim;
+			TabView m_tabs;
+				FilterEditor<Self> m_filter_edit;
+				SimulationEditor m_sim_edit;
+			
 			UiContext& r_ctx;
+			Window& r_mainwin;
 		};
 	}
 
 int main(int argc, char *argv[])
 	{
 	Tiger::UiContext ctx;
-	Tiger::Simulation sim("testdata/grayscott.cpp","__targets");
-	sim.imagesLoad(std::vector<Tiger::Channel>
-		{
-		 Tiger::Channel("u:testdata/lenna-r.png")
-		,Tiger::Channel("v:testdata/lenna-g.png")
-		});
 	Tiger::Window mainwin("Tiger",0);
-	Tiger::SimulationEditor m_simedit(mainwin,0);
-	m_simedit.simulation(sim);
-	Tiger::UiController ctrl(ctx);
-	mainwin.callback(ctrl);
+	Tiger::Ui ui(ctx,mainwin);
 	mainwin.show();
 	ctx.run();
 	return 0;
