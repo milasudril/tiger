@@ -64,6 +64,8 @@ namespace Tiger
 			
 			int id() const noexcept;
 
+			ImageDisplay& channel(int ch);
+
 		protected:
 			typedef void (*Callback)(void* cb_obj,ImageDisplay& self);
 			ImageDisplay& callback(Callback cb,void* cb_obj);

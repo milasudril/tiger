@@ -58,6 +58,13 @@ class ImageDisplay::Impl:private ImageDisplay
 		Range zrangeOptimal() const noexcept
 			{return r_img==nullptr?Range{}:r_img->range(m_view_channel);}
 
+		void channel(int ch)
+			{
+			assert(ch<static_cast<int>(r_img->channelCount()));
+			m_view_channel=ch;
+			gtk_widget_queue_draw(m_widget);
+			}
+
 	private:
 		int m_id;
 		const Image* r_img;
@@ -106,6 +113,13 @@ Range ImageDisplay::zrangeOptimal() const noexcept
 	{
 	return m_impl->zrangeOptimal();
 	}
+
+ImageDisplay& ImageDisplay::channel(int ch)
+	{
+	m_impl->channel(ch);
+	return *this;
+	}
+
 
 
 

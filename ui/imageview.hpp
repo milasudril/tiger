@@ -50,6 +50,12 @@ namespace Tiger
 				return *this;
 				}
 
+			ImageView& channel(int channel)
+				{
+				m_img_display.channel(channel);
+				return *this;
+				}
+
 			template<class Callback>
 			ImageView& displayCallback(Callback& cb)
 				{

@@ -22,13 +22,16 @@ namespace Tiger
 			SimulationView& simulation(Simulation& sim);
 
 		private:
-			Simulation* r_sim;
 			Box m_top;
 				ButtonList<Self> m_toolbar;
 				Box m_lower;
 					ButtonList<Self> m_img_selector;
 					ImageView m_img_view;
 			int m_ch_current;
+
+			virtual void run(){}
+			virtual void pause(){}
+			virtual void reset(){}
 		};
 	}
 

@@ -5,8 +5,8 @@
 
 using namespace Tiger;
 
-SimulationView::SimulationView(Container& cnt):r_sim(nullptr)
-	,m_top(cnt,1)
+SimulationView::SimulationView(Container& cnt):
+	 m_top(cnt,1)
 		,m_toolbar(m_top,0,0)
 		,m_lower(m_top.insertMode({2,Box::FILL|Box::EXPAND}),0)
 			,m_img_selector(m_lower,1,1)
@@ -27,15 +27,26 @@ void SimulationView::clicked(ButtonList<Self>& list,Button& btn)
 			}
 
 		auto id=btn.id();
-		m_img_view.image(&r_sim->stateCurrent(),id); //.range(m_img_ranges[id]);
+		m_img_view.channel(id); //.range(m_img_ranges[id]);
 		m_ch_current=id;
 		btn.state(1);
 		}
-/*	else
+	else
 		{
-		submit();
+		switch(btn.id())
+			{
+			case 0:
+				run();
+				break;
+			case 1:
+				pause();
+				break;
+			case 2:
+				reset();
+				break;
+			}
 		btn.state(0);
-		}*/
+		}
 	}
 
 SimulationView& SimulationView::simulation(Simulation& sim)
@@ -44,7 +55,7 @@ SimulationView& SimulationView::simulation(Simulation& sim)
 	sim.channelsList([this](const Simulation& sim,const char* ch)
 		{m_img_selector.append(ch);});
 	m_img_selector.callback(*this);
+	m_img_view.image(&sim.stateCurrent(),0);
 	m_ch_current=-1;
-	r_sim=&sim;
 	return *this;
 	}
