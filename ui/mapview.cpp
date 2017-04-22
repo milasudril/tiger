@@ -30,13 +30,13 @@ class MapViewBase::Impl:private MapViewBase
 			,int id);
 		~Impl();
 
-		void clear();
+		void clear() noexcept;
 
 		void recordAppend(const void* key,const void* value);
 
-		void keyAlignment(float val);
+		void keyAlignment(float val) noexcept;
 
-		void valueAlignment(float val);
+		void valueAlignment(float val) noexcept;
 
 		void callback(ValueSetCallback cb,void* cb_obj)
 			{
@@ -85,7 +85,7 @@ MapViewBase::MapViewBase(Container& cnt,int id,const DataDescriptorImpl& descrip
 MapViewBase::~MapViewBase()
 	{delete m_impl;}
 
-MapViewBase& MapViewBase::clear()
+MapViewBase& MapViewBase::clear() noexcept
 	{
 	m_impl->clear();
 	return *this;
@@ -97,13 +97,13 @@ MapViewBase& MapViewBase::recordAppend(const void* key,const void* value)
 	return *this;
 	}
 
-MapViewBase& MapViewBase::keyAlignment(float val)
+MapViewBase& MapViewBase::keyAlignment(float val) noexcept
 	{
 	m_impl->keyAlignment(val);
 	return *this;
 	}
 
-MapViewBase& MapViewBase::valueAlignment(float val)
+MapViewBase& MapViewBase::valueAlignment(float val) noexcept
 	{
 	m_impl->valueAlignment(val);
 	return *this;
@@ -194,7 +194,7 @@ MapViewBase::Impl::~Impl()
 	g_object_unref(m_list);
 	}
 
-void MapViewBase::Impl::clear()
+void MapViewBase::Impl::clear() noexcept
 	{gtk_list_store_clear(m_list);}
 
 void MapViewBase::Impl::recordAppend(const void* key,const void* value)
@@ -204,12 +204,12 @@ void MapViewBase::Impl::recordAppend(const void* key,const void* value)
 	gtk_list_store_set(m_list,&i,0,key,1,value,-1);
 	}
 
-void MapViewBase::Impl::valueAlignment(float x)
+void MapViewBase::Impl::valueAlignment(float x) noexcept
 	{
 	g_object_set(m_val_renderer, "xalign", x, NULL);
 	}
 
-void MapViewBase::Impl::keyAlignment(float x)
+void MapViewBase::Impl::keyAlignment(float x) noexcept
 	{
 	g_object_set(m_key_renderer, "xalign", x, NULL);
 	}

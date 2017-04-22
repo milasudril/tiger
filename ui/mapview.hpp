@@ -49,7 +49,7 @@ namespace Tiger
 
 			explicit MapViewBase(Container& cnt,int id,const DataDescriptorImpl& descriptor);
 			
-			~MapViewBase();
+			~MapViewBase() noexcept;
 
 			MapViewBase& operator=(MapViewBase&& obj) noexcept
 				{
@@ -60,13 +60,13 @@ namespace Tiger
 			MapViewBase(MapViewBase&& obj) noexcept:m_impl(obj.m_impl)
 				{obj.m_impl=nullptr;}
 
-			MapViewBase& keyAlignment(float val);
+			MapViewBase& keyAlignment(float val) noexcept;
 
-			MapViewBase& valueAlignment(float val);
+			MapViewBase& valueAlignment(float val) noexcept;
 
 			MapViewBase& recordAppend(const void* key,const void* value);
 
-			MapViewBase& clear();
+			MapViewBase& clear() noexcept;
 
 			MapViewBase& callback(ValueSetCallback cb,void* cb_obj);
 			
