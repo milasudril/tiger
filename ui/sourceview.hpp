@@ -69,7 +69,7 @@ namespace Tiger
 				auto cb_wrapper=[](void* rvc,SourceView& self)
 					{
 					auto x=reinterpret_cast<SourceViewCallback*>(rvc);
-					(*x)(self);
+					x->changed(self);
 					};
 				return callback(cb_wrapper,&cb); 
 				}

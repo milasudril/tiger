@@ -33,7 +33,7 @@ namespace Tiger
 		{
 		public:
 			explicit RangeView(Container& container,int id);
-			~RangeView();
+			~RangeView() noexcept;
 
 			RangeView& operator=(RangeView&& obj) noexcept
 				{

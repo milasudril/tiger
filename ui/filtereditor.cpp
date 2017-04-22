@@ -170,7 +170,7 @@ void FilterEditorBase::clicked(ButtonList<FilterEditorBase>& src,Button& btn)
 	btn.state(0);
 	}
 
-void FilterEditorBase::operator()(SourceView& srcv)
+void FilterEditorBase::changed(SourceView& srcv)
 	{
 	m_dirty_flags|=SOURCE_DIRTY;
 	stateChangeNotify();

@@ -45,7 +45,7 @@ namespace Tiger
 			bool save();
 			bool compile();
 			void clicked(ButtonList<Self>& src,Button& btn);
-			void operator()(SourceView& srcv);
+			void changed(SourceView& srcv);
 			bool askSave();
 			void load();
 			bool dirty() const noexcept
