@@ -56,6 +56,8 @@ namespace Tiger
 
 			Simulation& imagesLoad(const std::vector<Channel>& files_init);
 
+			Simulation& imagesLoad(const std::vector<Image>& img_init);
+
 			const Simulation& imagesStore(const std::vector<Channel>& files) const
 				{
 				imagesStore(m_filter,m_state,files);
@@ -127,6 +129,10 @@ namespace Tiger
 		private:
 			static Image imagesLoad(const std::vector<Channel>& files
 				,const Tiger::Filter& f);
+
+			static Image imagesLoad(const std::vector<Image>& images
+				,const Tiger::Filter& f);
+
 			static void imagesStore(const Filter& f,const FilterState& d
 				,const std::vector<Channel>& files);
 

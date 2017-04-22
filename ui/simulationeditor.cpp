@@ -46,7 +46,7 @@ SimulationEditorBase::SimulationEditorBase(Container& cnt):
 	{
 	m_params.callback(*this);
 	m_img_view.displayCallback(*this);
-	m_toolbar.append("Start").callback(*this);
+	m_toolbar.append("Go").callback(*this);
 	m_ch_current=-1;
 	}
 

@@ -22,6 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "tabview.hpp"
 #include "filtereditor.hpp"
 #include "simulationeditor.hpp"
+#include "simulationview.hpp"
 #include "../engine/simulation.hpp"
 
 namespace Tiger
@@ -35,7 +36,7 @@ namespace Tiger
 				 m_tabs(mainwin)
 				,m_filter_edit(m_tabs.tabTitle("Filter editor"),0)
 				,m_sim_edit(m_tabs.tabTitle("Simulation setup"),0)
-				,m_sim_view(m_tabs.tabTitle("Simulation"),0)
+				,m_sim_view(m_tabs.tabTitle("Simulation"))
 				,r_ctx(ctx)
 				,r_mainwin(mainwin)
 				{
@@ -61,8 +62,8 @@ namespace Tiger
 			void submit(FilterEditor<Self>& editor)
 				{
 				m_sim.reset(new Simulation(editor.filenameBinary(),""));
+				m_sim_view.simulation(*m_sim.get());
 				m_sim_edit.simulation(*m_sim.get());
-			//	m_sim_view.simulation(*m_sim.get());
 				m_tabs.activate(1);
 				m_tabs.show();
 				}
@@ -71,7 +72,8 @@ namespace Tiger
 				{
 				if(m_sim)
 					{
-				//	m_sim_view.simulation(*m_sim.get());
+					m_sim->imagesLoad(m_sim_edit.imagesStaged());
+					m_sim_view.simulation(*m_sim.get());
 					m_tabs.activate(2);
 					m_tabs.show();
 					}
@@ -87,7 +89,7 @@ namespace Tiger
 			TabView m_tabs;
 				FilterEditor<Self> m_filter_edit;
 				SimulationEditor<Self> m_sim_edit;
-				ImageView m_sim_view;
+				SimulationView m_sim_view;
 			
 			UiContext& r_ctx;
 			Window& r_mainwin;

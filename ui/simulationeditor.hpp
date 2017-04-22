@@ -47,6 +47,8 @@ namespace Tiger
 			void clicked(ButtonList<Self>& list,Button& btn);
 			void itemChanged(MapView<ParamDataDescriptor>& src,float& obj,const char* valstr);
 			void clicked(ImageDisplay& src);
+			const std::vector<Image>& imagesStaged() const noexcept
+				{return m_img_staged;}
 
 		private:
 			class ParamDataDescriptor

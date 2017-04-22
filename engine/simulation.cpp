@@ -60,6 +60,18 @@ Simulation& Simulation::imagesLoad(const std::vector<Channel>& files_init)
 	return *this;
 	}
 
+Simulation& Simulation::imagesLoad(const std::vector<Image>& images_init)
+	{
+	auto current=imagesLoad(images_init,m_filter);
+	auto next=layoutClone(current);
+	m_current=std::move(current);
+	m_next=std::move(next);
+	m_state=FilterState(m_next.pixels(),m_current.pixels(),m_params.data()
+		,m_next.width(),m_next.height());
+
+	return *this;
+	}
+
 static void imageSoA2AoS(const Tiger::Image& src,unsigned int ch,Tiger::Image& dest)
 	{
 	assert(src.height()==dest.height() && src.width()==dest.width() 
@@ -115,6 +127,34 @@ Image Simulation::imagesLoad(const std::vector<Tiger::Channel>& files,const Filt
 		auto ch_index=f.channelIndex(ch.name());
 		imageSoA2AoS(img,ch_index,ret);
 		},files.begin(),images.begin());
+
+	return std::move(ret);
+	}
+
+Image image_copy(const Image& img)
+	{
+	auto ret=layoutClone(img);
+	memcpy(ret.pixels(),img.pixels()
+		,ret.width()*ret.height()*ret.channelCount()*sizeof(Image::SampleType));
+	return std::move(ret);
+	}
+
+Image Simulation::imagesLoad(const std::vector<Image>& images
+	,const Filter& f)
+	{	
+	std::vector<Image> img_copy(images.size());
+	std::transform(images.begin(),images.end(),img_copy.begin()
+		,[](const Image& img)
+			{return image_copy(img);});
+
+	fitToLargest(img_copy.data(),img_copy.data() + img_copy.size());
+	Image ret(img_copy[0].width(),img_copy[0].height(),static_cast<uint32_t>(img_copy.size()));	
+	int k=0;
+	std::for_each(img_copy.begin(),img_copy.end(),[&k,&ret](const Image& img)
+		{
+		imageSoA2AoS(img,k,ret);
+		++k;
+		});
 
 	return std::move(ret);
 	}

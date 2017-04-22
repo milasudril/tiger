@@ -35,4 +35,6 @@ MimeIdentifier::~MimeIdentifier()
 	{magic_close(reinterpret_cast<magic_t>(m_handle));}
 
 const char* MimeIdentifier::identify(const char* filename) const noexcept
-	{return magic_file(reinterpret_cast<magic_t>(m_handle),filename);}
+	{
+	return magic_file(reinterpret_cast<magic_t>(m_handle),filename);
+	}

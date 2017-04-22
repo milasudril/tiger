@@ -93,6 +93,8 @@
       <File Name="ui/filtereditor.cpp"/>
       <File Name="ui/buttonlist.cpp"/>
       <File Name="ui/main.cpp"/>
+      <File Name="ui/simulationview.hpp"/>
+      <File Name="ui/simulationview.cpp"/>
     </VirtualDirectory>
     <File Name="LICENSE"/>
     <File Name="maikeconfig-rel.json"/>
