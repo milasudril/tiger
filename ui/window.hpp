@@ -57,7 +57,7 @@ namespace Tiger
 				auto cb_wrapper=[](void* wc,Window& self)
 					{
 					auto x=reinterpret_cast<WindowCallback*>(wc);
-					(*x)(self);
+					x->closing(self);
 					};
 				return callback(cb_wrapper,&cb); 
 				}

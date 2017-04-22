@@ -38,8 +38,8 @@ namespace Tiger
 				,r_tabs(tabs)
 				{}
 
-			void operator()(Window& ui_owner)
-				{}
+			void closing(Window& ui_owner)
+				{r_ctx.exit();}
 
 			void stateChanged(FilterEditor<Self>& editor)
 				{
@@ -68,18 +68,13 @@ int main(int argc, char *argv[])
 	{
 	Tiger::UiContext ctx;
 	Tiger::Window mainwin("Tiger test",0);
-	auto mainwin_cb=[&ctx](Tiger::Window& window)
-		{ctx.exit();};
 	Tiger::TabView tabs(mainwin);
-
 	Tiger::FilterEditor<Tiger::UiController> filteredit(tabs.tabTitle("Filter editor"),0);
-	
 	Tiger::SimulationEditor simedit(tabs.tabTitle("Simulation setup"),0);
 
 	Tiger::UiController ui(ctx,mainwin,tabs);
 	filteredit.callback(ui);
-
-	mainwin.callback(mainwin_cb);
+	mainwin.callback(ui);
 	mainwin.show();
 	ctx.run();
 	return 0;

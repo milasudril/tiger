@@ -23,6 +23,25 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "../engine/simulation.hpp"
 #include "../engine/channel.hpp"
 
+
+namespace Tiger
+	{
+	class UiController
+		{
+		public:
+			typedef UiController Self;
+
+			explicit UiController(UiContext& ctx) noexcept:r_ctx(ctx)
+				{}
+
+			void closing(Window& ui_owner)
+				{r_ctx.exit();}
+
+		private:
+			UiContext& r_ctx;
+		};
+	}
+
 int main(int argc, char *argv[])
 	{
 	Tiger::UiContext ctx;
@@ -33,11 +52,10 @@ int main(int argc, char *argv[])
 		,Tiger::Channel("v:testdata/lenna-g.png")
 		});
 	Tiger::Window mainwin("Tiger",0);
-	auto mainwin_cb=[&ctx](Tiger::Window& window)
-		{ctx.exit();};
 	Tiger::SimulationEditor m_simedit(mainwin,0);
 	m_simedit.simulation(sim);
-	mainwin.callback(mainwin_cb);
+	Tiger::UiController ctrl(ctx);
+	mainwin.callback(ctrl);
 	mainwin.show();
 	ctx.run();
 	return 0;
