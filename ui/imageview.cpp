@@ -98,7 +98,7 @@ void ImageView::changed(RangeView& rv)
 	m_img_display.zrange(r);
 	}
 
-void ImageView::operator()(TextEntry& entry)
+void ImageView::changed(TextEntry& entry)
 	{
 	switch(entry.id())
 		{

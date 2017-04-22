@@ -27,7 +27,7 @@ namespace Tiger
 			int id() const noexcept
 				{return m_id;}
 
-			void operator()(TextEntry& src);
+			void changed(TextEntry& src);
 
 			void changed(RangeView& src);
 

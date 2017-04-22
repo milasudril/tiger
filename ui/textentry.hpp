@@ -50,7 +50,7 @@ namespace Tiger
 				auto cb_wrapper=[](void* rvc,TextEntry& self)
 					{
 					auto x=reinterpret_cast<EntryCallback*>(rvc);
-					(*x)(self);
+					x->changed(self);
 					};
 				return callback(cb_wrapper,&cb); 
 				}
