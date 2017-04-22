@@ -44,12 +44,7 @@ namespace Tiger
 
 			void closing(Window& ui_owner)
 				{
-				if(m_filter_edit.dirty())
-					{
-					if(m_filter_edit.save())
-						{r_ctx.exit();}
-					}
-				else
+				if(m_filter_edit.askSave())
 					{r_ctx.exit();}
 				}
 
