@@ -34,16 +34,16 @@ namespace Tiger
 	{
 	class Simulation;
 	class Window;
-	class SimulationEditor
+	class SimulationEditorBase
 		{
 		private:
 			class ParamDataDescriptor;
 
 		public:
-			typedef SimulationEditor Self;
+			typedef SimulationEditorBase Self;
 
-			explicit SimulationEditor(Container& cnt,int id);
-			SimulationEditor& simulation(Simulation& sim);
+			explicit SimulationEditorBase(Container& cnt);
+			SimulationEditorBase& simulation(Simulation& sim);
 			void clicked(ButtonList<Self>& list,Button& btn);
 			void itemChanged(MapView<ParamDataDescriptor>& src,float& obj,const char* valstr);
 			void clicked(ImageDisplay& src);
@@ -77,8 +77,6 @@ namespace Tiger
 				};
 
 			static constexpr ParamDataDescriptor s_desc{};
-			int m_id;
-		//	Simulation* r_sim;
 			Box m_top;
 				ButtonList<Self> m_toolbar;
 				Box m_lower;
@@ -95,6 +93,37 @@ namespace Tiger
 			std::vector<std::string> m_img_names;
 			std::vector<Range> m_img_ranges;
 			int m_ch_current;
+
+			virtual void submit()
+				{}
+		};
+
+	template<class Callback>
+	class SimulationEditor:public SimulationEditorBase
+		{
+		public:
+			explicit SimulationEditor(Container& cnt,int id):SimulationEditorBase(cnt)
+				,m_id(id),r_cb(nullptr)
+				{}
+
+			SimulationEditor& callback(Callback& cb)
+				{
+				r_cb=&cb;
+				return *this;
+				}
+
+			int id() const noexcept
+				{return m_id;}
+
+			void submit()
+				{
+				if(r_cb!=nullptr)
+					{r_cb->submit(*this);}
+				}
+
+		private:
+			int m_id;
+			Callback* r_cb;
 		};
 	}
 

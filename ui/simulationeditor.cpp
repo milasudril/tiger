@@ -28,10 +28,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Tiger;
 
-constexpr SimulationEditor::ParamDataDescriptor SimulationEditor::s_desc;
+constexpr SimulationEditorBase::ParamDataDescriptor SimulationEditorBase::s_desc;
 
-SimulationEditor::SimulationEditor(Container& cnt,int id):m_id(id)
-	,m_top(cnt,1)
+SimulationEditorBase::SimulationEditorBase(Container& cnt):
+	m_top(cnt,1)
 		,m_toolbar(m_top,0,0)
 		,m_lower(m_top.insertMode({2,Box::FILL|Box::EXPAND}),0)
 			,m_left(m_lower.insertMode({2,Box::FILL|Box::EXPAND}),1)
@@ -50,7 +50,7 @@ SimulationEditor::SimulationEditor(Container& cnt,int id):m_id(id)
 	m_ch_current=-1;
 	}
 
-void SimulationEditor::clicked(ButtonList<SimulationEditor>& list,Button& btn)
+void SimulationEditorBase::clicked(ButtonList<SimulationEditorBase>& list,Button& btn)
 	{
 	if(list.id()==1)
 		{
@@ -75,18 +75,18 @@ void SimulationEditor::clicked(ButtonList<SimulationEditor>& list,Button& btn)
 		}
 	else
 		{
-		printf("Toolbar\n");
+		submit();
 		btn.state(0);
 		}
 	}
 
-void SimulationEditor::itemChanged(MapView<ParamDataDescriptor>& params,float& param
+void SimulationEditorBase::itemChanged(MapView<ParamDataDescriptor>& params,float& param
 	,const char* valstr)
 	{
 	param=strtof(valstr,nullptr);
 	}
 
-void SimulationEditor::clicked(ImageDisplay& src)
+void SimulationEditorBase::clicked(ImageDisplay& src)
 	{
 	auto ch_current=m_ch_current;
 	if(ch_current!=-1)
@@ -108,7 +108,7 @@ void SimulationEditor::clicked(ImageDisplay& src)
 		}
 	}
 
-SimulationEditor& SimulationEditor::simulation(Simulation& sim)
+SimulationEditorBase& SimulationEditorBase::simulation(Simulation& sim)
 	{
 	m_params.clear();
 	sim.paramsList([this](const Simulation& sim,const char* const& name

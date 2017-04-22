@@ -40,6 +40,7 @@ namespace Tiger
 				{
 				mainwin.callback(*this);
 				m_filter_edit.callback(*this);
+				m_sim_edit.callback(*this);
 				}
 
 			void closing(Window& ui_owner)
@@ -64,14 +65,20 @@ namespace Tiger
 				m_tabs.show();
 				}
 
-			void submit(SimulationEditor& simedit)
-				{}
+			void submit(SimulationEditor<Self>& simedit)
+				{
+				if(!m_sim)
+					{
+					m_filter_edit.help();
+					m_tabs.activate(0);
+					}
+				}
 
 		private:
 			std::unique_ptr<Simulation> m_sim;
 			TabView m_tabs;
 				FilterEditor<Self> m_filter_edit;
-				SimulationEditor m_sim_edit;
+				SimulationEditor<Self> m_sim_edit;
 			
 			UiContext& r_ctx;
 			Window& r_mainwin;
