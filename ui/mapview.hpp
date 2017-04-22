@@ -125,7 +125,7 @@ namespace Tiger
 					auto& self=reinterpret_cast<MapView&>(src_obj);
 					auto cb_obj=reinterpret_cast<Callback*>(user_data);
 					auto x=reinterpret_cast<mapped_type*>(ptr);
-					(*cb_obj)(self,*x,value_new);
+					cb_obj->itemChanged(self,*x,value_new);
 					};
 				MapViewBase::callback(func,&cb);
 				return *this;

@@ -69,7 +69,7 @@ void SimulationEditor::clicked(ButtonList<SimulationEditor>& list,Button& btn)
 		}
 	}
 
-void SimulationEditor::operator()(MapView<ParamDataDescriptor>& params,float& param
+void SimulationEditor::itemChanged(MapView<ParamDataDescriptor>& params,float& param
 	,const char* valstr)
 	{
 	param=strtof(valstr,nullptr);
