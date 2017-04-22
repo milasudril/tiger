@@ -48,6 +48,8 @@ namespace Tiger
 			void changed(SourceView& srcv);
 			bool askSave();
 			void load();
+			void help();
+
 			bool dirty() const noexcept
 				{return m_dirty_flags&SOURCE_DIRTY;}
 

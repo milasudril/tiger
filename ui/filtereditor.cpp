@@ -31,9 +31,18 @@ using namespace Tiger;
 TIGER_BLOB(char,example,"engine/example.cpp");
 
 static constexpr const char* button_labels[]=
-	{"New","Open","Save","Save As","Compile","Load",nullptr};
+	{"New","Open","Save","Save As","Compile","Load","Help",nullptr};
 
-enum BUTTON_IDS{NEW,OPEN,SAVE,SAVE_AS,COMPILE,LOAD};
+enum BUTTON_IDS{NEW,OPEN,SAVE,SAVE_AS,COMPILE,LOAD,HELP};
+
+static constexpr const char* intro=R"EOF(Quick help
+
+0. Click `Help` to display this message
+1. Edit the source to the left
+2. Click `Compile` to compile it. You will see any compilation errors here.
+3. Click `Load` to set simulation parameters
+4. TODO
+)EOF";
 
 FilterEditorBase::FilterEditorBase(Container& cnt):m_box(cnt,1)
 	,m_toolbar(m_box,0,0)
@@ -44,7 +53,7 @@ FilterEditorBase::FilterEditorBase(Container& cnt):m_box(cnt,1)
 	m_toolbar.append(button_labels).callback(*this);
 
 	m_src_view.highlight("foo.cpp").lineNumbers(1);
-	m_output.wordwrap(1).content("Click \"Compile\" or \"Load\" to compile the filter")
+	m_output.wordwrap(1).content(intro)
 		.readonly(1);
 	create();
 	m_src_view.callback(*this);
@@ -56,6 +65,7 @@ void FilterEditorBase::create()
 		{
 		m_src_view.content(example_begin);
 		m_dirty_flags=BINARY_DIRTY;
+		m_file_current.clear();
 		stateChangeNotify();
 		}
 	}
@@ -70,7 +80,9 @@ void FilterEditorBase::open()
 				{
 				auto m=mime.identify(filename);
 				return begins_with(m,"text/x-c; charset=utf-8") 
-					|| begins_with(m,"text/plain; charset=utf-8");
+					|| begins_with(m,"text/x-c; charset=us-ascii") 
+					|| begins_with(m,"text/plain; charset=utf-8")
+					|| begins_with(m,"text/plain; charset=us-ascii");
 				},"Filter source files"))
 			{
 			m_src_view.content(SrcStdio{m_file_current.c_str()});
@@ -137,6 +149,9 @@ void FilterEditorBase::load()
 		{submit();}
 	}
 
+void FilterEditorBase::help()
+	{m_output.content(intro);}
+
 void FilterEditorBase::clicked(ButtonList<FilterEditorBase>& src,Button& btn)
 	{
 	try
@@ -160,6 +175,9 @@ void FilterEditorBase::clicked(ButtonList<FilterEditorBase>& src,Button& btn)
 				break;
 			case LOAD:
 				load();
+				break;
+			case HELP:
+				help();
 				break;
 			default:
 				break;

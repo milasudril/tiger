@@ -22,24 +22,36 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "tabview.hpp"
 #include "filtereditor.hpp"
 #include "simulationeditor.hpp"
+#include "../engine/simulation.hpp"
 
 namespace Tiger
 	{
-	template<class Callback>
-	class SimulationSetup;
-
-	class UiController
+	class Ui
 		{
 		public:
-			typedef UiController Self;
+			typedef Ui Self;
 
-			explicit UiController(UiContext& ctx,Window& mainwin
-				,TabView& tabs) noexcept:r_ctx(ctx),r_mainwin(mainwin)
-				,r_tabs(tabs)
-				{}
+			explicit Ui(UiContext& ctx,Window& mainwin):
+				 m_tabs(mainwin)
+				,m_filter_edit(m_tabs.tabTitle("Filter editor"),0)
+				,m_sim_edit(m_tabs.tabTitle("Simulation setup"),0)
+				,r_ctx(ctx)
+				,r_mainwin(mainwin)
+				{
+				mainwin.callback(*this);
+				m_filter_edit.callback(*this);
+				}
 
 			void closing(Window& ui_owner)
-				{r_ctx.exit();}
+				{
+				if(m_filter_edit.dirty())
+					{
+					if(m_filter_edit.save())
+						{r_ctx.exit();}
+					}
+				else
+					{r_ctx.exit();}
+				}
 
 			void stateChanged(FilterEditor<Self>& editor)
 				{
@@ -51,31 +63,31 @@ namespace Tiger
 
 			void submit(FilterEditor<Self>& editor)
 				{
-				r_tabs.activate(1);
-				printf("%s\n",editor.filenameBinary());
+				m_sim.reset(new Simulation(editor.filenameBinary(),""));
+				m_sim_edit.simulation(*m_sim.get());
+				m_tabs.activate(1);
+				m_tabs.show();
 				}
 
-			void submit(SimulationSetup<Self>& simedit)
+			void submit(SimulationEditor& simedit)
 				{}
 
 		private:
+			std::unique_ptr<Simulation> m_sim;
+			TabView m_tabs;
+				FilterEditor<Self> m_filter_edit;
+				SimulationEditor m_sim_edit;
+			
 			UiContext& r_ctx;
 			Window& r_mainwin;
-			TabView& r_tabs;
 		};
 	}
 
 int main(int argc, char *argv[])
 	{
 	Tiger::UiContext ctx;
-	Tiger::Window mainwin("Tiger test",0);
-	Tiger::TabView tabs(mainwin);
-	Tiger::FilterEditor<Tiger::UiController> filteredit(tabs.tabTitle("Filter editor"),0);
-	Tiger::SimulationEditor simedit(tabs.tabTitle("Simulation setup"),0);
-
-	Tiger::UiController ui(ctx,mainwin,tabs);
-	filteredit.callback(ui);
-	mainwin.callback(ui);
+	Tiger::Window mainwin("Tiger",0);
+	Tiger::Ui ui(ctx,mainwin);
 	mainwin.show();
 	ctx.run();
 	return 0;

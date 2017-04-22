@@ -30,41 +30,52 @@ using namespace Tiger;
 
 constexpr SimulationEditor::ParamDataDescriptor SimulationEditor::s_desc;
 
-SimulationEditor::SimulationEditor(Container& cnt,int id):m_id(id),r_sim(nullptr)
-	,m_top(cnt,0)
-		,m_left(m_top.insertMode({2,Box::FILL|Box::EXPAND}),1)
-			,m_init_label(m_left,"Initial conditions")
-			,m_init_panels(m_left.insertMode({4,Box::FILL|Box::EXPAND}),0)
-				,m_init_list(m_init_panels,0,1)
-				,m_img_view(m_init_panels.insertMode({2,Box::FILL|Box::EXPAND}),0)
-		,m_sep(m_top.insertMode({2,0}),1)
-		,m_right(m_top.insertMode({2,Box::FILL|Box::EXPAND}),1)
-			,m_param_label(m_right,"Parameters")
-			,m_params(m_right.insertMode({0,Box::FILL|Box::EXPAND}),0,s_desc)
+SimulationEditor::SimulationEditor(Container& cnt,int id):m_id(id)
+	,m_top(cnt,1)
+		,m_toolbar(m_top,0,0)
+		,m_lower(m_top.insertMode({2,Box::FILL|Box::EXPAND}),0)
+			,m_left(m_lower.insertMode({2,Box::FILL|Box::EXPAND}),1)
+				,m_init_label(m_left,"Initial conditions")
+				,m_init_panels(m_left.insertMode({4,Box::FILL|Box::EXPAND}),0)
+					,m_init_list(m_init_panels,1,1)
+					,m_img_view(m_init_panels.insertMode({2,Box::FILL|Box::EXPAND}),0)
+			,m_sep(m_lower.insertMode({2,0}),1)
+			,m_right(m_lower.insertMode({2,Box::FILL|Box::EXPAND}),1)
+				,m_param_label(m_right,"Parameters")
+				,m_params(m_right.insertMode({0,Box::FILL|Box::EXPAND}),0,s_desc)
 	{
 	m_params.callback(*this);
 	m_img_view.displayCallback(*this);
+	m_toolbar.append("Start").callback(*this);
 	m_ch_current=-1;
 	}
 
 void SimulationEditor::clicked(ButtonList<SimulationEditor>& list,Button& btn)
 	{
-	if(m_ch_current!=-1)
+	if(list.id()==1)
 		{
-		m_img_ranges[m_ch_current]=m_img_view.range();
-		list[m_ch_current].state(0);
-		}
-	if(btn.id()<r_sim->channelCount())
-		{
-		auto id=btn.id();
-		m_img_view.image(&m_img_staged[id],0).range(m_img_ranges[id]);
-		m_ch_current=id;
+		if(m_ch_current!=-1)
+			{
+			m_img_ranges[m_ch_current]=m_img_view.range();
+			list[m_ch_current].state(0);
+			}
+		if(btn.id() < static_cast<int>(m_img_staged.size()))
+			{
+			auto id=btn.id();
+			m_img_view.image(&m_img_staged[id],0).range(m_img_ranges[id]);
+			m_ch_current=id;
+			}
+		else
+			{
+			m_ch_current=-1;
+			btn.state(0);
+			m_img_view.image(nullptr,0);
+			}
 		}
 	else
 		{
-		m_ch_current=-1;
+		printf("Toolbar\n");
 		btn.state(0);
-		m_img_view.image(nullptr,0);
 		}
 	}
 
@@ -103,7 +114,7 @@ SimulationEditor& SimulationEditor::simulation(Simulation& sim)
 		,float& value)
 		{m_params.recordAppend(name,value);});
 
-	r_sim=&sim;
+//	r_sim=&sim;
 	m_init_list.clear();
 	sim.channelsList([this](const Simulation& sim,const char* ch)
 		{m_init_list.append(ch);});

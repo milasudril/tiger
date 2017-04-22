@@ -40,9 +40,11 @@ namespace Tiger
 			class ParamDataDescriptor;
 
 		public:
+			typedef SimulationEditor Self;
+
 			explicit SimulationEditor(Container& cnt,int id);
 			SimulationEditor& simulation(Simulation& sim);
-			void clicked(ButtonList<SimulationEditor>& list,Button& btn);
+			void clicked(ButtonList<Self>& list,Button& btn);
 			void itemChanged(MapView<ParamDataDescriptor>& src,float& obj,const char* valstr);
 			void clicked(ImageDisplay& src);
 
@@ -76,17 +78,19 @@ namespace Tiger
 
 			static constexpr ParamDataDescriptor s_desc{};
 			int m_id;
-			Simulation* r_sim;
+		//	Simulation* r_sim;
 			Box m_top;
-				Box m_left;
-					Label m_init_label;
-					Box m_init_panels;
-						ButtonList<SimulationEditor> m_init_list;
-						ImageView m_img_view;
-				Separator m_sep;
-				Box m_right;
-					Label m_param_label;
-					MapView<ParamDataDescriptor> m_params;
+				ButtonList<Self> m_toolbar;
+				Box m_lower;
+					Box m_left;
+						Label m_init_label;
+						Box m_init_panels;
+							ButtonList<Self> m_init_list;
+							ImageView m_img_view;
+					Separator m_sep;
+					Box m_right;
+						Label m_param_label;
+						MapView<ParamDataDescriptor> m_params;
 			std::vector<Image> m_img_staged;
 			std::vector<std::string> m_img_names;
 			std::vector<Range> m_img_ranges;
