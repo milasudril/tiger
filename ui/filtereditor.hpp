@@ -41,15 +41,19 @@ namespace Tiger
 			void open();
 			bool saveAs();
 			bool save();
-			void compile();
+			bool compile();
 			void operator()(ButtonList<FilterEditorBase>& src,Button& btn);
 			void operator()(SourceView& srcv);
 			bool askSave();
+			void load();
 			bool dirty() const noexcept
-				{return m_dirty;}
+				{return m_dirty_flags&SOURCE_DIRTY;}
 
-			const char* filename() const noexcept
+			const char* filenameSrc() const noexcept
 				{return m_file_current.c_str();}
+
+			const char* filenameBinary() const noexcept
+				{return m_file_binary.c_str();}
 
 		private:
 			Box m_box;
@@ -58,11 +62,17 @@ namespace Tiger
 					SourceView m_src_view;
 					SourceView m_output;
 			std::string m_file_current;
-			bool m_dirty;
+			std::string m_file_binary;
+			static constexpr auto SOURCE_DIRTY=0x1;
+			static constexpr auto BINARY_DIRTY=0x2;
+			int m_dirty_flags;
 
 			void save(std::string filename);
 
 			virtual void stateChangeNotify()
+				{}
+
+			virtual void submit()
 				{}
 		};
 
@@ -86,7 +96,13 @@ namespace Tiger
 			void stateChangeNotify()
 				{
 				if(r_cb!=nullptr)
-					{(*r_cb)(*this);}	
+					{r_cb->stateChanged(*this);}	
+				}
+
+			void submit()
+				{
+				if(r_cb!=nullptr)
+					{r_cb->submit(*this);}
 				}
 
 		private:

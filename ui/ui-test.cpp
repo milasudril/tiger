@@ -28,19 +28,33 @@ namespace Tiger
 	template<class Callback>
 	class SimulationSetup;
 
-	class Ui
+	class UiController
 		{
 		public:
+			typedef UiController Self;
+
+			explicit UiController(UiContext& ctx,Window& mainwin
+				,TabView& tabs) noexcept:r_ctx(ctx),r_mainwin(mainwin)
+				,r_tabs(tabs)
+				{}
+
 			void operator()(Window& ui_owner)
 				{}
 
-			void stateChanged(FilterEditor<Ui>& editor)
-				{}
+			void stateChanged(FilterEditor<Self>& editor)
+				{
+				std::string title_string(editor.filenameSrc());
+				if(editor.dirty())
+					{title_string+=" * ";}
+				r_mainwin.title(title_string.c_str());
+				}
 
-			void submit(FilterEditor<Ui>& editor)
-				{}
+			void submit(FilterEditor<Self>& editor)
+				{
+				printf("%s\n",editor.filenameBinary());
+				}
 
-			void submit(SimulationSetup<Ui>& simedit)
+			void submit(SimulationSetup<Self>& simedit)
 				{}
 
 		private:
@@ -57,16 +71,13 @@ int main(int argc, char *argv[])
 	auto mainwin_cb=[&ctx](Tiger::Window& window)
 		{ctx.exit();};
 	Tiger::TabView tabs(mainwin);
-	auto editor_cb=[&mainwin](Tiger::FilterEditorBase& editor)
-		{
-		std::string title_string(editor.filename());
-		if(editor.dirty())
-			{title_string+=" * ";}
-		mainwin.title(title_string.c_str());
-		};
-	Tiger::FilterEditor<decltype(editor_cb)> fileedit(tabs.tabTitle("Filter editor"),0);
-	fileedit.callback(editor_cb);
+
+	Tiger::FilterEditor<Tiger::UiController> filteredit(tabs.tabTitle("Filter editor"),0);
+	
 	Tiger::SimulationEditor simedit(tabs.tabTitle("Simulation setup"),0);
+
+	Tiger::UiController ui(ctx,mainwin,tabs);
+	filteredit.callback(ui);
 
 	mainwin.callback(mainwin_cb);
 	mainwin.show();

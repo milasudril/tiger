@@ -39,7 +39,7 @@ FilterEditorBase::FilterEditorBase(Container& cnt):m_box(cnt,1)
 	,m_toolbar(m_box,0,0)
 	,m_vsplit(m_box.insertMode({0,Box::FILL|Box::EXPAND}),0)
 		,m_src_view(m_vsplit.insertMode({Paned::RESIZE|Paned::SHRINK_ALLOWED}),0)
-		,m_output(m_vsplit,1),m_dirty(0)
+		,m_output(m_vsplit,1),m_dirty_flags(BINARY_DIRTY)
 	{
 	m_toolbar.append(button_labels).callback(*this);
 
@@ -55,7 +55,7 @@ void FilterEditorBase::create()
 	if(askSave())
 		{
 		m_src_view.content(example_begin);
-		m_dirty=0;
+		m_dirty_flags=BINARY_DIRTY;
 		stateChangeNotify();
 		}
 	}
@@ -74,7 +74,7 @@ void FilterEditorBase::open()
 				},"Filter source files"))
 			{
 			m_src_view.content(SrcStdio{m_file_current.c_str()});
-			m_dirty=0;
+			m_dirty_flags=BINARY_DIRTY;
 			stateChangeNotify();
 			}
 		}
@@ -95,10 +95,13 @@ bool FilterEditorBase::saveAs()
 
 bool FilterEditorBase::save()
 	{
-	if(m_file_current.size()==0)
-		{return saveAs();}
-	save(m_file_current);
-	stateChangeNotify();
+	if(dirty() || m_file_current.size()==0)
+		{
+		if(m_file_current.size()==0)
+			{return saveAs();}
+		save(m_file_current);
+		stateChangeNotify();
+		}
 	return 1;
 	}
 
@@ -106,17 +109,32 @@ void FilterEditorBase::save(std::string filename)
 	{
 	SinkStdio dest(filename.c_str());
 	dest.write(m_src_view.content(),m_src_view.contentSize());
-	m_dirty=0;
+	m_dirty_flags=BINARY_DIRTY;
 	}
 
-void FilterEditorBase::compile()
+bool FilterEditorBase::compile()
 	{
-	if(save())
+	if(save() && (m_dirty_flags&BINARY_DIRTY))
 		{
 		m_output.content("");
-		filterCompile(m_file_current.c_str(),(m_file_current+".so").c_str(),m_output);
-		m_output.content("Filter compiled successfully. Click `Load` to load the filter.");
+		try
+			{
+			m_file_binary=m_file_current+".so";
+			filterCompile(m_file_current.c_str(),m_file_binary.c_str(),m_output);
+			m_output.content("Filter compiled successfully. Click `Load` to load the filter.");
+			m_dirty_flags&=~BINARY_DIRTY;
+			return 1;
+			}
+		catch(const Tiger::Error& msg)
+			{return 0;}
 		}
+	return 0;
+	}
+
+void FilterEditorBase::load()
+	{
+	if(compile())
+		{submit();}
 	}
 
 void FilterEditorBase::operator()(ButtonList<FilterEditorBase>& src,Button& btn)
@@ -140,6 +158,9 @@ void FilterEditorBase::operator()(ButtonList<FilterEditorBase>& src,Button& btn)
 			case COMPILE:
 				compile();
 				break;
+			case LOAD:
+				load();
+				break;
 			default:
 				break;
 			}
@@ -151,13 +172,13 @@ void FilterEditorBase::operator()(ButtonList<FilterEditorBase>& src,Button& btn)
 
 void FilterEditorBase::operator()(SourceView& srcv)
 	{
-	m_dirty=1;
+	m_dirty_flags|=SOURCE_DIRTY;
 	stateChangeNotify();
 	}
 
 bool FilterEditorBase::askSave()
 	{
-	if(m_dirty)
+	if(dirty())
 		{
 		std::string message("Do you want to save changes to `");
 		message+=m_file_current;
