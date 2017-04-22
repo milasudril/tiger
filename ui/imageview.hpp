@@ -31,7 +31,7 @@ namespace Tiger
 
 			void operator()(RangeView& src);
 
-			void operator()(Button& src);
+			void clicked(Button& src);
 
 			ImageView& image(Image&& img,int channel)=delete;
 

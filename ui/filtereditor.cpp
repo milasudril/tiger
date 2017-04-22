@@ -137,7 +137,7 @@ void FilterEditorBase::load()
 		{submit();}
 	}
 
-void FilterEditorBase::operator()(ButtonList<FilterEditorBase>& src,Button& btn)
+void FilterEditorBase::clicked(ButtonList<FilterEditorBase>& src,Button& btn)
 	{
 	try
 		{

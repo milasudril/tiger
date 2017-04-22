@@ -35,6 +35,8 @@ namespace Tiger
 	class FilterEditorBase
 		{
 		public:
+			typedef FilterEditorBase Self;
+
 			explicit FilterEditorBase(Container& cnt);
 
 			void create();
@@ -42,7 +44,7 @@ namespace Tiger
 			bool saveAs();
 			bool save();
 			bool compile();
-			void operator()(ButtonList<FilterEditorBase>& src,Button& btn);
+			void clicked(ButtonList<Self>& src,Button& btn);
 			void operator()(SourceView& srcv);
 			bool askSave();
 			void load();
@@ -57,7 +59,7 @@ namespace Tiger
 
 		private:
 			Box m_box;
-				ButtonList<FilterEditorBase> m_toolbar;
+				ButtonList<Self> m_toolbar;
 				Paned m_vsplit;
 					SourceView m_src_view;
 					SourceView m_output;

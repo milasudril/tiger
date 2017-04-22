@@ -111,8 +111,8 @@ namespace Tiger
 				return *this;
 				}
 
-			void operator()(Button& btn)
-				{(*r_callback)(*this,btn);}
+			void clicked(Button& btn)
+				{r_callback->clicked(*this,btn);}
 			
 			int id() const noexcept
 				{return m_impl.m_id();}

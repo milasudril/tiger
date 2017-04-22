@@ -79,7 +79,7 @@ Range ImageView::range() const noexcept
 	return map(m_rv.range());
 	}
 
-void ImageView::operator()(Button& src)
+void ImageView::clicked(Button& src)
 	{
 	auto range_opt=m_img_display.zrangeOptimal();
 	m_rv.range(unmap(range_opt));

@@ -50,7 +50,7 @@ namespace Tiger
 				auto cb_wrapper=[](void* rvc,Button& self)
 					{
 					auto x=reinterpret_cast<Callback*>(rvc);
-					(*x)(self);
+					x->clicked(self);
 					};
 				return callback(cb_wrapper,&cb); 
 				}

@@ -48,7 +48,7 @@ SimulationEditor::SimulationEditor(Container& cnt,int id):m_id(id),r_sim(nullptr
 	m_ch_current=-1;
 	}
 
-void SimulationEditor::operator()(ButtonList<SimulationEditor>& list,Button& btn)
+void SimulationEditor::clicked(ButtonList<SimulationEditor>& list,Button& btn)
 	{
 	if(m_ch_current!=-1)
 		{

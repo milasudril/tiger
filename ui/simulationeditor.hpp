@@ -42,7 +42,7 @@ namespace Tiger
 		public:
 			explicit SimulationEditor(Container& cnt,int id);
 			SimulationEditor& simulation(Simulation& sim);
-			void operator()(ButtonList<SimulationEditor>& list,Button& btn);
+			void clicked(ButtonList<SimulationEditor>& list,Button& btn);
 			void operator()(MapView<ParamDataDescriptor>& src,float& obj,const char* valstr);
 			void operator()(ImageDisplay& src);
 
