@@ -35,6 +35,7 @@ namespace Tiger
 				 m_tabs(mainwin)
 				,m_filter_edit(m_tabs.tabTitle("Filter editor"),0)
 				,m_sim_edit(m_tabs.tabTitle("Simulation setup"),0)
+				,m_sim_view(m_tabs.tabTitle("Simulation"),0)
 				,r_ctx(ctx)
 				,r_mainwin(mainwin)
 				{
@@ -61,13 +62,20 @@ namespace Tiger
 				{
 				m_sim.reset(new Simulation(editor.filenameBinary(),""));
 				m_sim_edit.simulation(*m_sim.get());
+			//	m_sim_view.simulation(*m_sim.get());
 				m_tabs.activate(1);
 				m_tabs.show();
 				}
 
 			void submit(SimulationEditor<Self>& simedit)
 				{
-				if(!m_sim)
+				if(m_sim)
+					{
+				//	m_sim_view.simulation(*m_sim.get());
+					m_tabs.activate(2);
+					m_tabs.show();
+					}
+				else
 					{
 					m_filter_edit.help();
 					m_tabs.activate(0);
@@ -79,6 +87,7 @@ namespace Tiger
 			TabView m_tabs;
 				FilterEditor<Self> m_filter_edit;
 				SimulationEditor<Self> m_sim_edit;
+				ImageView m_sim_view;
 			
 			UiContext& r_ctx;
 			Window& r_mainwin;
