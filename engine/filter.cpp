@@ -34,6 +34,20 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Tiger;
 
+static const char* filename(const char* str)
+	{
+	auto ptr=str;
+	auto ptr_end=ptr + strlen(str);
+	while(ptr!=ptr_end)
+		{
+		--ptr_end;
+		auto ch_in=*ptr_end;
+		if(ch_in=='/')
+			{return ptr_end+1;}
+		}
+	return ptr_end;
+	}
+
 static std::string objectGenerate(const char* src,const char* objdir)
 	{
 	MimeIdentifier m;
@@ -43,8 +57,8 @@ static std::string objectGenerate(const char* src,const char* objdir)
 	if(begins_with(mime,"text/x-c") || begins_with(mime,"text/plain"))
 		{
 		std::string ret(objdir);
-		ret+='/';
-		ret+=src;
+		if(ret.size()!=0){ret+='/';}
+		ret+=filename(src);
 		ret+=".so";
 		filterCompile(src,ret.c_str(),SinkStdio(nullptr));
 		return ret;
