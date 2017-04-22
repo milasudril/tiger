@@ -42,7 +42,6 @@ SimulationEditor::SimulationEditor(Container& cnt,int id):m_id(id),r_sim(nullptr
 			,m_param_label(m_right,"Parameters")
 			,m_params(m_right.insertMode({0,Box::FILL|Box::EXPAND}),0,s_desc)
 	{
-	m_init_list.callback(*this);
 	m_params.callback(*this);
 	m_img_view.displayCallback(*this);
 	m_ch_current=-1;
@@ -108,7 +107,8 @@ SimulationEditor& SimulationEditor::simulation(Simulation& sim)
 	m_init_list.clear();
 	sim.channelsList([this](const Simulation& sim,const char* ch)
 		{m_init_list.append(ch);});
-	m_init_list.append("Load all");
+	m_init_list.append("Load all").callback(*this);
+
 	sim.imagesStore(m_img_staged);
 	m_img_names.resize(m_img_staged.size());
 	m_img_ranges.clear();
