@@ -140,7 +140,7 @@ bool FilterEditorBase::compile()
 		catch(const Tiger::Error& msg)
 			{return 0;}
 		}
-	return 0;
+	return !(m_dirty_flags&BINARY_DIRTY);
 	}
 
 void FilterEditorBase::load()

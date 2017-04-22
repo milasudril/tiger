@@ -64,6 +64,7 @@ void SimulationEditor::clicked(ButtonList<SimulationEditor>& list,Button& btn)
 			auto id=btn.id();
 			m_img_view.image(&m_img_staged[id],0).range(m_img_ranges[id]);
 			m_ch_current=id;
+			btn.state(1);
 			}
 		else
 			{
