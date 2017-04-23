@@ -68,8 +68,9 @@ void SimulationEditorBase::clicked(ButtonList<SimulationEditorBase>& list,Button
 			}
 		else
 			{
-			m_ch_current=-1;
+			throw Error("This feature is not yet implemented");
 			btn.state(0);
+			m_ch_current=-1;
 			m_img_view.image(nullptr,0);
 			}
 		}
