@@ -99,6 +99,7 @@ namespace Tiger
 					{
 					m_continue=1;
 					m_render_thread=std::thread([this](){m_sim->run(*this);});
+					simview.running(1);
 					}
 				}
 
@@ -108,6 +109,7 @@ namespace Tiger
 					{
 					m_continue=0;
 					m_render_thread.join();
+					m_sim_view.running(0);
 					}
 				}
 

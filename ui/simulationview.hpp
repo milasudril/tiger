@@ -20,6 +20,7 @@ namespace Tiger
 			SimulationViewBase(Container& cnt);
 			void clicked(ButtonList<Self>& list,Button& btn);
 			SimulationViewBase& simulation(Simulation& sim);
+			void running(bool status);
 
 		private:
 			Box m_top;

@@ -41,16 +41,17 @@ void SimulationViewBase::clicked(ButtonList<Self>& list,Button& btn)
 			case 1:
 				pause();
 				btn.state(0);
-				m_toolbar[0].state(0);
 				break;
 			case 2:
 				reset();
 				btn.state(0);
-				m_toolbar[0].state(0);
 				break;
 			}
 		}
 	}
+
+void SimulationViewBase::running(bool status)
+	{m_toolbar[0].state(status);}
 
 SimulationViewBase& SimulationViewBase::simulation(Simulation& sim)
 	{
