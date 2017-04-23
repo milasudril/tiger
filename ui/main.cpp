@@ -41,6 +41,7 @@ namespace Tiger
 				,m_sim_view(m_tabs.tabTitle("Simulation"),0)
 				,r_ctx(ctx)
 				,r_mainwin(mainwin)
+				,m_continue(0)
 				{
 				mainwin.callback(*this);
 				m_filter_edit.callback(*this);

@@ -196,6 +196,9 @@ gboolean ImageDisplay::Impl::draw_callback(GtkWidget *widget, cairo_t *cr, gpoin
 
 	if(state->r_img!=nullptr)
 		{
+		if(state->r_img->height()==0 || state->r_img->width()==0)
+			{return FALSE;}
+
 		auto width_in=state->r_img->width();
 		auto nch=state->r_img->channelCount();
 		auto ch=state->m_view_channel;
