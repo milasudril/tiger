@@ -573,6 +573,9 @@ Image Tiger::resize(const Image& src,uint32_t width,uint32_t height)
 	{
 	auto n_ch=src.channelCount();
 	Image ret(width,height,n_ch);
+	if(src.width()==0 || src.height()==0)
+		{return std::move(ret);}
+
 	auto pixels_in=src.pixels();
 	auto width_in=src.width();
 	auto r_x=static_cast<float>(width_in)/static_cast<float>(width);	

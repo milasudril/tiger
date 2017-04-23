@@ -245,7 +245,8 @@ gboolean RangeView::Impl::move_callback(GtkWidget* widget,GdkEvent* event,gpoint
 			break;
 		}
 	auto l=range_new.length();
-	assert(l>=0);
+	if(l<0)
+		{return FALSE;}
 	state->m_range=range_new;
 	gtk_widget_queue_draw(widget);
 	auto parent=gtk_widget_get_parent_window(widget);
