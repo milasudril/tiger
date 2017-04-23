@@ -612,3 +612,11 @@ void Tiger::fitToLargest(Image* img_begin,Image* img_end)
 	std::transform(img_begin,img_end,img_begin,[width,height](const Image& src)
 		{return resize(src,width,height);});
 	}
+
+Image Tiger::clone(const Image& img)
+	{
+	auto ret=layoutClone(img);
+	memcpy(ret.pixels(),img.pixels()
+		,ret.width()*ret.height()*ret.channelCount()*sizeof(Image::SampleType));
+	return std::move(ret);
+	}

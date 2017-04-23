@@ -132,21 +132,13 @@ Image Simulation::imagesLoad(const std::vector<Tiger::Channel>& files,const Filt
 	return std::move(ret);
 	}
 
-Image image_copy(const Image& img)
-	{
-	auto ret=layoutClone(img);
-	memcpy(ret.pixels(),img.pixels()
-		,ret.width()*ret.height()*ret.channelCount()*sizeof(Image::SampleType));
-	return std::move(ret);
-	}
-
 Image Simulation::imagesLoad(const std::vector<Image>& images
 	,const Filter& f)
 	{	
 	std::vector<Image> img_copy(images.size());
 	std::transform(images.begin(),images.end(),img_copy.begin()
 		,[](const Image& img)
-			{return image_copy(img);});
+			{return clone(img);});
 
 	fitToLargest(img_copy.data(),img_copy.data() + img_copy.size());
 	Image ret(img_copy[0].width(),img_copy[0].height(),static_cast<uint32_t>(img_copy.size()));	
