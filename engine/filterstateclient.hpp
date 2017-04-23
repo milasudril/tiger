@@ -25,7 +25,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 namespace Tiger
 	{
 	template<int N,int M>
-	class FilterStateClientImpl:protected FilterState
+	class FilterStateClientImpl:public FilterState
 		{
 		public:
 			using FilterState::width;

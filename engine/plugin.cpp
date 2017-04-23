@@ -36,12 +36,16 @@ Plugin::Plugin(std::string&& filename):m_name(std::move(filename))
 		throw Error("It was not possible to load the plugin "
 			,m_name.c_str(),". ",dlerror());
 		}
+	printf("*************%s opened\n",m_name.c_str());
 	}
 
 Plugin::~Plugin()
 	{
 	if(m_handle!=NULL)
-		{dlclose(m_handle);}
+		{
+		printf("*************%s closed\n",m_name.c_str());
+		dlclose(m_handle);
+		}
 	}
 
 void Plugin::entryPoint(const char* name,intptr_t* p_loc) const

@@ -115,6 +115,43 @@ namespace Alice
 
 TIGER_BLOB(char,example,"engine/example.cpp");
 
+#ifndef NDEBUG
+void* operator new(size_t n_bytes)
+	{
+	auto ret=malloc(n_bytes);
+	printf("Alloc: %p (%lu)\n",ret,n_bytes);
+	return ret;
+	}
+
+void operator delete(void* buffer)
+	{printf("Free: %p\n",buffer);}
+
+void* operator new[](size_t n_bytes)
+	{
+	auto ret=malloc(n_bytes);
+	printf("Alloc[]: %p (%lu)\n",ret,n_bytes);
+	return ret;
+	}
+
+void operator delete[](void* buffer)
+	{
+	printf("Free: %p\n",buffer);
+	free(buffer);
+	}
+
+void operator delete(void* buffer,size_t n)
+	{
+	printf("Free: %p\n",buffer);
+	free(buffer);
+	}
+
+void operator delete[](void* buffer,size_t n)
+	{
+	printf("Free: %p\n",buffer);
+	free(buffer);
+	}
+#endif
+
 int main(int argc,char** argv)
 	{
 	try

@@ -114,7 +114,7 @@ unsigned int Filter::channelCount() const noexcept
 unsigned int Filter::parameterIndex(const std::string& param) const
 	{
 	auto i=m_param_index.find(param);
-	if(i==m_channel_index.end())
+	if(i==m_param_index.end())
 		{throw Error(name()," does not take a parameter with name ",param.c_str());}
 	return i->second;
 	}

@@ -51,7 +51,9 @@ Simulation& Simulation::run(ProcessMonitor monitor,void* processcallback) noexce
 Simulation& Simulation::imagesLoad(const std::vector<Channel>& files_init)
 	{
 	auto current=imagesLoad(files_init,m_filter);
+	printf("Current pixels: %p\n",current.pixels());
 	auto next=layoutClone(current);
+	printf("Next pixels: %p\n",next.pixels());
 	m_current=std::move(current);
 	m_next=std::move(next);
 	m_state=FilterState(m_next.pixels(),m_current.pixels(),m_params.data()

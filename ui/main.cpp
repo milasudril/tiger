@@ -69,6 +69,7 @@ namespace Tiger
 			void submit(FilterEditor<Self>& editor)
 				{
 				pause(m_sim_view);
+				m_sim.reset();
 				m_sim.reset(new Simulation(editor.filenameBinary(),""));
 				m_sim_view.simulation(*m_sim.get());
 				m_sim_edit.simulation(*m_sim.get());

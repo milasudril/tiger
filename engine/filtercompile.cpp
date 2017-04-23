@@ -140,7 +140,7 @@ void Tiger::filterCompile(const char* filename,const char* target_file,DataSink&
 
 	const char* const argv[]=
 		{
-		 "g++","-std=c++14","-O3","--fast-math"
+		 "g++","-std=c++14","-O3","--fast-math","-g"
 		,"-march=native","-fno-stack-protector"
 		,"-Wconversion","-Wall",iquote.c_str()
 		,"-include","pluginmain.hpp","-include","filterstateclient.hpp"
