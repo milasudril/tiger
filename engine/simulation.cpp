@@ -74,20 +74,21 @@ Simulation& Simulation::imagesLoad(const std::vector<Image>& images_init)
 
 static void imageSoA2AoS(const Tiger::Image& src,unsigned int ch,Tiger::Image& dest)
 	{
-	assert(src.height()==dest.height() && src.width()==dest.width() 
-		&& src.channelCount()==1 && ch<dest.channelCount() );
+	assert(src.height()==dest.height() && src.width()==dest.width() &&
+		ch<dest.channelCount() );
 
 	auto w=dest.width();
 	auto h=dest.height();
 	auto N=w*h;
 	auto ch_count=dest.channelCount();
+	auto ch_count_in=src.channelCount();
 	auto pixels_in=src.pixels();
 	auto pixels_out=dest.pixels() + ch;
 	while(N)
 		{
 		*pixels_out=*pixels_in;
 		pixels_out+=ch_count;
-		++pixels_in;
+		pixels_in+=ch_count_in;
 		--N;
 		}
 	}

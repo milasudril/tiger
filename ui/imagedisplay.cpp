@@ -196,14 +196,16 @@ gboolean ImageDisplay::Impl::draw_callback(GtkWidget *widget, cairo_t *cr, gpoin
 
 	if(state->r_img!=nullptr)
 		{
-		if(state->r_img->height()==0 || state->r_img->width()==0)
+		auto width_in=state->r_img->width();
+		auto height_in=state->r_img->height();
+		if(width_in==0 || height_in==0)
 			{return FALSE;}
 
-		auto width_in=state->r_img->width();
+
 		auto nch=state->r_img->channelCount();
 		auto ch=state->m_view_channel;
 
-		auto ratio_in=double(width_in)/double(state->r_img->height());
+		auto ratio_in=double(width_in)/double(height_in);
 		auto ratio_out=double(width)/double(height);
 
 		auto height_out=size_t(ratio_out > ratio_in? height : width/ratio_in);
@@ -220,8 +222,8 @@ gboolean ImageDisplay::Impl::draw_callback(GtkWidget *widget, cairo_t *cr, gpoin
 		while(ptr!=ptr_end)
 			{
 		//	TODO: Interpolate
-			auto row_src=size_t(row*factor);
-			auto col_src=size_t(col*factor);
+			auto row_src=std::min(size_t(row*factor),size_t(height_in - 1));
+			auto col_src=std::min(size_t(col*factor),size_t(width_in - 1));
 			auto v_temp=ptr_src[nch*(row_src*width_in + col_src) + ch];
 			auto val_src=static_cast<uint8_t>(255.0*valueMap(v_temp,state->m_z_range));
 
