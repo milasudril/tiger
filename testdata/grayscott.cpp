@@ -27,34 +27,40 @@ static void gray_scott(const Tiger::FilterStateClient& data,unsigned long long f
 	auto F=data.param<P("F")>();
 	auto k=data.param<P("k")>();
 
-	for(int y=1;y<h-1;++y) //Dirichlet boundary for simplicity
+	for(int y=0;y<h;++y)
 		{
-		for(int x=1;x<w-1;++x) //Dirichlet boundary for simplicity
+		auto up  =y<h-1?y+1:0;
+		auto down=y>0?y-1:h-1;
+
+		for(int x=0;x<w;++x)
 			{
+			auto right=x<w-1?x+1:0;
+			auto left=x>0?x-1:w-1;
+
 		//	Exercise: Vectorize this piece of code
-			auto dyy_u=data.value_current<C("u")>(x,y+1) 
+			auto dyy_u=data.value_current<C("u")>(x,up) 
 				-2.0f*data.value_current<C("u")>(x,y)
-				+data.value_current<C("u")>(x,y-1);
+				+data.value_current<C("u")>(x,down);
 
-			auto dxx_u=data.value_current<C("u")>(x+1,y) 
+			auto dxx_u=data.value_current<C("u")>(right,y) 
 				-2.0f*data.value_current<C("u")>(x,y)
-				+data.value_current<C("u")>(x-1,y);
+				+data.value_current<C("u")>(left,y);
 
-			auto dyy_v=data.value_current<C("v")>(x,y+1) 
+			auto dyy_v=data.value_current<C("v")>(x,up) 
 				-2.0f*data.value_current<C("v")>(x,y)
-				+data.value_current<C("v")>(x,y-1);
+				+data.value_current<C("v")>(x,down);
 
-			auto dxx_v=data.value_current<C("v")>(x+1,y) 
+			auto dxx_v=data.value_current<C("v")>(right,y) 
 				-2.0f*data.value_current<C("v")>(x,y)
-				+data.value_current<C("v")>(x-1,y);
+				+data.value_current<C("v")>(left,y);
 
 			auto l_u=dxx_u + dyy_u;
 			auto l_v=dxx_v + dyy_v;
 			auto v_u=data.value_current<C("u")>(x,y);
 			auto v_v=data.value_current<C("v")>(x,y);
 
-			data.value_next<C("u")>(x,y)=v_u + ( d*l_u - v_u*v_v*v_v + F*(1-v_u) )/48.0f;
-			data.value_next<C("v")>(x,y)=v_v + ( l_v + v_u*v_v*v_v - (F+k)*v_v )/48.0f;
+			data.value_next<C("u")>(x,y)=v_u + ( d*l_u - v_u*v_v*v_v + F*(1-v_u) )/16.0f;
+			data.value_next<C("v")>(x,y)=v_v + ( l_v + v_u*v_v*v_v - (F+k)*v_v )/16.0f;
 			}
 		}
 	}

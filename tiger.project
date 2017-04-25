@@ -3,11 +3,11 @@
   <Reconciliation>
     <Regexes/>
     <Excludepaths>
-      <Path>.clang/</Path>
-      <Path>.codelite/</Path>
-      <Path>.git/</Path>
-      <Path>__targets_rel/</Path>
       <Path>__targets/</Path>
+      <Path>__targets_rel/</Path>
+      <Path>.git/</Path>
+      <Path>.codelite/</Path>
+      <Path>.clang/</Path>
     </Excludepaths>
     <Ignorefiles/>
     <Extensions>

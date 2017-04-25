@@ -36,7 +36,7 @@ namespace Tiger
 				{
 				static_assert(n>=0,"Channel not found");
 				static_assert(n<N,"Channel count out of bounds");
-				return m_next[N*(y*m_height + x) + n];
+				return m_next[N*(y*m_width + x) + n];
 				}
 
 			template<int n>
@@ -44,7 +44,7 @@ namespace Tiger
 				{
 				static_assert(n>=0,"Channel not found");
 				static_assert(n<N,"Channel count out of bounds");
-				return m_current[N*(y*m_height + x) + n];
+				return m_current[N*(y*m_width + x) + n];
 				}
 
 			template<int n>

@@ -15,7 +15,20 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
-//@	{"targets":[{"name":"filtercompile.o","type":"object","pkgconfig_libs":["uuid"]}]}
+//@	{
+//@	"targets":
+//@		[{
+//@		 "name":"filtercompile.o"
+//@		,"type":"object"
+//@		,"pkgconfig_libs":["uuid"]
+//@		,"dependencies":
+//@			[
+//@			 {"ref":"filterstate.hpp","rel":"file"}
+//@			,{"ref":"filterstateclient.hpp","rel":"file"}
+//@			,{"ref":"pluginmain.hpp","rel":"file"}
+//@			]
+//@		}]
+//@	}
 
 #include "filtercompile.hpp"
 #include "blob.hpp"
