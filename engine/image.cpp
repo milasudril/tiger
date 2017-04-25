@@ -214,7 +214,7 @@ void PNGReader::headerRead()
 template<class T>
 static void pixelsScale(const T* pixels_in,Image::SampleType* pixels_out,uint32_t N)
 	{
-	auto factor=static_cast<float>( ( 1L<<(8L*sizeof(T)) ) - 1 );
+	auto factor=static_cast<float>( ( 1LL<<(8LL*sizeof(T)) ) - 1LL );
 
 	while(N)
 		{
@@ -349,7 +349,7 @@ Image::Image(DataSource& source)
 	m_width=reader.width();
 	m_height=reader.height();
 	m_channel_count=reader.channelCount();
-	
+
 
 	m_data.reset(new SampleType[reader.width()*reader.height()
 		*reader.channelCount()]);
