@@ -43,7 +43,7 @@ class MapViewBase::Impl:private MapViewBase
 			r_value_update=cb;
 			r_cb_obj=cb_obj;
 			}
-			
+
 		int id() const noexcept
 			{return m_id;}
 
@@ -54,7 +54,7 @@ class MapViewBase::Impl:private MapViewBase
 		const void* r_cb_user_data;
 		ValueSetCallback r_value_update;
 		void* r_cb_obj;
-		
+
 		GtkTreeView* m_handle;
 		GtkListStore* m_list;
 		GtkCellRendererText* m_key_renderer;
@@ -114,7 +114,7 @@ MapViewBase& MapViewBase::callback(ValueSetCallback cb,void* cb_obj)
 	m_impl->callback(cb,cb_obj);
 	return *this;
 	}
-	
+
 int MapViewBase::id() const noexcept
 	{return m_impl->id();}
 
@@ -128,11 +128,11 @@ MapViewBase::Impl::Impl(Container& cnt,const DataDescriptorImpl& descriptor
 	r_cb_user_data=descriptor.cb_user_data;
 	m_id=id;
 
-	auto content=gtk_list_store_new(2, G_TYPE_UINT64, G_TYPE_UINT64);
+	auto content=gtk_list_store_new(2,G_TYPE_POINTER,G_TYPE_POINTER);
 	m_list=content;
 	auto tree=gtk_tree_view_new_with_model(GTK_TREE_MODEL(content));
 	m_handle=GTK_TREE_VIEW(tree);
-	
+
 	auto col=gtk_tree_view_column_new();
 	gtk_tree_view_column_set_resizable(col,TRUE);
 	gtk_tree_view_column_set_sizing(col,GTK_TREE_VIEW_COLUMN_FIXED);
@@ -169,7 +169,7 @@ MapViewBase::Impl::Impl(Container& cnt,const DataDescriptorImpl& descriptor
 	if(descriptor.value_const)
 		{
 	//For now
-		gtk_tree_selection_set_mode(select,GTK_SELECTION_NONE); 
+		gtk_tree_selection_set_mode(select,GTK_SELECTION_NONE);
 		}
 	else
 		{gtk_tree_selection_set_mode(select,GTK_SELECTION_SINGLE);}
