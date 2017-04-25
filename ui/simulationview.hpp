@@ -8,6 +8,7 @@
 
 #include "imageview.hpp"
 #include "buttonlist.hpp"
+#include "../engine/image.hpp"
 
 namespace Tiger
 	{

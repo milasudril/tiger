@@ -12,9 +12,9 @@
 #include "separator.hpp"
 #include "imagedisplay.hpp"
 #include "button.hpp"
+#include <cassert>
 #ifndef NDEBUG
 #include "../engine/image.hpp"
-#include <cassert>
 #endif
 
 namespace Tiger
