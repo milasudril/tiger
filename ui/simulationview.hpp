@@ -28,6 +28,7 @@ namespace Tiger
 				Box m_lower;
 					ButtonList<Self> m_img_selector;
 					ImageView m_img_view;
+			Image m_img_disp;
 			int m_ch_current;
 
 			virtual void run(){}

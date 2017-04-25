@@ -61,11 +61,15 @@ SimulationViewBase& SimulationViewBase::simulation(Simulation& sim)
 		sim.channelsList([this](const Simulation& sim,const char* ch)
 			{m_img_selector.append(ch);});
 		m_img_selector.callback(*this);
-		m_img_view.image(&sim.stateCurrent(),0);
+		m_img_disp=clone(sim.stateCurrent());
+		m_img_view.image(&m_img_disp,0);
 		m_ch_current=-1;
 		}
 	else
-		{m_img_view.image(&sim.stateCurrent(),m_ch_current==-1?0:m_ch_current);}
+		{
+		m_img_disp=clone(sim.stateCurrent());
+		m_img_view.image(&m_img_disp,m_ch_current==-1?0:m_ch_current);
+		}
 	return *this;
 	}
 
