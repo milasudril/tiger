@@ -168,14 +168,6 @@ static int move_detect(double x,double y,double w,double h)
 	return 1;
 	}
 
-struct alignas(4) Pixel
-	{
-	uint8_t v0;
-	uint8_t v1;
-	uint8_t v2;
-	uint8_t v3;
-	};
-
 static float toSRGB(float x)
 	{
 	return x<=0.0031308? 12.92f*x : (1.0f + 0.055f)*std::pow( x,1.0f/2.4f) - 0.055f;
@@ -211,9 +203,11 @@ gboolean ImageDisplay::Impl::draw_callback(GtkWidget *widget, cairo_t *cr, gpoin
 		auto width_out=size_t(ratio_out > ratio_in? height*ratio_in : width);
 
 		auto factor=static_cast<double>(width_in)/static_cast<double>(width_out);
-		const auto N=width_out*height_out;
-		std::unique_ptr<Pixel[]> pixels(new Pixel[N]);
-		auto ptr=pixels.get();
+		
+		auto surface=cairo_image_surface_create(CAIRO_FORMAT_ARGB32
+			,static_cast<int>(width_out),static_cast<int>(height_out));
+		auto ptr=cairo_image_surface_get_data(surface);
+		const auto N=4*width_out*height_out;
 		auto ptr_end=ptr + N;
 		auto ptr_src=state->r_img->pixels();
 		unsigned int row=0;
@@ -226,7 +220,10 @@ gboolean ImageDisplay::Impl::draw_callback(GtkWidget *widget, cairo_t *cr, gpoin
 			auto v_temp=ptr_src[nch*(row_src*width_in + col_src) + ch];
 			auto val_src=static_cast<uint8_t>(255.0*valueMap(v_temp,state->m_z_range));
 
-			*ptr={val_src,val_src,val_src,255};
+			ptr[0]=val_src;
+			ptr[1]=val_src;
+			ptr[2]=val_src;
+			ptr[3]=255;
 
 			++col;
 			if(col==width_out)
@@ -234,14 +231,9 @@ gboolean ImageDisplay::Impl::draw_callback(GtkWidget *widget, cairo_t *cr, gpoin
 				col=0;
 				++row;
 				}
-			++ptr;
+			ptr+=4;
 			}
-
-		auto surface=cairo_image_surface_create_for_data(
-			(uint8_t*)pixels.get()
-			,CAIRO_FORMAT_ARGB32
-			,static_cast<int>(width_out),static_cast<int>(height_out)
-			,static_cast<int>(width_out*sizeof(Pixel)));
+		cairo_surface_mark_dirty(surface);
 		cairo_set_operator(cr,CAIRO_OPERATOR_OVER);
 		cairo_set_source_surface(cr, surface, 0.5*static_cast<double>(width-width_out), 0.0);
 		cairo_paint(cr);
